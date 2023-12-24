@@ -1,12 +1,6 @@
 package org.firstinspires.ftc.teamcode.firstCompBot;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
-
-import static org.firstinspires.ftc.teamcode.BasicSample.Constants.MotorConstants.RevHDHexMotor.ticks_per_revolution;
 
 public class Constants {
     public static final class DriveTrainConstants {

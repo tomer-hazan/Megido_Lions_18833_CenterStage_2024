@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.InTakeSubsystem;
 
 public class InTakeCommand extends CommandBase {
     InTakeSubsystem subsystem;
+
     public InTakeCommand(InTakeSubsystem subsystem){
         this.subsystem=subsystem;
         addRequirements(subsystem);

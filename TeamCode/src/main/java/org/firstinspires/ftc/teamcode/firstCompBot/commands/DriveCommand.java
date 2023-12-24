@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.DriveTrainSubsyste
 import java.util.function.Supplier;
 
 public class DriveCommand extends CommandBase {
-private DriveTrainSubsystem driveTrainSubsystem;
+    private DriveTrainSubsystem driveTrainSubsystem;
     Supplier<Double> leftX;
     Supplier<Double> leftY;
     Supplier<Double> rightY;

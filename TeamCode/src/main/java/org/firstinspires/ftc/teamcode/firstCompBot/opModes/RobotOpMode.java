@@ -1,19 +1,26 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.opModes;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.OdometrySubsystem;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.DeployHookCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DriveCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.EjectionCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.InTakeCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.LaunchAirplaneCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.MoveLiftCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.PullDownCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.PullUpCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.ReturnHookCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.AirplaneSubsystem;
+import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CartridgeSubsystam;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.DriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.HookSubsystem;
@@ -23,26 +30,40 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsyste
 
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
+    //controllers
+    GamepadEx driver;
+    GamepadEx controller;
+    //subsystems
     LiftSubsystem liftSubsystem;
     DriveTrainSubsystem driveTrainSubsystem;
     AirplaneSubsystem airplaneSubsystem;
     CartridgeSubsystam cartridgeSubsystam;
     HookSubsystem hookSubsystem;
     InTakeSubsystem inTakeSubsystem;
-    GamepadEx driver;
-    GamepadEx operator;
-    MoveLiftCommand moveLiftCommand;
-    DriveCommand driveCommand;
+    CameraSubsystem cameraSubsystem;
     MyOdometrySubsystem odometrySubsystem;
+    //commands
+    DeployHookCommand deployHookCommand;
+    DriveCommand driveCommand;
+    EjectionCommand ejectionCommand;
+    InTakeCommand inTakeCommand;
+    LaunchAirplaneCommand launchAirplaneCommand;
+    MoveLiftCommand moveLiftCommand;
+    PullDownCommand pullDownCommand;
+    PullUpCommand pullUpCommand;
+    ReturnHookCommand returnHookCommand;
+    //variables
+    private double time;
 
 
     @Override
     public void initialize() {
         driver = new GamepadEx(gamepad1);
-        operator = new GamepadEx(gamepad2);
+        controller = new GamepadEx(gamepad2);
         initSubsystems();
         initCommands();
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
+        time = 0;
 
     }
     private void initSubsystems(){
@@ -53,13 +74,31 @@ public class RobotOpMode extends CommandOpMode {
         hookSubsystem = new HookSubsystem(hardwareMap);
         inTakeSubsystem = new InTakeSubsystem(hardwareMap);
         odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
+        cameraSubsystem = new CameraSubsystem(hardwareMap);
 
     }
     private void initCommands(){
-        moveLiftCommand = new MoveLiftCommand(liftSubsystem,() -> operator.getLeftY());
+        constructCommands();
+        assignCommands();
+    }
+    private void constructCommands(){
+        deployHookCommand = new DeployHookCommand(hookSubsystem);
         driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX());
-        new GamepadButton(operator, GamepadKeys.Button.X).whenActive(new LaunchAirplaneCommand(airplaneSubsystem));
+        ejectionCommand = new EjectionCommand(inTakeSubsystem);
+        inTakeCommand = new InTakeCommand(inTakeSubsystem);
+        launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);
+        moveLiftCommand = new MoveLiftCommand(liftSubsystem,() -> controller.getLeftY());
+        pullDownCommand = new PullDownCommand(hookSubsystem);
+        pullUpCommand = new PullUpCommand(hookSubsystem);
+        returnHookCommand = new ReturnHookCommand(hookSubsystem);
+
+    }
+    private void assignCommands(){
+        //default commands
         liftSubsystem.setDefaultCommand(moveLiftCommand);
+        driveTrainSubsystem.setDefaultCommand(driveCommand);
+        //interactive commands
+        new GamepadButton(controller, GamepadKeys.Button.X).whenActive(new LaunchAirplaneCommand(airplaneSubsystem));
     }
 
 
@@ -70,6 +109,10 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("top ",String.valueOf(liftSubsystem.isTop()));
         telemetry.update();
     }
-
+    @Override
+    public void run() {
+        super.run();//if that doesnt work then replace with CommandScheduler.getInstance().run(); and if that crashes then remove the run func completely
+        time = getRuntime();
+    }
 
 }

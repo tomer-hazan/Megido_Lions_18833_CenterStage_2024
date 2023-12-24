@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants;
 
-import java.util.logging.Handler;
 
 public class HookSubsystem extends SubsystemBase {
     ServoEx leftServo;
@@ -32,5 +31,8 @@ public class HookSubsystem extends SubsystemBase {
     }
     public void setSuspensionPower(double power){
         suspension.set(power);
+    }
+    public void setSuspensionDirection(boolean inverted){
+        suspension.setInverted(inverted);
     }
 }

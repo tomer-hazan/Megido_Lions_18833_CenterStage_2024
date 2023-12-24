@@ -1,12 +1,6 @@
 package org.firstinspires.ftc.teamcode.firstCompBot;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
-
-import static org.firstinspires.ftc.teamcode.BasicSample.Constants.MotorConstants.RevHDHexMotor.ticks_per_revolution;
 
 public class Constants {
     public static final class DriveTrainConstants {
@@ -44,6 +38,9 @@ public class Constants {
         public static final double bottom_limit = 180;
         public static final double gear_ratio = 192;
         public static final double wheel_diameter = 0.01;
+        public static final boolean up_direction_inverted=false;
+        public static final boolean down_direction_inverted=true;
+        public static final double power=1;
         public static final double ticks_per_revolution = MotorConstants.RevHDHexMotor.ticks_per_revolution/gear_ratio;
         public static double ticksToMeters(double ticks){
             return 0;

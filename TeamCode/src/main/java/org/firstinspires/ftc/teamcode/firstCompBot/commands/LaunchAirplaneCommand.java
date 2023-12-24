@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.AirplaneSubsystem;
-import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;
 
-import java.util.function.Supplier;
 
 public class LaunchAirplaneCommand extends CommandBase {
     private AirplaneSubsystem airplaneSubsystem;

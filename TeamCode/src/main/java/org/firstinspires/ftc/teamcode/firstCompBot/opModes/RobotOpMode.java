@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.opModes;
 
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
-
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -98,7 +96,7 @@ public class RobotOpMode extends CommandOpMode {
         liftSubsystem.setDefaultCommand(moveLiftCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         //interactive commands
-        new GamepadButton(controller, GamepadKeys.Button.X).whenActive(new LaunchAirplaneCommand(airplaneSubsystem));
+        if(time>90)new GamepadButton(controller, GamepadKeys.Button.X).whenActive(new LaunchAirplaneCommand(airplaneSubsystem));
     }
 
 

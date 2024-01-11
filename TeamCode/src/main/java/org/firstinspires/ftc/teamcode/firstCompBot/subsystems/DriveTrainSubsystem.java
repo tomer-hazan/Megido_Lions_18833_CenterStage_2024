@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.firstCompBot.subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.drivebase.RobotDrive;
+import com.arcrobotics.ftclib.hardware.SensorColor;
 import com.arcrobotics.ftclib.hardware.SensorRevTOFDistance;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,15 +18,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
     MotorEx rightRear;
     SensorRevTOFDistance leftSensor;
     SensorRevTOFDistance rightSensor;
+    SensorColor frontSensor;
     public DriveTrainSubsystem(HardwareMap hardwareMap){
-        leftFront = new MotorEx(hardwareMap,"leftFront");
-        rightFront = new MotorEx(hardwareMap,"rightFront");
-        leftRear = new MotorEx(hardwareMap,"leftRear");
-        rightRear = new MotorEx(hardwareMap,"rightRear");
-        drive = new MecanumDrive(leftFront,rightFront,leftRear,rightRear);
 
-        leftSensor = new SensorRevTOFDistance(hardwareMap,"leftDistance");
-        rightSensor = new SensorRevTOFDistance(hardwareMap,"rightDistance");
+        leftFront = new MotorEx(hardwareMap,"left front");
+        rightFront = new MotorEx(hardwareMap,"right front");
+        leftRear = new MotorEx(hardwareMap,"left rear");
+        rightRear = new MotorEx(hardwareMap,"right rear");
+        drive = new MecanumDrive(leftFront,rightFront,leftRear,rightRear);
+        frontSensor = new SensorColor(hardwareMap,"front color sensor");
+        leftSensor = new SensorRevTOFDistance(hardwareMap,"left distance");
+        rightSensor = new SensorRevTOFDistance(hardwareMap,"right distance");
     }
 
     public RobotDrive getDrive(){
@@ -33,5 +36,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
     public double getLeftDistance(){return leftSensor.getDistance(DistanceUnit.METER);}
     public double getRightDistance(){return rightSensor.getDistance(DistanceUnit.METER);}
+    public int[] geARGBt(){
+        return frontSensor.getARGB();
+    }
 
 }

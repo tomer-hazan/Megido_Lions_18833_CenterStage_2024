@@ -11,7 +11,7 @@ public class AirplaneSubsystem extends SubsystemBase {
     ServoEx servo;
     Boolean hasLunched;
     public AirplaneSubsystem(HardwareMap hardwareMap){
-        servo = new SimpleServo(hardwareMap,"AirPlane", AirplaneConstants.bottom_limit, AirplaneConstants.top_limit);
+        servo = new SimpleServo(hardwareMap,"airplane servo", AirplaneConstants.bottom_limit, AirplaneConstants.top_limit);
         servo.setPosition(0);
         hasLunched = false;
     }

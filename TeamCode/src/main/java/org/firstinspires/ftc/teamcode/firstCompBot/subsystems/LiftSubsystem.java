@@ -20,8 +20,8 @@ public class LiftSubsystem extends SubsystemBase{
     RevTouchSensor bottomLimitSwitch;
     double encoderOffset;
     public LiftSubsystem(HardwareMap hardwareMap){
-        this.motor1 = new MotorEx(hardwareMap,"LiftMotor1");
-        this.motor2 = new MotorEx(hardwareMap,"LiftMotor2");
+        this.motor1 = new MotorEx(hardwareMap,"lift motor 1");
+        this.motor2 = new MotorEx(hardwareMap,"lift motor 2");
         motors = new MotorGroup(motor1,motor2);
         bottomLimitSwitch = hardwareMap.get(RevTouchSensor.class,"LiftLimit");
         motors.resetEncoder();

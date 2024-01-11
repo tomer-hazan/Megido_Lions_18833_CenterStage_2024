@@ -14,8 +14,8 @@ public class HookSubsystem extends SubsystemBase {
     ServoEx rightServo;
     MotorEx suspension;
     public HookSubsystem(HardwareMap hardwareMap){
-        leftServo = new SimpleServo(hardwareMap,"leftServo", HookConstants.bottom_limit,HookConstants.top_limit);
-        rightServo = new SimpleServo(hardwareMap,"rightServo", HookConstants.bottom_limit,HookConstants.top_limit);
+        leftServo = new SimpleServo(hardwareMap,"left hook", HookConstants.bottom_limit,HookConstants.top_limit);
+        rightServo = new SimpleServo(hardwareMap,"right hook", HookConstants.bottom_limit,HookConstants.top_limit);
         suspension = new MotorEx(hardwareMap,"suspension");
     }
 

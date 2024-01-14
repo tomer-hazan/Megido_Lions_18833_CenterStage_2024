@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.hardware.SensorColor;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
-
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.GameElaments.Pixals;
 
 public class InTakeSubsystem extends SubsystemBase {
     final MotorEx motor;
-    final SensorColor colorSensor;
+    //final SensorColor colorSensor;
+    final RevColorSensorV3 colorSensor;
     public InTakeSubsystem(HardwareMap hardwareMap){
         this.motor = new MotorEx(hardwareMap,"intake motor");
-        this.colorSensor = new SensorColor(hardwareMap,"intake color sensor");
+        this.colorSensor = hardwareMap.get(RevColorSensorV3.class,"intake color sensor");
         motor.resetEncoder();
         motor.setRunMode(Motor.RunMode.VelocityControl);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -30,9 +27,6 @@ public class InTakeSubsystem extends SubsystemBase {
         motor.setVelocity(velocity);
     }
     public void setDirection(boolean inverted){motor.setInverted(inverted);}
-    public Constants.GameElaments.Pixals getPixal(){
-        return Pixals.NULL;
-    }
     public int red(){return colorSensor.red();}
     public int green(){return colorSensor.green();}
     public int blue(){return colorSensor.blue();}

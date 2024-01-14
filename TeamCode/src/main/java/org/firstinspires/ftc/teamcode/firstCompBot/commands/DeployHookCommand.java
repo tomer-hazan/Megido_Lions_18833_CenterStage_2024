@@ -9,6 +9,7 @@ public class DeployHookCommand extends CommandBase {
     private HookSubsystem subsystem;
     public DeployHookCommand(HookSubsystem subsystem) {
         this.subsystem = subsystem;
+        addRequirements(subsystem);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class LiftSubsystem extends SubsystemBase{
         this.motor1 = new MotorEx(hardwareMap,"lift motor 1");
         this.motor2 = new MotorEx(hardwareMap,"lift motor 2");
         motors = new MotorGroup(motor1,motor2);
-        bottomLimitSwitch = hardwareMap.get(RevTouchSensor.class,"LiftLimit");
+        //bottomLimitSwitch = hardwareMap.get(RevTouchSensor.class,"LiftLimit");
         motors.resetEncoder();
         motors.setRunMode(Motor.RunMode.RawPower);
         motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -35,9 +35,9 @@ public class LiftSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if (bottomLimitSwitch.isPressed()) {
-            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
-        }
+//        if (bottomLimitSwitch.isPressed()) {
+//            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
+//        }
 
     }
 
@@ -55,7 +55,8 @@ public class LiftSubsystem extends SubsystemBase{
     }
 
     public boolean isBottom(){
-        return bottomLimitSwitch.isPressed();
+        //return bottomLimitSwitch.isPressed();
+        return false;
     }
 
     public void setPower(double power){

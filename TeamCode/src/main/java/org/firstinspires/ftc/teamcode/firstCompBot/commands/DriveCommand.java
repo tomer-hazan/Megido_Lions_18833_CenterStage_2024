@@ -17,6 +17,7 @@ public class DriveCommand extends CommandBase {
         this.leftX=leftX;
         this.leftY=leftY;
         this.rightY=rightY;
+        addRequirements(subsystem);
     }
 
     @Override

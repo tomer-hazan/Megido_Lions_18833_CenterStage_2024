@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.InTakeSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsystem;
 
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.GameConstants.autoTime;
+
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
     //controllers
@@ -50,8 +52,7 @@ public class RobotOpMode extends CommandOpMode {
     PullDownCommand pullDownCommand;
     PullUpCommand pullUpCommand;
     ReturnHookCommand returnHookCommand;
-    //variables
-    private double time;
+    double time;
 
 
     @Override
@@ -61,7 +62,6 @@ public class RobotOpMode extends CommandOpMode {
         initSubsystems();
         initCommands();
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
-        time = 0;
 
     }
     private void initSubsystems(){
@@ -96,7 +96,14 @@ public class RobotOpMode extends CommandOpMode {
         liftSubsystem.setDefaultCommand(moveLiftCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         //interactive commands
-        if(time>90)new GamepadButton(controller, GamepadKeys.Button.X).whenActive(new LaunchAirplaneCommand(airplaneSubsystem));
+
+
+        //end game
+        if(time>autoTime){
+            new GamepadButton(controller, GamepadKeys.Button.X).whenActive(launchAirplaneCommand);
+            new GamepadButton(controller, GamepadKeys.Button.DPAD_UP).whenActive(pullUpCommand);
+            new GamepadButton(controller, GamepadKeys.Button.DPAD_DOWN).whenActive(pullDownCommand);
+        }
     }
 
 
@@ -105,12 +112,13 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("off set: ",String.valueOf(liftSubsystem.getEncoderOffset()));
         telemetry.addData("buttom ",String.valueOf(liftSubsystem.isBottom()));
         telemetry.addData("top ",String.valueOf(liftSubsystem.isTop()));
+        telemetry.addData("time ",time);
         telemetry.update();
     }
     @Override
     public void run() {
-        super.run();//if that doesnt work then replace with CommandScheduler.getInstance().run(); and if that crashes then remove the run func completely
-        time = getRuntime();
+        super.run();//toDo if that doesnt work then replace with CommandScheduler.getInstance().run(); and if that crashes then remove the run func completely
+        time= getRuntime();
     }
 
 }

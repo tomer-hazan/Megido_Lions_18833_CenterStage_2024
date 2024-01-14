@@ -10,6 +10,7 @@ public class PullDownCommand extends CommandBase {
     private HookSubsystem subsystem;
     public PullDownCommand(HookSubsystem subsystem) {
         this.subsystem = subsystem;
+        addRequirements(subsystem);
     }
 
     @Override
@@ -19,7 +20,6 @@ public class PullDownCommand extends CommandBase {
 
     @Override
     public void execute() {
-        subsystem.setHookPosition(HookConstants.top_limit);
         subsystem.setSuspensionPower(HookConstants.power);
     }
 

@@ -26,7 +26,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftRear = new MotorEx(hardwareMap,"left rear");
         rightRear = new MotorEx(hardwareMap,"right rear");
         drive = new MecanumDrive(leftFront,rightFront,leftRear,rightRear);
-        frontSensor = new SensorColor(hardwareMap,"front color sensor");
+        //frontSensor = new SensorColor(hardwareMap,"front color sensor");
         leftSensor = new SensorRevTOFDistance(hardwareMap,"left distance");
         rightSensor = new SensorRevTOFDistance(hardwareMap,"right distance");
     }
@@ -36,8 +36,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
     public double getLeftDistance(){return leftSensor.getDistance(DistanceUnit.METER);}
     public double getRightDistance(){return rightSensor.getDistance(DistanceUnit.METER);}
-    public int[] geARGBt(){
-        return frontSensor.getARGB();
-    }
+//    public int[] geARGBt(){
+//        return frontSensor.getARGB();
+//    }
 
 }

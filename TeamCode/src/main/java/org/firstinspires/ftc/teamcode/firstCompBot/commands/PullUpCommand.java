@@ -6,12 +6,11 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.HookSubsystem;
 
-import java.util.function.Supplier;
-
 public class PullUpCommand extends CommandBase {
     private HookSubsystem subsystem;
     public PullUpCommand(HookSubsystem subsystem) {
         this.subsystem = subsystem;
+        addRequirements(subsystem);
     }
 
     @Override
@@ -21,7 +20,6 @@ public class PullUpCommand extends CommandBase {
 
     @Override
     public void execute() {
-        subsystem.setHookPosition(HookConstants.top_limit);
         subsystem.setSuspensionPower(HookConstants.power);
     }
 

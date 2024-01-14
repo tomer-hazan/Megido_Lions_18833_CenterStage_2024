@@ -9,6 +9,7 @@ public class ReturnHookCommand extends CommandBase {
     private HookSubsystem subsystem;
     public ReturnHookCommand(HookSubsystem subsystem) {
         this.subsystem = subsystem;
+        addRequirements(subsystem);
     }
 
     @Override

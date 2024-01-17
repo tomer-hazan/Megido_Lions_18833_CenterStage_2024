@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.drivebase.RobotDrive;
 import com.arcrobotics.ftclib.hardware.SensorColor;
 import com.arcrobotics.ftclib.hardware.SensorRevTOFDistance;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -29,6 +30,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
         //frontSensor = new SensorColor(hardwareMap,"front color sensor");
         leftSensor = new SensorRevTOFDistance(hardwareMap,"left distance");
         rightSensor = new SensorRevTOFDistance(hardwareMap,"right distance");
+        leftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
     public RobotDrive getDrive(){

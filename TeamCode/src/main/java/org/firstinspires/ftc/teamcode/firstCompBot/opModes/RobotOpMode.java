@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DeployHookCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.EjectionCommand;
@@ -27,6 +28,7 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsystem;
 
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.GameConstants.autoTime;
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.GameConstants.endGameTime;
 
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
@@ -53,6 +55,7 @@ public class RobotOpMode extends CommandOpMode {
     PullUpCommand pullUpCommand;
     ReturnHookCommand returnHookCommand;
     double time;
+    Constants.GameConstants.gamePeriod period;
 
 
     @Override
@@ -62,6 +65,7 @@ public class RobotOpMode extends CommandOpMode {
         initSubsystems();
         initCommands();
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
+        period = Constants.GameConstants.gamePeriod.teleOp;
 
     }
     private void initSubsystems(){
@@ -117,8 +121,12 @@ public class RobotOpMode extends CommandOpMode {
     }
     @Override
     public void run() {
-        super.run();//toDo if that doesnt work then replace with CommandScheduler.getInstance().run(); and if that crashes then remove the run func completely
+        super.run();
         time= getRuntime();
+        if(period== Constants.GameConstants.gamePeriod.teleOp&&time>=endGameTime){
+            period = Constants.GameConstants.gamePeriod.endGame;
+        }
+
     }
 
 }

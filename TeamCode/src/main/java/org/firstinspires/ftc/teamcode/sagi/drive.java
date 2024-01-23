@@ -15,12 +15,12 @@ public class drive extends OpMode {
     MotorEx frontRight;
     MotorEx rearRight;
     MotorEx pullUpMotor;
-    Servo lHook;
+//    Servo lHook;
     Servo rHook;
     MotorEx inTakeMotor;
     MecanumDrive mecanum;
-    GamepadEx gp1;
-    GamepadEx gp2;
+    GamepadEx driver;
+    GamepadEx controller;
     @Override
     public void init() {
         frontLeft = new MotorEx(hardwareMap,"fl");
@@ -29,36 +29,34 @@ public class drive extends OpMode {
         rearRight=new MotorEx(hardwareMap,"rr");
         pullUpMotor = new MotorEx(hardwareMap,"pullUp");
         inTakeMotor = new MotorEx(hardwareMap,"inTake");
-        lHook = hardwareMap.get(Servo.class, "L servo");
+//        lHook = hardwareMap.get(Servo.class, "L servo");
         rHook = hardwareMap.get(Servo.class, "R servo");
         pullUpMotor.setInverted(true);
         // input motors exactly as shown below
         mecanum = new MecanumDrive(frontLeft, frontRight, rearLeft, rearRight);
-        gp1 = new GamepadEx(gamepad1);
-        gp2 = new GamepadEx(gamepad2);
+        driver = new GamepadEx(gamepad1);
+        controller = new GamepadEx(gamepad2);
     }
 
     @Override
     public void loop() {
-        mecanum.driveRobotCentric(gp1.getLeftX(),gp1.getLeftY(),gp1.getRightY());
-        if (gamepad1.a){
-            lHook.setPosition(1);
+        mecanum.driveRobotCentric(driver.getLeftX(), driver.getLeftY(), driver.getRightX());
+        if (controller.getButton(GamepadKeys.Button.DPAD_UP)){
+//            lHook.setPosition(1);
             rHook.setPosition(0);
         }
-        else if (gamepad1.b){
-            lHook.setPosition(0);
+        else if (controller.getButton(GamepadKeys.Button.DPAD_DOWN)){
+//            lHook.setPosition(0);
             rHook.setPosition(1);
         }
-        if(gp2.getButton(GamepadKeys.Button.B)){
+        if(controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
             inTakeMotor.setInverted(false);
             inTakeMotor.set(1);
-        } else if (gp2.getButton(GamepadKeys.Button.A)) {
+        } else if (controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1) {
             inTakeMotor.setInverted(true);
             inTakeMotor.set(1);
-        }else if (gp2.getButton(GamepadKeys.Button.Y)) {
-            inTakeMotor.set(0);
-        }
-        pullUpMotor.set(gp2.getLeftY());
+        }else inTakeMotor.set(0);
+        pullUpMotor.set(controller.getLeftY());
         telemetry.addData("height" ,pullUpMotor.getCurrentPosition());
         telemetry.update();
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.firstCompBot.opModes;
+package org.firstinspires.ftc.teamcode.sagi;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

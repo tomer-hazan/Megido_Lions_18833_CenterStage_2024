@@ -8,12 +8,12 @@ public class Constants {
                 MotorConstants.REVThroughBoreEncoder.ticks_per_revolution;
 
         public final static double WheelDiameter = 0.096;//toDo
-        public final static double OdometryWheelDiameter = 0.05;//toDo
+        public final static double OdometryWheelDiameter = 0.0508;
 
         public final static double GearRatio = 19.2;//toDo
 
-        public final static double TrackWidth = 0.259;//toDo
-        public final static double CenterWheelOffset = 0.2;//toDo
+        public final static double TrackWidth = 0.254;
+        public final static double CenterWheelOffset = 0.1016;//toDo
         public static double MaxVelocity = 1.867873;//1.764102,1.867873//,// Its recommended to put max velocity to 90% of the true value
         public static double MaxAccel = 1.7;
 
@@ -113,6 +113,11 @@ public class Constants {
             autonomous,
             teleOp,
             endGame
+        }
+    }
+    public static class util{
+        public static double meterToInch(double m){
+            return  39.37*m;
         }
     }
 

@@ -6,6 +6,8 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
@@ -56,6 +58,7 @@ public class RobotOpMode extends CommandOpMode {
     ReturnHookCommand returnHookCommand;
     double time;
     Constants.GameConstants.gamePeriod period;
+    Pose2d pose;
 
 
     @Override
@@ -66,6 +69,7 @@ public class RobotOpMode extends CommandOpMode {
         initCommands();
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
         period = Constants.GameConstants.gamePeriod.teleOp;
+        pose = new Pose2d();
 
     }
     private void initSubsystems(){
@@ -117,12 +121,15 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("buttom ",String.valueOf(liftSubsystem.isBottom()));
         telemetry.addData("top ",String.valueOf(liftSubsystem.isTop()));
         telemetry.addData("time ",time);
+        telemetry.addData("pos","("+pose.getX()+", "+pose.getY()+")");
+        telemetry.addData("heading",pose.getHeading());
         telemetry.update();
     }
     @Override
     public void run() {
         super.run();
         time= getRuntime();
+        pose = odometrySubsystem.getPose();
         if(period== Constants.GameConstants.gamePeriod.teleOp&&time>=endGameTime){
             period = Constants.GameConstants.gamePeriod.endGame;
         }

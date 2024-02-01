@@ -12,11 +12,13 @@ public class DriveCommand extends CommandBase {
     Supplier<Double> leftX;
     Supplier<Double> leftY;
     Supplier<Double> rightY;
-    public DriveCommand(DriveTrainSubsystem subsystem, Supplier<Double> leftX, Supplier<Double> leftY, Supplier<Double> rightY) {
+    Supplier<Boolean> fieldCentric;
+    public DriveCommand(DriveTrainSubsystem subsystem, Supplier<Double> leftX, Supplier<Double> leftY, Supplier<Double> rightY, Supplier<Boolean> fieldCentric) {
         this.driveTrainSubsystem = subsystem;
         this.leftX=leftX;
         this.leftY=leftY;
         this.rightY=rightY;
+        this.fieldCentric = fieldCentric;
         addRequirements(subsystem);
     }
 
@@ -27,7 +29,8 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         MecanumDrive  m_drive = (MecanumDrive) driveTrainSubsystem.getDrive();
-        m_drive.driveRobotCentric(leftX.get(),leftY.get(),rightY.get());
+        if(fieldCentric.get());//m_drive.driveFieldCentric(leftX.get(),leftY.get(),rightY.get(),);
+        else m_drive.driveRobotCentric(leftX.get(),leftY.get(),rightY.get());
     }
 
     @Override

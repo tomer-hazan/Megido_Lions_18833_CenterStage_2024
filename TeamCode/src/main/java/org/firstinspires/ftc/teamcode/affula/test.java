@@ -25,7 +25,7 @@ public class test extends OpMode {
         right.setRunMode(Motor.RunMode.RawPower);
         left.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        right.setInverted(true);
+        right.setInverted(false);
         driver = new GamepadEx(gamepad1);
         controller = new GamepadEx(gamepad2);
     }
@@ -35,10 +35,10 @@ public class test extends OpMode {
         if(controller.getButton(GamepadKeys.Button.B) && !last){
             freaze = !freaze;
         }
-        if(controller.isDown(GamepadKeys.Button.A))
+        //if(controller.isDown(GamepadKeys.Button.A))
         if(controller.getButton(GamepadKeys.Button.A)) powerLimit = 0.3;
-        if(controller.getButton(GamepadKeys.Button.X)) powerLimit = 0.7;
-        if(controller.getButton(GamepadKeys.Button.Y)) powerLimit = 1;
+        if(controller.getButton(GamepadKeys.Button.X)) powerLimit = 0.5;
+        if(controller.getButton(GamepadKeys.Button.Y)) powerLimit = 0.8;
         if(!freaze){
             left.set(driver.getLeftY()*powerLimit);
             right.set(driver.getRightY()*powerLimit);

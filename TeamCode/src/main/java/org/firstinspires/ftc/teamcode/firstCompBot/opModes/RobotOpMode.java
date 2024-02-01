@@ -85,7 +85,7 @@ public class RobotOpMode extends CommandOpMode {
     }
     private void constructCommands(){
         deployHookCommand = new DeployHookCommand(hookSubsystem);
-        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX());
+        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX(),() -> false);
         ejectionCommand = new EjectionCommand(inTakeSubsystem);
         inTakeCommand = new InTakeCommand(inTakeSubsystem);
         launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);
@@ -99,6 +99,7 @@ public class RobotOpMode extends CommandOpMode {
         //default commands
         liftSubsystem.setDefaultCommand(moveLiftCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
+        liftSubsystem.setDefaultCommand(moveLiftCommand);
         //interactive commands
 
 
@@ -112,11 +113,16 @@ public class RobotOpMode extends CommandOpMode {
 
 
     private void telemetry(Command command) {
-        telemetry.addData("lift height: ",liftSubsystem.getHeight());
+        telemetry.addData("lift height 1:",liftSubsystem.motor1.getCurrentPosition());
+        telemetry.addData("lift height 2: ",liftSubsystem.motor2.getCurrentPosition());
         telemetry.addData("off set: ",String.valueOf(liftSubsystem.getEncoderOffset()));
         telemetry.addData("buttom ",String.valueOf(liftSubsystem.isBottom()));
         telemetry.addData("top ",String.valueOf(liftSubsystem.isTop()));
         telemetry.addData("time ",time);
+        telemetry.addData("distance to BB",driveTrainSubsystem.getBBDistance());
+        telemetry.addData("distance left",driveTrainSubsystem.getLeftDistance());
+        telemetry.addData("distance right",driveTrainSubsystem.getRightDistance());
+        telemetry.addData("power lift",moveLiftCommand.getPower());
         telemetry.update();
     }
     @Override

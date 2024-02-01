@@ -41,6 +41,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
     public double getLeftDistance(){return leftSensor.getDistance(DistanceUnit.METER);}
     public double getRightDistance(){return rightSensor.getDistance(DistanceUnit.METER);}
+    public double getBBDistance(){//distance to black wall
+        double a =0.155;
+        double z =0.205;
+        return Math.sin(Math.atan(a/(getRightDistance()-getLeftDistance())))*((getLeftDistance()+getRightDistance())/2+z);
+    }
 //    public int[] geARGBt(){
 //        return frontSensor.getARGB();
 //    }

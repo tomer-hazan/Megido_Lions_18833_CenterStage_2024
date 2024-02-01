@@ -32,15 +32,20 @@ public class drive extends OpMode {
 //        lHook = hardwareMap.get(Servo.class, "L servo");
         rHook = hardwareMap.get(Servo.class, "R servo");
         pullUpMotor.setInverted(true);
+
+        frontRight.setInverted(false);
+        rearRight.setInverted(false);
+        frontLeft.setInverted(true);
+        rearLeft.setInverted(true);
         // input motors exactly as shown below
-        mecanum = new MecanumDrive(frontLeft, frontRight, rearLeft, rearRight);
+        mecanum = new MecanumDrive(false,frontLeft, frontRight, rearLeft, rearRight);
         driver = new GamepadEx(gamepad1);
         controller = new GamepadEx(gamepad2);
     }
 
     @Override
     public void loop() {
-        mecanum.driveRobotCentric(driver.getLeftX(), driver.getLeftY(), driver.getRightX());
+        mecanum.driveRobotCentric(driver.getLeftX(), driver.getLeftY(), -driver.getRightX());
         if (controller.getButton(GamepadKeys.Button.DPAD_UP)){
 //            lHook.setPosition(1);
             rHook.setPosition(0);

@@ -7,16 +7,15 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.min_cartridge_hight;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.meters2ticks;
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.min_cartridge_hight;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.number_of_motors;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.ticks2meters;
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.top_height;
 
 public class LiftSubsystem extends SubsystemBase{
     final MotorGroup motors;
-    final MotorEx   motor1;
-    final MotorEx motor2;
+    public final MotorEx   motor1;
+    public final MotorEx motor2;
     RevTouchSensor bottomLimitSwitch;
     double encoderOffset;
     public LiftSubsystem(HardwareMap hardwareMap){
@@ -28,7 +27,7 @@ public class LiftSubsystem extends SubsystemBase{
         motors.setRunMode(Motor.RunMode.RawPower);
         motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motors.set(0);
-        motor1.setInverted(true);//?
+        motor1.setInverted(false);//?
         motor2.setInverted(false);//?
         encoderOffset = meters2ticks(min_cartridge_hight);//?
     }
@@ -51,7 +50,9 @@ public class LiftSubsystem extends SubsystemBase{
     private double avrageMotors(){return (motor1.getCurrentPosition()+motor2.getCurrentPosition())/number_of_motors; }
 
     public boolean isTop(){
-        return getHeight()>=top_height;
+        //return getHeight()>=top_height;
+        return false;
+
     }
 
     public boolean isBottom(){

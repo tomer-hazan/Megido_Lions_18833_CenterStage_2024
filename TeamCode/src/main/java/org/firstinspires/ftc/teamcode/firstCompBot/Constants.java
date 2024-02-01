@@ -8,7 +8,7 @@ public class Constants {
                 MotorConstants.REVThroughBoreEncoder.ticks_per_revolution;
 
         public final static double WheelDiameter = 0.096;//toDo
-        public final static double OdometryWheelDiameter = 0.05;//toDo
+        public final static double OdometryWheelRadius = 0.0254;//toDo
 
         public final static double GearRatio = 19.2;//toDo
 
@@ -17,7 +17,7 @@ public class Constants {
         public static double MaxVelocity = 1.867873;//1.764102,1.867873//,// Its recommended to put max velocity to 90% of the true value
         public static double MaxAccel = 1.7;
 
-        public final static double odometry_wheel_ticks_to_meters = OdometryWheelDiameter * Math.PI / ticks_per_revolution;
+        public final static double odometry_wheel_ticks_to_meters = OdometryWheelRadius * Math.PI / ticks_per_revolution;
 
         public static double kV = 0.478 ;
         public static double kStatic = 0.0688 ;

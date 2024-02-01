@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.meters2ticks;
@@ -22,6 +23,8 @@ public class LiftSubsystem extends SubsystemBase{
         this.motor1 = new MotorEx(hardwareMap,"lift motor 1");
         this.motor2 = new MotorEx(hardwareMap,"lift motor 2");
         motors = new MotorGroup(motor1,motor2);
+        motor1.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //bottomLimitSwitch = hardwareMap.get(RevTouchSensor.class,"LiftLimit");
         motors.resetEncoder();
         motors.setRunMode(Motor.RunMode.RawPower);

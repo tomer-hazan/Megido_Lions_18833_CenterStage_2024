@@ -28,6 +28,7 @@ public class MoveLiftCommand extends CommandBase {
 
     @Override
     public void execute() {
+        lift.setRunMode(Motor.RunMode.RawPower);
 //        double power = joyStick.get();
 //        if (!((lift.isBottom() && power < 0) || (lift.isTop() && power > 0))) {
 //            lift.setPower(power);
@@ -35,7 +36,6 @@ public class MoveLiftCommand extends CommandBase {
 //            lift.setPower(0);
 //        }
         lift.setPower(joyStick.get());
-
     }
     public double getPower(){
         return joyStick.get();

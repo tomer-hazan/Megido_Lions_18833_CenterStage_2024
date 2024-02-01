@@ -21,8 +21,9 @@ public class jhgsfviueiudz extends OpMode {
       r.setDirection(DcMotorSimple.Direction.FORWARD);
       r.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
       l.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        r.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        l.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      r.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      l.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     @Override

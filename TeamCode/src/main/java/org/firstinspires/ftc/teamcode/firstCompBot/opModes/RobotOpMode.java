@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
@@ -89,7 +88,7 @@ public class RobotOpMode extends CommandOpMode {
     }
     private void constructCommands(){
         deployHookCommand = new DeployHookCommand(hookSubsystem);
-        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX());
+        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX(),() -> false);
         ejectionCommand = new EjectionCommand(inTakeSubsystem);
         inTakeCommand = new InTakeCommand(inTakeSubsystem);
         launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.subsystems;
 
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.util.meterToInch;
+
 import com.arcrobotics.ftclib.command.OdometrySubsystem;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
@@ -14,6 +16,6 @@ public class MyOdometrySubsystem extends OdometrySubsystem{
      */
     public MyOdometrySubsystem(HardwareMap hardwareMap) {
         //                                 vertical left odometry                                         vertical right odometry                                                horizontal odometry
-        super(new HolonomicOdometry(() -> (new MotorEx(hardwareMap,"left front")).getCurrentPosition(),() -> (new MotorEx(hardwareMap,"right rear")).getCurrentPosition(),() -> (new MotorEx(hardwareMap,"left rear")).getCurrentPosition(),DriveTrainConstants.TrackWidth,DriveTrainConstants.CenterWheelOffset));
+        super(new HolonomicOdometry(() -> (new MotorEx(hardwareMap,"left front")).getCurrentPosition(),() -> (new MotorEx(hardwareMap,"right rear")).getCurrentPosition(),() -> (new MotorEx(hardwareMap,"left rear")).getCurrentPosition(),meterToInch(DriveTrainConstants.TrackWidth),meterToInch( DriveTrainConstants.CenterWheelOffset)));
     }
 }

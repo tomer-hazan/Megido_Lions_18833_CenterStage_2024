@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.RamseteCommand;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;

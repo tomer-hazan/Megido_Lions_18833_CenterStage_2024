@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.firstCompBot.opModes;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DeployHookCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DriveCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.DriveHorizontalCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.EjectionCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.InTakeCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.LaunchAirplaneCommand;
@@ -55,6 +58,7 @@ public class RobotOpMode extends CommandOpMode {
     PullDownCommand pullDownCommand;
     PullUpCommand pullUpCommand;
     ReturnHookCommand returnHookCommand;
+    DriveHorizontalCommand driveHorizontalCommand;
     double time;
     Constants.GameConstants.gamePeriod period;
     Pose2d pose;
@@ -64,12 +68,11 @@ public class RobotOpMode extends CommandOpMode {
     public void initialize() {
         driver = new GamepadEx(gamepad1);
         controller = new GamepadEx(gamepad2);
+        pose = new Pose2d();
         initSubsystems();
         initCommands();
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
         period = Constants.GameConstants.gamePeriod.teleOp;
-        pose = new Pose2d();
-
     }
     private void initSubsystems(){
         liftSubsystem = new LiftSubsystem(hardwareMap);
@@ -96,7 +99,7 @@ public class RobotOpMode extends CommandOpMode {
         pullDownCommand = new PullDownCommand(hookSubsystem);
         pullUpCommand = new PullUpCommand(hookSubsystem);
         returnHookCommand = new ReturnHookCommand(hookSubsystem);
-
+        driveHorizontalCommand = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX(),() -> pose.getHeading());
     }
     private void assignCommands(){
         //default commands
@@ -104,13 +107,11 @@ public class RobotOpMode extends CommandOpMode {
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         //interactive commands
 
-
-        //end game
-        if(time>autoTime){
-            new GamepadButton(controller, GamepadKeys.Button.X).whenActive(launchAirplaneCommand);
-            new GamepadButton(controller, GamepadKeys.Button.DPAD_UP).whenActive(pullUpCommand);
-            new GamepadButton(controller, GamepadKeys.Button.DPAD_DOWN).whenActive(pullDownCommand);
-        }
+    }
+    private void assignEndGameCommands(){
+        new GamepadButton(controller, GamepadKeys.Button.X).whenActive(launchAirplaneCommand);
+        new GamepadButton(controller, GamepadKeys.Button.DPAD_UP).whenActive(pullUpCommand);
+        new GamepadButton(controller, GamepadKeys.Button.DPAD_DOWN).whenActive(pullDownCommand);
     }
 
 
@@ -131,8 +132,17 @@ public class RobotOpMode extends CommandOpMode {
         pose = odometrySubsystem.getPose();
         if(period== Constants.GameConstants.gamePeriod.teleOp&&time>=endGameTime){
             period = Constants.GameConstants.gamePeriod.endGame;
+            assignEndGameCommands();
         }
+        ConditionalCommand pressBeacon = new ConditionalCommand(
+                new InstantCommand(driveHorizontalCommand::drive, driveTrainSubsystem),
+                new InstantCommand(driveHorizontalCommand::drive, driveTrainSubsystem),
+                () -> (pose.getY()>50 &&pose.getX()>20)
+        );
+
+        pressBeacon.schedule();
 
     }
+
 
 }

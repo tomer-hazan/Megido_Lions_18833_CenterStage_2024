@@ -108,7 +108,7 @@ public class Constants {
     public static final class GameConstants{
         public static final int gameTime = 150;//0-150
         public static final int autoTime = 30;//0-30
-        public static final int endGameTime = 120;//120 - 150
+        public static final int endGameTime = 90;//120 - 150
         public enum gamePeriod {
             autonomous,
             teleOp,

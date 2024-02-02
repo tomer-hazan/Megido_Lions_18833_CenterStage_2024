@@ -1,25 +1,23 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.OdometrySubsystem;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.DriveTrainSubsystem;
+import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsystem;
 
 import java.util.function.Supplier;
 
-public class DriveCommand extends CommandBase {
+public class DriveHorizontalCommand extends CommandBase {
     private DriveTrainSubsystem driveTrainSubsystem;
     Supplier<Double> leftX;
-    Supplier<Double> leftY;
-    Supplier<Double> rightY;
-    Supplier<Boolean> fieldCentric;
     MecanumDrive  m_drive;
-    public DriveCommand(DriveTrainSubsystem subsystem, Supplier<Double> leftX, Supplier<Double> leftY, Supplier<Double> rightY, Supplier<Boolean> fieldCentric) {
+    Supplier<Double> heading;
+    public DriveHorizontalCommand(DriveTrainSubsystem subsystem, Supplier<Double> leftX, Supplier<Double> heading) {
         this.driveTrainSubsystem = subsystem;
         this.leftX=leftX;
-        this.leftY=leftY;
-        this.rightY=rightY;
-        this.fieldCentric = fieldCentric;
+        this.heading=heading;
         m_drive = (MecanumDrive) driveTrainSubsystem.getDrive();
         addRequirements(subsystem);
     }
@@ -28,10 +26,8 @@ public class DriveCommand extends CommandBase {
     public void initialize() {
     }
 
-    @Override
-    public void execute() {
-        if(fieldCentric.get());//m_drive.driveFieldCentric(leftX.get(),leftY.get(),rightY.get(),);
-        else m_drive.driveRobotCentric(leftX.get(),leftY.get(),rightY.get());
+    public void drive() {
+        m_drive.driveFieldCentric(0,leftX.get(),0,heading.get());
     }
 
     @Override

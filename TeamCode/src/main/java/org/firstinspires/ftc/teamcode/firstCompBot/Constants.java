@@ -40,6 +40,8 @@ public class Constants {
         public static final double top_limit = 0;
         public static final double bottom_limit = 180;
         public static final double gear_ratio = 192;//toDo
+        public static final double[] levels = new double[]{};//toDo
+        public static final double levelError = 50;//toDo
         public static final double wheel_diameter = 0.01;
         public static final boolean up_direction_inverted=false;
         public static final boolean down_direction_inverted=true;

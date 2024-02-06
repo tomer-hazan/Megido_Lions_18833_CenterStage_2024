@@ -24,6 +24,6 @@ public class InTakeCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

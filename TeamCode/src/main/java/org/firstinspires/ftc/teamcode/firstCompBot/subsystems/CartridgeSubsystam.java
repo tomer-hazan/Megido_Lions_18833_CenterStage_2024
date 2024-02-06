@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.CartridgeCon
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.CartridgeConstants.top_limit;
 
 public class CartridgeSubsystam extends SubsystemBase {
+    //toDo check if needs to have isActive function that returns false after given time
     final CRServo droppingServo;//continuous
     final ServoEx rotationServo;
     public CartridgeSubsystam(HardwareMap hardwareMap){

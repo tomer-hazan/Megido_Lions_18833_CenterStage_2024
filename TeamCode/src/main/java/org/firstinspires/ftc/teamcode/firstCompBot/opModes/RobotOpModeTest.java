@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.firstCompBot.opModes;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -24,7 +23,6 @@ import org.firstinspires.ftc.teamcode.firstCompBot.commands.PullUpCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.ReturnHookCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.RotateToCollectionCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.RotateToDropCommand;
-import org.firstinspires.ftc.teamcode.firstCompBot.commands.VeloMoveLiftCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CartridgeSubsystam;
@@ -35,7 +33,7 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsystem;
 
 @TeleOp
-public class RobotOpMode extends CommandOpMode {
+public class RobotOpModeTest extends CommandOpMode {
     //controllers
     GamepadEx driver;
     GamepadEx controller;
@@ -63,7 +61,9 @@ public class RobotOpMode extends CommandOpMode {
     CartridgeDropCommand cartridgeDropCommand;
     RotateToCollectionCommand rotateToCollectionCommand;
     RotateToDropCommand rotateToDropCommand;
-    VeloMoveLiftCommand veloMoveLiftCommand;
+    //test
+    Command cartridgeDropOneCommandNotReal;
+    //test
     double time;
     Constants.GameConstants.gamePeriod period;
     Pose2d pose;
@@ -76,23 +76,30 @@ public class RobotOpMode extends CommandOpMode {
         pose = new Pose2d();
         initSubsystems();
         initCommands();
-        CommandScheduler.getInstance().onCommandExecute(this::telemetry);
+        //CommandScheduler.getInstance().onCommandExecute(this::telemetry);
         period = Constants.GameConstants.gamePeriod.teleOp;
     }
     private void initSubsystems(){
-        liftSubsystem = new LiftSubsystem(hardwareMap);
-        driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
-        airplaneSubsystem = new AirplaneSubsystem(hardwareMap);
+//        liftSubsystem = new LiftSubsystem(hardwareMap);
+//        driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
+//        airplaneSubsystem = new AirplaneSubsystem(hardwareMap);
         cartridgeSubsystam = new  CartridgeSubsystam(hardwareMap);
-        hookSubsystem = new HookSubsystem(hardwareMap);
-        inTakeSubsystem = new InTakeSubsystem(hardwareMap);
-        odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
-        cameraSubsystem = new CameraSubsystem(hardwareMap);
+//        hookSubsystem = new HookSubsystem(hardwareMap);
+//        inTakeSubsystem = new InTakeSubsystem(hardwareMap);
+//        odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
+//        cameraSubsystem = new CameraSubsystem(hardwareMap);
 
     }
     private void initCommands(){
-        constructCommands();
-        assignCommands();
+//        constructCommands();
+//        assignCommands();
+        //test
+        cartridgeDropCommand = new CartridgeDropCommand(cartridgeSubsystam);
+        cartridgeCollectCommand = new CartridgeCollectCommand(cartridgeSubsystam);
+        cartridgeDropOneCommandNotReal = (new CartridgeDropCommand(cartridgeSubsystam)).withTimeout(10000);
+        new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(cartridgeDropOneCommandNotReal);
+        new GamepadButton(controller,GamepadKeys.Button.A).toggleWhenPressed(cartridgeDropCommand,cartridgeCollectCommand);
+        //test
     }
     private void constructCommands(){
         deployHookCommand = new DeployHookCommand(hookSubsystem);
@@ -109,22 +116,21 @@ public class RobotOpMode extends CommandOpMode {
         cartridgeDropCommand = new CartridgeDropCommand(cartridgeSubsystam);
         rotateToCollectionCommand= new RotateToCollectionCommand(cartridgeSubsystam);
         rotateToDropCommand = new RotateToDropCommand(cartridgeSubsystam);
-        veloMoveLiftCommand = new VeloMoveLiftCommand(liftSubsystem,() -> controller.getRightY());
 
     }
     private void assignCommands(){
         //default commands
         liftSubsystem.setDefaultCommand(moveLiftCommand);
-        new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whenHeld(veloMoveLiftCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         //interactive commands
         new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whenHeld(inTakeCommand);
         new GamepadButton(controller, GamepadKeys.Button.RIGHT_BUMPER).whenHeld(ejectionCommand);
-        new GamepadButton(controller, GamepadKeys.Button.DPAD_UP).whenHeld(cartridgeCollectCommand);
-        new GamepadButton(controller, GamepadKeys.Button.DPAD_DOWN).whenHeld(cartridgeDropCommand);
+        new GamepadButton(controller, GamepadKeys.Button.A).whenHeld(cartridgeCollectCommand);
+        //new GamepadButton(controller, GamepadKeys.Button.B).whenHeld(cartridgeDropCommand);
 
         new GamepadButton(controller,GamepadKeys.Button.Y).cancelWhenActive(cartridgeCollectCommand).cancelWhenActive(cartridgeDropCommand).cancelWhenActive(ejectionCommand).cancelWhenActive(inTakeCommand);
-        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(rotateToCollectionCommand,rotateToDropCommand);
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_UP).whenActive(rotateToDropCommand);
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_DOWN).whenActive(rotateToCollectionCommand);
     }
     private void assignEndGameCommands(){
         new GamepadButton(controller, GamepadKeys.Button.X).whenActive(launchAirplaneCommand);
@@ -149,7 +155,7 @@ public class RobotOpMode extends CommandOpMode {
     public void run() {
         super.run();
         time= getRuntime();
-        pose = odometrySubsystem.getPose();
+        //pose = odometrySubsystem.getPose();
 //        if(period== Constants.GameConstants.gamePeriod.teleOp&&time>=endGameTime){
 //            period = Constants.GameConstants.gamePeriod.endGame;
 //            assignEndGameCommands();

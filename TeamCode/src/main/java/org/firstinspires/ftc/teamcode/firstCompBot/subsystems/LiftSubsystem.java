@@ -8,6 +8,8 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants.levelError;
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants.levels;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.meters2ticks;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.min_cartridge_hight;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.number_of_motors;
@@ -18,6 +20,7 @@ public class LiftSubsystem extends SubsystemBase{
     public final MotorEx   motor1;
     public final MotorEx motor2;
     RevTouchSensor bottomLimitSwitch;
+    int level;
     double encoderOffset;
     public LiftSubsystem(HardwareMap hardwareMap){
         this.motor1 = new MotorEx(hardwareMap,"lift motor 1");
@@ -32,15 +35,21 @@ public class LiftSubsystem extends SubsystemBase{
         motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motors.set(0);
         motor1.setInverted(false);
-        motor2.setInverted(false);
+        motor2.setInverted(true);
         encoderOffset = meters2ticks(min_cartridge_hight);//?
+        level = 0;
     }
 
     @Override
     public void periodic() {
-//        if (bottomLimitSwitch.isPressed()) {
-//            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
-//        }
+        if (bottomLimitSwitch.isPressed()) {
+            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
+        }
+        double height = getHeight();
+        if(inLevel(level,height));
+        else if(inLevel(level-1,height))level = level-1;
+        else if(inLevel(level+1,height))level = level+1;
+        else level=findLevel(height);
 
     }
 
@@ -68,6 +77,25 @@ public class LiftSubsystem extends SubsystemBase{
         setRunMode(Motor.RunMode.RawPower);
         motors.set(power);
     }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public double getEncoderOffset(){return encoderOffset;}
+    private boolean inLevel(int level,double height){
+        //    test if level is valid             test the condition
+        return (level<levels.length-1&&level>0)&&(levels[level]-levelError<height && height<levels[level]+levelError);
+    }
+    private int findLevel(double height){
+        for(int i=0;i<levels.length;i++){
+            if(inLevel(level,height))return level;
+        }
+        return 0;
+    }
 
 }

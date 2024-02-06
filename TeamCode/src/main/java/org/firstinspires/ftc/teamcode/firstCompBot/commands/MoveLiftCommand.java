@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.RamseteCommand;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;
@@ -40,6 +39,12 @@ public class MoveLiftCommand extends CommandBase {
     }
     public double getPower(){
         return joyStick.get();
+    }
+    public double getRealPower1(){
+        return lift.motor1.get();
+    }
+    public double getRealPower2(){
+        return lift.motor2.get();
     }
 
     @Override

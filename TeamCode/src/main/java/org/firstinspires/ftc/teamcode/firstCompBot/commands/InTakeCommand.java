@@ -18,6 +18,9 @@ public class InTakeCommand extends CommandBase {
         subsystem.setDirection(InTakeConstants.inDirection);
         subsystem.setVelocity(InTakeConstants.inVelocity);
     }
+    public void end(boolean interrupted) {
+        subsystem.setVelocity(0);
+    }
 
     @Override
     public boolean isFinished() {

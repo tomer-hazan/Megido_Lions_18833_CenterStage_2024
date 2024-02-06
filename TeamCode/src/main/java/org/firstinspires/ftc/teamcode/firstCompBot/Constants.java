@@ -27,11 +27,14 @@ public class Constants {
         public static final double top_limit = 0;
         public static final double bottom_limit = 180;
         public enum CartridgePositions {
-            INTAKE,
+            COLLECTION,
             DROP
         }
-        public static final double dropRate = 0.8 ;
-        public static final double insertRate = 0.2 ;
+        public static final boolean inDirection = true;
+        public static final boolean outDirection = false;
+        public static final double dropRate = 1 ;
+        public static final double insertRate = 1 ;
+        public static final double autoRotateCartridgeHeight = 1.4;//toDO test
     }
     public static final class HookConstants {
         public static final double top_limit = 0;

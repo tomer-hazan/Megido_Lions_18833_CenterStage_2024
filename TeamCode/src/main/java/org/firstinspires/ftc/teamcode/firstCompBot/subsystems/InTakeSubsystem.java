@@ -14,7 +14,7 @@ public class InTakeSubsystem extends SubsystemBase {
         this.motor = new MotorEx(hardwareMap,"intake motor");
         this.colorSensor = hardwareMap.get(RevColorSensorV3.class,"intake color sensor");
         motor.resetEncoder();
-        motor.setRunMode(Motor.RunMode.VelocityControl);
+        motor.setRunMode(Motor.RunMode.RawPower);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -24,7 +24,7 @@ public class InTakeSubsystem extends SubsystemBase {
     }
 
     public void setVelocity(double velocity){
-        motor.setVelocity(velocity);
+        motor.set(velocity);
     }
     public void setDirection(boolean inverted){motor.setInverted(inverted);}
     public int red(){return colorSensor.red();}

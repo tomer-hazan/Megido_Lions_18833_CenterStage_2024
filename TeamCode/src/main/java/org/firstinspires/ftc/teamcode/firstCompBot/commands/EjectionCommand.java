@@ -18,6 +18,10 @@ public class EjectionCommand extends CommandBase {
         subsystem.setDirection(InTakeConstants.outDirection);
         subsystem.setVelocity(InTakeConstants.outVelocity);
     }
+    public void end(boolean interrupted) {
+        subsystem.setVelocity(0);
+    }
+
 
     @Override
     public boolean isFinished() {

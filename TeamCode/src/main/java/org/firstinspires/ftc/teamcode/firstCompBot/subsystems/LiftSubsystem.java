@@ -26,12 +26,13 @@ public class LiftSubsystem extends SubsystemBase{
         motor1.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //bottomLimitSwitch = hardwareMap.get(RevTouchSensor.class,"LiftLimit");
-        motors.resetEncoder();
+        motor1.resetEncoder();
+        motor2.resetEncoder();
         motors.setRunMode(Motor.RunMode.RawPower);
         motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motors.set(0);
-        motor1.setInverted(false);//?
-        motor2.setInverted(false);//?
+        motor1.setInverted(false);
+        motor2.setInverted(false);
         encoderOffset = meters2ticks(min_cartridge_hight);//?
     }
 

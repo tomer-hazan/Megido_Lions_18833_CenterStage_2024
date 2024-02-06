@@ -18,6 +18,7 @@ public class CartridgeSubsystam extends SubsystemBase {
     public CartridgeSubsystam(HardwareMap hardwareMap){
         this.droppingServo = new CRServo(hardwareMap,"dropping cartridge servo");
         this.rotationServo = new SimpleServo(hardwareMap,"rotation cartridge servo",bottom_limit,top_limit);
+        droppingServo.setInverted(true);
     }
 
     public void rotateToPosition(CartridgePositions position){
@@ -25,18 +26,24 @@ public class CartridgeSubsystam extends SubsystemBase {
             case DROP:
                 rotationServo.setPosition(1);
                 break;
-            case INTAKE:
+            case COLLECTION:
                 rotationServo.setPosition(0);
                 break;
         }
     }
-
+    public void setDirection(boolean val){
+        droppingServo.setInverted(val);
+    }
     public void drop(){
         droppingServo.set(dropRate);
     }
     public void insert(){
         droppingServo.set(insertRate);
     }
+    public void stop(){
+        droppingServo.set(0);
+    }
+
 
 
 }

@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.firstCompBot.opModes;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,6 +10,8 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.CartridgeCollectCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.CartridgeDropCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DeployHookCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.DriveHorizontalCommand;
@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.firstCompBot.commands.MoveLiftCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.PullDownCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.PullUpCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.commands.ReturnHookCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.RotateToCollectionCommand;
+import org.firstinspires.ftc.teamcode.firstCompBot.commands.RotateToDropCommand;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CartridgeSubsystam;
@@ -30,9 +32,6 @@ import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.HookSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.InTakeSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsystem;
-
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.GameConstants.autoTime;
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.GameConstants.endGameTime;
 
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
@@ -59,6 +58,10 @@ public class RobotOpMode extends CommandOpMode {
     PullUpCommand pullUpCommand;
     ReturnHookCommand returnHookCommand;
     DriveHorizontalCommand driveHorizontalCommand;
+    CartridgeCollectCommand cartridgeCollectCommand;
+    CartridgeDropCommand cartridgeDropCommand;
+    RotateToCollectionCommand rotateToCollectionCommand;
+    RotateToDropCommand rotateToDropCommand;
     double time;
     Constants.GameConstants.gamePeriod period;
     Pose2d pose;
@@ -100,13 +103,23 @@ public class RobotOpMode extends CommandOpMode {
         pullUpCommand = new PullUpCommand(hookSubsystem);
         returnHookCommand = new ReturnHookCommand(hookSubsystem);
         driveHorizontalCommand = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX(),() -> pose.getHeading());
+        cartridgeCollectCommand = new CartridgeCollectCommand(cartridgeSubsystam);
+        cartridgeDropCommand = new CartridgeDropCommand(cartridgeSubsystam);
+        rotateToCollectionCommand= new RotateToCollectionCommand(cartridgeSubsystam);
+        rotateToDropCommand = new RotateToDropCommand(cartridgeSubsystam);
     }
     private void assignCommands(){
         //default commands
         liftSubsystem.setDefaultCommand(moveLiftCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         //interactive commands
-
+        new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whileHeld(inTakeCommand);
+        new GamepadButton(controller, GamepadKeys.Button.RIGHT_BUMPER).whileHeld(ejectionCommand);
+        new GamepadButton(controller, GamepadKeys.Button.A).whileHeld(cartridgeCollectCommand);
+        new GamepadButton(controller, GamepadKeys.Button.B).whileHeld(cartridgeDropCommand);
+        new GamepadButton(controller,GamepadKeys.Button.Y).cancelWhenActive(cartridgeCollectCommand).cancelWhenActive(cartridgeDropCommand).cancelWhenActive(ejectionCommand).cancelWhenActive(inTakeCommand);
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_UP).whenPressed(rotateToDropCommand);
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_DOWN).whenPressed(rotateToCollectionCommand);
     }
     private void assignEndGameCommands(){
         new GamepadButton(controller, GamepadKeys.Button.X).whenActive(launchAirplaneCommand);
@@ -116,7 +129,9 @@ public class RobotOpMode extends CommandOpMode {
 
 
     private void telemetry(Command command) {
-        telemetry.addData("lift height: ",liftSubsystem.getHeight());
+        telemetry.addData("lift height: ", liftSubsystem.getHeight());
+//        telemetry.addData("lift power1: ", moveLiftCommand.getRealPower1());
+//        telemetry.addData("lift power2: ", moveLiftCommand.getRealPower2());
         telemetry.addData("off set: ",String.valueOf(liftSubsystem.getEncoderOffset()));
         telemetry.addData("buttom ",String.valueOf(liftSubsystem.isBottom()));
         telemetry.addData("top ",String.valueOf(liftSubsystem.isTop()));
@@ -130,17 +145,17 @@ public class RobotOpMode extends CommandOpMode {
         super.run();
         time= getRuntime();
         pose = odometrySubsystem.getPose();
-        if(period== Constants.GameConstants.gamePeriod.teleOp&&time>=endGameTime){
-            period = Constants.GameConstants.gamePeriod.endGame;
-            assignEndGameCommands();
-        }
-        ConditionalCommand pressBeacon = new ConditionalCommand(
-                new InstantCommand(driveHorizontalCommand::drive, driveTrainSubsystem),
-                new InstantCommand(driveHorizontalCommand::drive, driveTrainSubsystem),
-                () -> (pose.getY()>50 &&pose.getX()>20)
-        );
+//        if(period== Constants.GameConstants.gamePeriod.teleOp&&time>=endGameTime){
+//            period = Constants.GameConstants.gamePeriod.endGame;
+//            assignEndGameCommands();
+//        }
 
-        pressBeacon.schedule();
+//        ConditionalCommand pressBeacon = new ConditionalCommand(
+//                new InstantCommand(driveHorizontalCommand::drive, driveTrainSubsystem),
+//                new InstantCommand(),
+//                () -> (pose.getY()>50 &&pose.getX()>20)
+//        );
+//        pressBeacon.schedule();
 
     }
 

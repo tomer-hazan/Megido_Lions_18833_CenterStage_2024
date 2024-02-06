@@ -31,13 +31,13 @@ import static org.firstinspires.ftc.teamcode.util.convert.MeterToInch;
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS = MeterToInch(DriveTrainConstants.OdometryWheelRadius);
+    public static double WHEEL_RADIUS = MeterToInch(DriveTrainConstants.OdometryWheelDiameter/2);
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double X_MULL = 1;
     public static double Y_MULL = 1;
     public static double LATERAL_DISTANCE = MeterToInch(0.338); // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = MeterToInch(-0.16); // in; offset of the lateral wheel
+    public static double FORWARD_OFFSET = MeterToInch(-0.21); // in; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 

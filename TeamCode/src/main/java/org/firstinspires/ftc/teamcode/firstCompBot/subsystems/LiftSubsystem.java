@@ -31,8 +31,8 @@ public class LiftSubsystem extends SubsystemBase{
         motors.setRunMode(Motor.RunMode.RawPower);
         motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motors.set(0);
-        motor1.setInverted(false);
-        motor2.setInverted(false);
+        motor1.setInverted(true);
+        motor2.setInverted(true);
         encoderOffset = meters2ticks(min_cartridge_hight);//?
     }
 

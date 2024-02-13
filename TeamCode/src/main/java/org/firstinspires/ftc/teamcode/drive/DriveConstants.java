@@ -47,7 +47,7 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 0.052083333333333336; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 0.1; // output (wheel) speed / input (motor) speed toDo
     public static double TRACK_WIDTH = 12.20472; // in
 
     /*
@@ -88,10 +88,10 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 2.7378659544492687;
-    public static double MAX_ACCEL = 2.7378659544492687;
-    public static double MAX_ANG_VEL = Math.toRadians(12.853073570102387);
-    public static double MAX_ANG_ACCEL = Math.toRadians(12.853073570102387);
+    public static double MAX_VEL = 61.17644481018491;
+    public static double MAX_ACCEL = 61.17644481018491;
+    public static double MAX_ANG_VEL = Math.toRadians(24.67790125459658);
+    public static double MAX_ANG_ACCEL = Math.toRadians(24.67790125459658);
 
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;

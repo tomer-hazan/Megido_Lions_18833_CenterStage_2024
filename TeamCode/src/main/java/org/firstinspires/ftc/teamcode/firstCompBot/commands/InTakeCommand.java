@@ -14,6 +14,11 @@ public class InTakeCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        subsystem.resetEncoders();
+    }
+
+    @Override
     public void execute() {
         subsystem.setDirection(InTakeConstants.inDirection);
         subsystem.setVelocity(InTakeConstants.inVelocity);

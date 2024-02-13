@@ -42,9 +42,9 @@ public class LiftSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if (bottomLimitSwitch.isPressed()) {
-            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
-        }
+//        if (bottomLimitSwitch.isPressed()) {
+//            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
+//        }
         double height = getHeight();
         if(inLevel(level,height));
         else if(inLevel(level-1,height))level = level-1;
@@ -59,6 +59,12 @@ public class LiftSubsystem extends SubsystemBase{
 
     public double getHeight(){
         return ticks2meters(avrageMotors() + encoderOffset);
+    }
+    public double getHeight1(){
+        return motor1.getCurrentPosition();
+    }
+    public double getHeight2(){
+        return motor2.getCurrentPosition();
     }
     private double avrageMotors(){return (motor1.getCurrentPosition()+motor2.getCurrentPosition())/number_of_motors; }
 
@@ -84,6 +90,10 @@ public class LiftSubsystem extends SubsystemBase{
 
     public void setLevel(int level) {
         this.level = level;
+    }
+    public void resetEncoders(){
+        motor1.resetEncoder();
+        motor2.resetEncoder();
     }
 
     public double getEncoderOffset(){return encoderOffset;}

@@ -115,7 +115,7 @@ public class RobotOpMode extends CommandOpMode {
     private void assignCommands(){
         //default commands
         liftSubsystem.setDefaultCommand(moveLiftCommand);
-        new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whenHeld(veloMoveLiftCommand);
+        //new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whenHeld(veloMoveLiftCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         //interactive commands
         new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whenHeld(inTakeCommand);
@@ -134,9 +134,9 @@ public class RobotOpMode extends CommandOpMode {
 
 
     private void telemetry(Command command) {
-        telemetry.addData("lift height: ", liftSubsystem.getHeight());
-//        telemetry.addData("lift power1: ", moveLiftCommand.getRealPower1());
-//        telemetry.addData("lift power2: ", moveLiftCommand.getRealPower2());
+        //telemetry.addData("lift height: ", liftSubsystem.getHeight());
+        telemetry.addData("lift height1: ", liftSubsystem.getHeight1());
+        telemetry.addData("lift height2: ", liftSubsystem.getHeight2());
         telemetry.addData("off set: ",String.valueOf(liftSubsystem.getEncoderOffset()));
         telemetry.addData("buttom ",String.valueOf(liftSubsystem.isBottom()));
         telemetry.addData("top ",String.valueOf(liftSubsystem.isTop()));

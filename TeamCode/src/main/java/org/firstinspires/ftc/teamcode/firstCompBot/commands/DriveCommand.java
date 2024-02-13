@@ -26,6 +26,7 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        driveTrainSubsystem.resetEncoders();
     }
 
     @Override

@@ -24,6 +24,7 @@ public class VeloMoveLiftCommand extends CommandBase {
 //        else if (joyStick.get()<0 && !lift.isBottom())lift.setPower(joyStick.get());
 //        else lift.setPower(joyStick.get());
         lift.setPower(0);
+        lift.resetEncoders();
     }
 
     @Override

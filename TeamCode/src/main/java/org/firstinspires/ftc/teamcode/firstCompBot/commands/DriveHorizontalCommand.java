@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.OdometrySubsystem;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.DriveTrainSubsystem;
-import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.MyOdometrySubsystem;
 
 import java.util.function.Supplier;
 
@@ -24,6 +22,7 @@ public class DriveHorizontalCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        driveTrainSubsystem.resetEncoders();
     }
 
     public void drive() {

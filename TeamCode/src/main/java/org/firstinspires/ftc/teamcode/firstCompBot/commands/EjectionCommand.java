@@ -12,6 +12,10 @@ public class EjectionCommand extends CommandBase {
         this.subsystem=subsystem;
         addRequirements(subsystem);
     }
+    @Override
+    public void initialize() {
+        subsystem.resetEncoders();
+    }
 
     @Override
     public void execute() {

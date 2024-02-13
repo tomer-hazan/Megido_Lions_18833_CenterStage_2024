@@ -9,7 +9,6 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class DriveTrainSubsystem extends SubsystemBase {
@@ -35,6 +34,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        resetEncoders();
     }
 
     public RobotDrive getDrive(){
@@ -46,6 +46,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
         double a =0.155;
         double z =0.205;
         return Math.sin(Math.atan(a/(getRightDistance()-getLeftDistance())))*((getLeftDistance()+getRightDistance())/2+z);
+    }
+    public void resetEncoders(){
+        leftRear.resetEncoder();
+        rightRear.resetEncoder();
+        leftFront.resetEncoder();
+        rightFront.resetEncoder();
     }
 //    public int[] geARGBt(){
 //        return frontSensor.getARGB();

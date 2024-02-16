@@ -22,7 +22,6 @@ public class DriveHorizontalCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        driveTrainSubsystem.resetEncoders();
     }
 
     public void drive() {

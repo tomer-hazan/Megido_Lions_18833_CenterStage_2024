@@ -1,50 +1,63 @@
 package org.firstinspires.ftc.teamcode.firstCompBot.subsystems;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants.levelError;
 import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants.levels;
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.meters2ticks;
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.min_cartridge_hight;
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.number_of_motors;
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.LiftConstants.ticks2meters;
 
 public class LiftSubsystem extends SubsystemBase{
-    final MotorGroup motors;
     public final MotorEx   motor1;
     public final MotorEx motor2;
-    RevTouchSensor bottomLimitSwitch;
+    public final MotorEx motor3;
+    TouchSensor bottomLimitSwitch;
     int level;
-    double encoderOffset;
+   // double encoderOffset;
     public LiftSubsystem(HardwareMap hardwareMap){
         this.motor1 = new MotorEx(hardwareMap,"lift motor 1");
         this.motor2 = new MotorEx(hardwareMap,"lift motor 2");
-        motors = new MotorGroup(motor1,motor2);
+        this.motor3 = new MotorEx(hardwareMap,"lift motor 3");
+        motor2.encoder = motor1.encoder;
+        motor3.encoder = motor1.encoder;
+        bottomLimitSwitch =hardwareMap.get(TouchSensor.class,"limit switch");
         motor1.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor3.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor1.encoder.setDirection(Motor.Direction.REVERSE);
+        motor2.encoder.setDirection(Motor.Direction.REVERSE);
+        motor3.encoder.setDirection(Motor.Direction.REVERSE);
         //bottomLimitSwitch = hardwareMap.get(RevTouchSensor.class,"LiftLimit");
         motor1.resetEncoder();
         motor2.resetEncoder();
-        motors.setRunMode(Motor.RunMode.RawPower);
-        motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        motors.set(0);
+        motor3.resetEncoder();
+        motor1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor3.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor1.set(0);
+        motor2.set(0);
+        motor3.set(0);
         motor1.setInverted(false);
         motor2.setInverted(true);
-        encoderOffset = meters2ticks(min_cartridge_hight);//?
+        motor3.setInverted(false);
+        //encoderOffset = 0;//?
         level = 0;
+
     }
 
     @Override
     public void periodic() {
-//        if (bottomLimitSwitch.isPressed()) {
-//            encoderOffset = meters2ticks(min_cartridge_hight) - avrageMotors();
-//        }
+        if (bottomLimitSwitch.isPressed()) {
+            resetEncoders();
+            motor1.setTargetDistance(0);
+            motor2.setTargetDistance(0);
+            motor3.setTargetPosition(0);
+        }
         double height = getHeight();
         if(inLevel(level,height));
         else if(inLevel(level-1,height))level = level-1;
@@ -54,11 +67,13 @@ public class LiftSubsystem extends SubsystemBase{
     }
 
     public void setRunMode(Motor.RunMode mode){
-        motors.setRunMode(mode);
+        motor1.setRunMode(mode);
+        motor2.setRunMode(mode);
+        motor3.setRunMode(mode);
     }
 
     public double getHeight(){
-        return ticks2meters(avrageMotors() + encoderOffset);
+        return motor1.getCurrentPosition() ;
     }
     public double getHeight1(){
         return motor1.getCurrentPosition();
@@ -66,7 +81,7 @@ public class LiftSubsystem extends SubsystemBase{
     public double getHeight2(){
         return motor2.getCurrentPosition();
     }
-    private double avrageMotors(){return (motor1.getCurrentPosition()+motor2.getCurrentPosition())/number_of_motors; }
+    //private double avrageMotors(){return (motor1.getCurrentPosition()+motor2.getCurrentPosition())/number_of_motors; }
 
     public boolean isTop(){
         //return getHeight()>=top_height;
@@ -75,13 +90,29 @@ public class LiftSubsystem extends SubsystemBase{
     }
 
     public boolean isBottom(){
-        //return bottomLimitSwitch.isPressed();
-        return false;
+        Log.d("boolean limit switch", String.valueOf(bottomLimitSwitch.isPressed()));
+        return bottomLimitSwitch.isPressed();
     }
 
     public void setPower(double power){
-        setRunMode(Motor.RunMode.RawPower);
-        motors.set(power);
+        motor1.set(power);
+        motor2.set(power);
+        motor3.set(power);
+    }
+    public void setTarget(int target){
+        motor1.setTargetPosition(target);
+        motor2.setTargetPosition(target);
+        motor3.setTargetPosition(target);
+    }
+    public void setVelocity(double target){
+        motor1.setVelocity(target);
+        motor2.setVelocity(target);
+        motor3.setVelocity(target);
+    }
+    public void stopMotors(){
+        motor1.stopMotor();
+        motor2.stopMotor();
+        motor3.stopMotor();
     }
 
     public int getLevel() {
@@ -94,9 +125,10 @@ public class LiftSubsystem extends SubsystemBase{
     public void resetEncoders(){
         motor1.resetEncoder();
         motor2.resetEncoder();
+        motor3.resetEncoder();
     }
 
-    public double getEncoderOffset(){return encoderOffset;}
+    //public double getEncoderOffset(){return encoderOffset;}
     private boolean inLevel(int level,double height){
         //    test if level is valid             test the condition
         return (level<levels.length-1&&level>0)&&(levels[level]-levelError<height && height<levels[level]+levelError);

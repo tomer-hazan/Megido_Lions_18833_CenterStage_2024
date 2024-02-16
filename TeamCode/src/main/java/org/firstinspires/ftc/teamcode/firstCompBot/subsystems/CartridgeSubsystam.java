@@ -14,8 +14,8 @@ import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.CartridgeCon
 
 public class CartridgeSubsystam extends SubsystemBase {
     //toDo check if needs to have isActive function that returns false after given time
-    final CRServo droppingServo;//continuous
-    final ServoEx rotationServo;
+    public final CRServo droppingServo;//continuous
+    public final ServoEx rotationServo;
     public CartridgeSubsystam(HardwareMap hardwareMap){
         this.droppingServo = new CRServo(hardwareMap,"dropping cartridge servo");
         this.rotationServo = new SimpleServo(hardwareMap,"rotation cartridge servo",bottom_limit,top_limit);
@@ -25,10 +25,10 @@ public class CartridgeSubsystam extends SubsystemBase {
     public void rotateToPosition(CartridgePositions position){
         switch (position){
             case DROP:
-                rotationServo.setPosition(1);
+                rotationServo.setPosition(0.7);
                 break;
             case COLLECTION:
-                rotationServo.setPosition(0);
+                rotationServo.setPosition(1);
                 break;
         }
     }

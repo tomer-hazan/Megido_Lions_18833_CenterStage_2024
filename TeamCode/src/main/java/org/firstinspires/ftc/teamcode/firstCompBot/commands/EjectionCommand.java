@@ -6,24 +6,27 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants.InTakeConstants;
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.InTakeSubsystem;
 
+import java.util.function.Supplier;
+
 public class EjectionCommand extends CommandBase {
     InTakeSubsystem subsystem;
-    public EjectionCommand(InTakeSubsystem subsystem){
+    Supplier<Double> power;
+    public EjectionCommand(InTakeSubsystem subsystem, Supplier<Double> power){
         this.subsystem=subsystem;
+        this.power = power;
         addRequirements(subsystem);
     }
     @Override
     public void initialize() {
-        subsystem.resetEncoders();
     }
 
     @Override
     public void execute() {
         subsystem.setDirection(InTakeConstants.outDirection);
-        subsystem.setVelocity(InTakeConstants.outVelocity);
+        subsystem.setPower(InTakeConstants.outMaxPower*power.get());
     }
     public void end(boolean interrupted) {
-        subsystem.setVelocity(0);
+        subsystem.setPower(0);
     }
 
 

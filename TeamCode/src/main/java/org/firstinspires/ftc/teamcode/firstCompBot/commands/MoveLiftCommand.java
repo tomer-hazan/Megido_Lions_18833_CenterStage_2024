@@ -23,8 +23,6 @@ public class MoveLiftCommand extends CommandBase {
 //        if(joyStick.get()>0 && !lift.isTop())lift.setPower(joyStick.get());
 //        else if (joyStick.get()<0 && !lift.isBottom())lift.setPower(joyStick.get());
 //        else lift.setPower(joyStick.get());
-        lift.resetEncoders();
-        lift.setPower(0);
     }
 
     @Override

@@ -23,8 +23,8 @@ public class InTakeSubsystem extends SubsystemBase {
         motor.setRunMode(mode);
     }
 
-    public void setVelocity(double velocity){
-        motor.set(velocity);
+    public void setPower(double power){
+        motor.set(power);
     }
     public void setDirection(boolean inverted){motor.setInverted(inverted);}
     public int red(){return colorSensor.red();}

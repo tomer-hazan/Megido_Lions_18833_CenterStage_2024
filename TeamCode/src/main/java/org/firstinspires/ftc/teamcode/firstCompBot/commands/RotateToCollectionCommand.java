@@ -15,8 +15,14 @@ public class RotateToCollectionCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
+        super.initialize();
         subsystem.rotateToPosition(COLLECTION);
+    }
+
+    @Override
+    public void execute() {
+
     }
     @Override
     public boolean isFinished() {

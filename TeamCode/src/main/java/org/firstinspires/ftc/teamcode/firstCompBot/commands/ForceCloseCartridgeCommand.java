@@ -4,12 +4,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.firstCompBot.subsystems.CartridgeSubsystam;
 
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.CartridgeConstants.CartridgePositions.DROP;
+import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.CartridgeConstants.CartridgePositions.COLLECTION;
 
-public class RotateToDropCommand extends CommandBase {
+public class ForceCloseCartridgeCommand extends CommandBase {
     CartridgeSubsystam subsystem;
 
-    public RotateToDropCommand(CartridgeSubsystam subsystem){
+    public ForceCloseCartridgeCommand(CartridgeSubsystam subsystem){
         this.subsystem=subsystem;
         addRequirements(subsystem);
     }
@@ -17,14 +17,12 @@ public class RotateToDropCommand extends CommandBase {
     @Override
     public void initialize() {
         super.initialize();
-        subsystem.rotateToPosition(DROP);
+        subsystem.rotateToPosition(COLLECTION);
     }
 
-    @Override
-    public void execute() {
-    }
+
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

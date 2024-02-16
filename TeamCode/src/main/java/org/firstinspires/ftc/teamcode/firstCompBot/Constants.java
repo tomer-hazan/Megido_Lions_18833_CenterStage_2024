@@ -14,6 +14,7 @@ public class Constants {
 
         public final static double TrackWidth = 0.254;
         public final static double CenterWheelOffset = 0.1016;//toDo
+
         public static double MaxVelocity = 1.867873;//1.764102,1.867873//,// Its recommended to put max velocity to 90% of the true value
         public static double MaxAccel = 1.7;
 
@@ -77,8 +78,8 @@ public class Constants {
     }
     public static final class InTakeConstants{
         public static final double colorError = 0.1;
-        public static final double inVelocity = 1;
-        public static final double outVelocity = 1;
+        public static final double inMaxPower = 1;
+        public static final double outMaxPower = 1;
         public static final boolean inDirection = true;
         public static final boolean outDirection = false;
 

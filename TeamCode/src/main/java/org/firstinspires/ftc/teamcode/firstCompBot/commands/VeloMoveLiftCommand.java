@@ -24,7 +24,6 @@ public class VeloMoveLiftCommand extends CommandBase {
 //        else if (joyStick.get()<0 && !lift.isBottom())lift.setPower(joyStick.get());
 //        else lift.setPower(joyStick.get());
         lift.setPower(0);
-        lift.resetEncoders();
     }
 
     @Override
@@ -38,6 +37,7 @@ public class VeloMoveLiftCommand extends CommandBase {
 //        }
         lift.motor1.setVelocity(2800* joyStick.get());
         lift.motor2.setVelocity(2800* joyStick.get());
+        lift.motor3.setVelocity(2800* joyStick.get());
     }
     public double getPower(){
         return joyStick.get();

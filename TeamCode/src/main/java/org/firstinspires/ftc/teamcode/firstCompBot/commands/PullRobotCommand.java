@@ -1,5 +1,6 @@
 //package org.firstinspires.ftc.teamcode.firstCompBot.commands;
 //
+//
 //import com.arcrobotics.ftclib.command.CommandBase;
 //
 //import org.firstinspires.ftc.teamcode.firstCompBot.Constants.HookConstants;
@@ -7,24 +8,18 @@
 //
 //import java.util.function.Supplier;
 //
-//
-//public class PullDownCommand extends CommandBase {
+//public class PullRobotCommand extends CommandBase {
 //    private HookSubsystem subsystem;
 //    Supplier<Double> power;
-//    public PullDownCommand(HookSubsystem subsystem) {
+//    public PullRobotCommand(HookSubsystem subsystem, Supplier<Double> power) {
 //        this.subsystem = subsystem;
 //        addRequirements(subsystem);
-//        this.power = ()->1.0;
-//    }
-//    public PullDownCommand(HookSubsystem subsystem, Supplier<Double> power) {
-//        this.subsystem = subsystem;
-//        addRequirements(subsystem);
-//        this.power = power;
+//        this.power=power;
 //    }
 //
 //    @Override
 //    public void initialize() {
-//        subsystem.setSuspensionDirection(HookConstants.down_direction_inverted);
+//        subsystem.setSuspensionDirection(HookConstants.up_direction_inverted);
 //    }
 //
 //    @Override

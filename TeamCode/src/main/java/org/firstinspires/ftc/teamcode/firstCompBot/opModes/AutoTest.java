@@ -207,8 +207,6 @@ public class AutoTest extends CommandOpMode {
         telemetry.addData("gameType",gameType);
         telemetry.update();
         drive.setPoseEstimate(new Pose2d(11.61, -69.36, Math.toRadians(90.00)));
-        while (!isVisoned) ;
-        schedule(auto);
     }
     private void initSubsytems(){
         driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
@@ -240,6 +238,7 @@ public class AutoTest extends CommandOpMode {
                 park
         );
         isVisoned=true;
+        schedule(auto);
 
     }
 

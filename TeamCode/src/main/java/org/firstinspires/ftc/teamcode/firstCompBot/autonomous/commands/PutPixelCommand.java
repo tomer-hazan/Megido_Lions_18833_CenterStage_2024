@@ -25,7 +25,7 @@ public class PutPixelCommand extends CommandBase {
     @Override
     public void initialize() {
         startTime=currentTimeMillis();
-        inTake.setDirection(Constants.InTakeConstants.outDirection);
+        inTake.setDirection(Constants.InTakeConstants.inDirection);
         inTake.setPower(powers());
     }
 
@@ -42,11 +42,11 @@ public class PutPixelCommand extends CommandBase {
     public double powers(){
         switch (gameType){
             case LEFT:
-                return 0.3;
+                return 0.4;
             case CENTER:
                 return 0.4;
             case RIGHT:
-                return 0.3;
+                return 0.4;
         }
         return 0;
     }

@@ -42,7 +42,7 @@ public class PutPixelCommand extends CommandBase {
     public double powers(){
         switch (gameType){
             case LEFT:
-                return 0.7;
+                return 0.3;
             case CENTER:
                 return 0.4;
             case RIGHT:

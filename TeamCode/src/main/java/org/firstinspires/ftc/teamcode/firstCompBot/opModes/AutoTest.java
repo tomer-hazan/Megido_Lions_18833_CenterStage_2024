@@ -254,8 +254,8 @@ public class AutoTest extends CommandOpMode {
                 .lineTo(new Vector2d(57,-20))
                 .waitSeconds(2)
 
-                .lineTo(new Vector2d(30,-20))                                       //place
-                .lineTo(new Vector2d(15,-20))
+//                .lineTo(new Vector2d(30,-20))                                       //place
+//                .lineTo(new Vector2d(15,-20))
 //                .waitSeconds(0.2)
 //                .turn(Math.toRadians(-90))
 //                .lineTo(new Vector2d(12, -74),

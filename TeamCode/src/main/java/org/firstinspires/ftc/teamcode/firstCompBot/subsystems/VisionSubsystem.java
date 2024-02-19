@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.firstCompBot.subsystems;
 
 import android.graphics.Bitmap;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -107,6 +106,7 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.update();
             if(!autoTest.isVisoned){
                 autoTest.initAuto(telemetry,gameType);
+                camera.closeCameraDevice();
             }
 
             return input;
@@ -144,7 +144,7 @@ public class VisionSubsystem extends SubsystemBase {
             public void onOpened() {
                 camera.startStreaming(camera_width, camera_height, OpenCvCameraRotation.UPRIGHT);
                 camera.setPipeline(new PipeLine());
-                FtcDashboard.getInstance().startCameraStream(camera,0);
+                //FtcDashboard.getInstance().startCameraStream(camera,0);
             }
             @Override
             public void onError(int errorCode) {}

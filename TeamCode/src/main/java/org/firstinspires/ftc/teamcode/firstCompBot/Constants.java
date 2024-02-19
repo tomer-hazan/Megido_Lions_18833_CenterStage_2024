@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.firstCompBot;
 
+import com.acmerobotics.dashboard.config.Config;
+
+import org.opencv.core.Rect;
+
 import java.util.HashMap;
 
 public class Constants {
@@ -31,8 +35,8 @@ public class Constants {
             COLLECTION,
             DROP
         }
-        public static final boolean inDirection = true;
-        public static final boolean outDirection = false;
+        public static final boolean inDirection = false;
+        public static final boolean outDirection = true;
         public static final double dropRate = 1 ;
         public static final double insertRate = 1 ;
         public static final double autoRotateCartridgeHeight = 1.4;//toDO test
@@ -120,11 +124,46 @@ public class Constants {
             teleOp,
             endGame
         }
+        public enum GameType {
+            LEFT,
+            CENTER,
+            RIGHT
+        }
+        public enum StartingPosition {
+            RED,
+            BLUE
+        }
     }
     public static class util{
         public static double meterToInch(double m){
             return  39.37*m;
         }
+    }
+    @Config
+    public static final class VisionConstants {
+        public final static int camera_width = 1280;
+        public final static int camera_height = 720;
+        public final static int R = 0;
+        public final static int G = 1;
+        public final static int B = 2;
+
+        public static Rect Red = new Rect(505, 400, 120, 180);//not the real numbers (temporary)
+        public static Rect Blue = new Rect(600, 400, 120, 180);//not the real numbers (temporary)
+
+        public static double RedHueThresholdLow = 0;
+        public static double RedHueThresholdHigh = 180;
+        public static double RedSaturationThresholdLow = 67;
+        public static double RedSaturationThresholdHigh = 255;
+        public static double RedValueThresholdLow = 5;
+        public static double RedValueThresholdHigh = 163;
+
+        public static double BlueHueThresholdLow = 39;
+        public static double BlueHueThresholdHigh = 180;
+        public static double BlueSaturationThresholdLow = 46;
+        public static double BlueSaturationThresholdHigh = 255;
+        public static double BlueValueThresholdLow = 0;
+        public static double BlueValueThresholdHigh = 219;
+
     }
 
 }

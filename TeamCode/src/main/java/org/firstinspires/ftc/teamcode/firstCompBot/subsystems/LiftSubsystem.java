@@ -42,11 +42,12 @@ public class LiftSubsystem extends SubsystemBase{
         motor1.set(0);
         motor2.set(0);
         motor3.set(0);
-        motor1.setInverted(false);
-        motor2.setInverted(true);
-        motor3.setInverted(false);
+        motor1.setInverted(true);
+        motor2.setInverted(false);
+        motor3.setInverted(true);
         //encoderOffset = 0;//?
         level = 0;
+        motor1.encoder.setDirection(Motor.Direction.FORWARD);
 
     }
 
@@ -54,9 +55,6 @@ public class LiftSubsystem extends SubsystemBase{
     public void periodic() {
         if (bottomLimitSwitch.isPressed()) {
             resetEncoders();
-            motor1.setTargetDistance(0);
-            motor2.setTargetDistance(0);
-            motor3.setTargetPosition(0);
         }
         double height = getHeight();
         if(inLevel(level,height));

@@ -25,7 +25,7 @@ public class CartridgeSubsystam extends SubsystemBase {
     public void rotateToPosition(CartridgePositions position){
         switch (position){
             case DROP:
-                rotationServo.setPosition(0.7);
+                rotationServo.setPosition(0.5);
                 break;
             case COLLECTION:
                 rotationServo.setPosition(1);

@@ -34,9 +34,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = MeterToInch(DriveTrainConstants.OdometryWheelDiameter/2);
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double X_MULL = 253.0/249.0;
-    public static double Y_MULL = 253.0/249.0;
-    public static double LATERAL_DISTANCE = MeterToInch(0.338); // in; distance between the left and right wheels
+//    public static double X_MULL = 253.0/249.0;
+//    public static double Y_MULL = 253.0/249.0;
+public static double X_MULL = 1;
+    public static double Y_MULL = 1;
+    public static double LATERAL_DISTANCE = 13.267; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = MeterToInch(-0.21); // in; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;

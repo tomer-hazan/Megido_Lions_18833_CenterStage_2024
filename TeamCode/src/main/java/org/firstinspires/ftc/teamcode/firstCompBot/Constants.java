@@ -152,17 +152,17 @@ public class Constants {
 
         public static double RedHueThresholdLow = 0;
         public static double RedHueThresholdHigh = 180;
-        public static double RedSaturationThresholdLow = 67;
+        public static double RedSaturationThresholdLow = 87;
         public static double RedSaturationThresholdHigh = 255;
-        public static double RedValueThresholdLow = 5;
-        public static double RedValueThresholdHigh = 163;
+        public static double RedValueThresholdLow = 133;
+        public static double RedValueThresholdHigh = 255;
 
-        public static double BlueHueThresholdLow = 39;
+        public static double BlueHueThresholdLow = 99;
         public static double BlueHueThresholdHigh = 180;
-        public static double BlueSaturationThresholdLow = 46;
+        public static double BlueSaturationThresholdLow = 57;
         public static double BlueSaturationThresholdHigh = 255;
         public static double BlueValueThresholdLow = 0;
-        public static double BlueValueThresholdHigh = 219;
+        public static double BlueValueThresholdHigh = 255;
 
     }
 

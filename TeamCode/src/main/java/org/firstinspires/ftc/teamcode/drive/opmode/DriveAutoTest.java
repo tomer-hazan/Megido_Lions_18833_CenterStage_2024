@@ -34,16 +34,6 @@ public class DriveAutoTest extends LinearOpMode {
                 .lineTo(new Vector2d(57,-20))
                 .waitSeconds(2)
 
-                .lineTo(new Vector2d(30,-20))                                       //place
-                .lineTo(new Vector2d(15,-20))
-                .waitSeconds(0.2)
-                .turn(Math.toRadians(-90))
-//                .splineToConstantHeading(new Vector2d(11.61, -65), 0)
-                .lineTo(new Vector2d(12, -74),
-                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL/2,DriveConstants.MAX_ANG_VEL/2,DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
-
-
                 .build();
 
 

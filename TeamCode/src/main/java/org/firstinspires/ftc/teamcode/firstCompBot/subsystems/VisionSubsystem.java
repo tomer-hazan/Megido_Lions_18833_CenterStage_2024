@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode.firstCompBot.subsystems;
 
 import android.graphics.Bitmap;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.firstCompBot.Constants;
-import org.firstinspires.ftc.teamcode.firstCompBot.opModes.AutoTest;
+import org.firstinspires.ftc.teamcode.firstCompBot.opModes.BlueBoardAuto;
+import org.firstinspires.ftc.teamcode.firstCompBot.opModes.RedBoardAuto;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -37,9 +39,10 @@ import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.VisionConsta
 
 public class VisionSubsystem extends SubsystemBase {
     OpenCvWebcam camera;
-    Constants.GameConstants.StartingPosition color = Constants.GameConstants.StartingPosition.RED;
+    Constants.GameConstants.StartingPosition color;
     Constants.GameConstants.GameType gameType;
-    AutoTest autoTest;
+    RedBoardAuto redBoardAuto;
+    BlueBoardAuto blueBoardAuto;
     Telemetry telemetry;
     //Rect left;
     Rect center;
@@ -60,7 +63,7 @@ public class VisionSubsystem extends SubsystemBase {
             Mat centerFiltered = new Mat();
             Mat rightFiltered = new Mat();
 
-            switch (color){
+            switch (color) {
                 case RED:
 //                    filterRed(leftMat, leftFiltered);
                     filterRed(centerMat, centerFiltered);
@@ -73,22 +76,41 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
 //            int lcr[] = {Core.countNonZero(leftFiltered),Core.countNonZero(centerFiltered),Core.countNonZero(rightFiltered)};
-            int cr[] = {Core.countNonZero(centerFiltered),Core.countNonZero(rightFiltered)};
+            int cr[] = {Core.countNonZero(centerFiltered), Core.countNonZero(rightFiltered)};
 
-
-            if (cr[0] > cr[1]) {
-                autoTest.gameType = Constants.GameConstants.GameType.CENTER;
-                gameType = Constants.GameConstants.GameType.CENTER;
-            } else if (cr[1] > cr[0]) {
-                autoTest.gameType = Constants.GameConstants.GameType.RIGHT;
-                gameType = Constants.GameConstants.GameType.RIGHT;
-            } else {
-                autoTest.gameType = Constants.GameConstants.GameType.CENTER;
-                gameType = Constants.GameConstants.GameType.CENTER;
-            }
-            if(color== Constants.GameConstants.StartingPosition.RED&&cr[0]<15000 && cr[1]<15000){
-                autoTest.gameType = Constants.GameConstants.GameType.LEFT;
-                gameType = Constants.GameConstants.GameType.LEFT;
+            switch (color){
+                case RED:
+                    if (cr[0] > cr[1]) {
+                        redBoardAuto.gameType = Constants.GameConstants.GameType.CENTER;
+                        gameType = Constants.GameConstants.GameType.CENTER;
+                    } else if (cr[1] > cr[0]) {
+                        redBoardAuto.gameType = Constants.GameConstants.GameType.RIGHT;
+                        gameType = Constants.GameConstants.GameType.RIGHT;
+                    } else {
+                        redBoardAuto.gameType = Constants.GameConstants.GameType.CENTER;
+                        gameType = Constants.GameConstants.GameType.CENTER;
+                    }
+                    if (color == Constants.GameConstants.StartingPosition.RED && cr[0] < 20000 && cr[1] < 20000) {
+                        redBoardAuto.gameType = Constants.GameConstants.GameType.LEFT;
+                        gameType = Constants.GameConstants.GameType.LEFT;
+                    }
+                    break;
+                case BLUE:
+                    if (cr[0] > cr[1]) {
+                        blueBoardAuto.gameType = Constants.GameConstants.GameType.CENTER;
+                        gameType = Constants.GameConstants.GameType.CENTER;
+                    } else if (cr[1] > cr[0]) {
+                        blueBoardAuto.gameType = Constants.GameConstants.GameType.RIGHT;
+                        gameType = Constants.GameConstants.GameType.RIGHT;
+                    } else {
+                        blueBoardAuto.gameType = Constants.GameConstants.GameType.CENTER;
+                        gameType = Constants.GameConstants.GameType.CENTER;
+                    }
+                    if (cr[0] < 20000 && cr[1] < 20000) {
+                        blueBoardAuto.gameType = Constants.GameConstants.GameType.LEFT;
+                        gameType = Constants.GameConstants.GameType.LEFT;
+                    }
+                    break;
             }
 
             //Imgproc.rectangle(input, left, new Scalar(0, 255, 0), 3);
@@ -104,39 +126,42 @@ public class VisionSubsystem extends SubsystemBase {
             telemetry.addData("vision sees center,right:", " %s, %s", cr[0], cr[1]);
             telemetry.addData("game type", gameType);
             telemetry.update();
-            if(!autoTest.isVisoned){
-                autoTest.initAuto(telemetry,gameType);
-                camera.closeCameraDevice();
-            }
+            switch (color) {
+                case RED:
+                        redBoardAuto.initAuto(telemetry, gameType);
+                    break;
+                case BLUE:
+                        blueBoardAuto.initAuto(telemetry, gameType);
 
+            }
             return input;
+        }
+
+
+        private void filterRed(Mat input,
+                               Mat out) {
+            Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
+            Core.inRange(out, new Scalar(RedHueThresholdLow, RedSaturationThresholdLow, RedValueThresholdLow),
+                    new Scalar(RedHueThresholdHigh, RedSaturationThresholdHigh, RedValueThresholdHigh), out);
+        }
+
+
+        private void filterBlue(Mat input,
+                                Mat out) {
+            Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
+            Core.inRange(out, new Scalar(BlueHueThresholdLow, BlueSaturationThresholdLow, BlueValueThresholdLow),
+                    new Scalar(BlueHueThresholdHigh, BlueSaturationThresholdHigh, BlueValueThresholdHigh), out);
         }
     }
 
 
 
-    private void filterRed(Mat input,
-                           Mat out) {
-        Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
-        Core.inRange(out, new Scalar(RedHueThresholdLow, RedSaturationThresholdLow, RedValueThresholdLow),
-                new Scalar(RedHueThresholdHigh, RedSaturationThresholdHigh, RedValueThresholdHigh), out);
-    }
-
-
-    private void filterBlue(Mat input,
-                            Mat out) {
-        Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
-        Core.inRange(out, new Scalar(BlueHueThresholdLow, BlueSaturationThresholdLow, BlueValueThresholdLow),
-                new Scalar(BlueHueThresholdHigh, BlueSaturationThresholdHigh, BlueValueThresholdHigh), out);
-    }
-
-
-
-    public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry,AutoTest autoTest) {
-        this.autoTest =autoTest;
+    public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RedBoardAuto redBoardAuto) {
+        this.redBoardAuto = redBoardAuto;
 //        left = new Rect(camera_width/3,0,camera_width/3,camera_height);
         center = new Rect(camera_width/3,0,camera_width/3 ,camera_height);
         right = new Rect((camera_width/3)*2,0,camera_width/3,camera_height);
+        this.color = Constants.GameConstants.StartingPosition.RED;
         this.telemetry = telemetry;
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -144,11 +169,12 @@ public class VisionSubsystem extends SubsystemBase {
             public void onOpened() {
                 camera.startStreaming(camera_width, camera_height, OpenCvCameraRotation.UPRIGHT);
                 camera.setPipeline(new PipeLine());
-                //FtcDashboard.getInstance().startCameraStream(camera,0);
+                FtcDashboard.getInstance().startCameraStream(camera,0);
             }
             @Override
             public void onError(int errorCode) {}
         });
+
 
 //        Rect vision;
 //
@@ -163,6 +189,43 @@ public class VisionSubsystem extends SubsystemBase {
 //        }
 //
 //        this.Vision = vision;
+    }
+    public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry, BlueBoardAuto blueBoardAuto) {
+        this.blueBoardAuto = blueBoardAuto;
+        this.color = Constants.GameConstants.StartingPosition.BLUE;
+//        left = new Rect(camera_width/3,0,camera_width/3,camera_height);
+        center = new Rect(camera_width/3,0,camera_width/3 ,camera_height);
+        right = new Rect((camera_width/3)*2,0,camera_width/3,camera_height);
+        this.telemetry = telemetry;
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(camera_width, camera_height, OpenCvCameraRotation.UPRIGHT);
+                camera.setPipeline(new PipeLine());
+                FtcDashboard.getInstance().startCameraStream(camera,0);
+            }
+            @Override
+            public void onError(int errorCode) {}
+        });
+
+
+//        Rect vision;
+//
+//        switch (RobotUniversal.startingPosition) {
+//            default:
+//            case Red:
+//                vision = Red;
+//                break;
+//            case Blue:
+//                vision = Blue;
+//                break;
+//        }
+//
+//        this.Vision = vision;
+    }
+    public void stop(){
+        camera.closeCameraDevice();
     }
 }
 

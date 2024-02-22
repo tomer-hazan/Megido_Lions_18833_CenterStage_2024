@@ -28,12 +28,12 @@ public class DropPixelCommand extends CommandBase {
     }
 
 
-    @Override
-    public void end(boolean interrupted) {
-        cartridge.stop();
-        cartridge.rotateToPosition(Constants.CartridgeConstants.CartridgePositions.COLLECTION);
-    }
-
+//    @Override
+//    public void end(boolean interrupted) {
+//        cartridge.stop();
+//        cartridge.rotateToPosition(Constants.CartridgeConstants.CartridgePositions.COLLECTION);
+//    }
+//
     @Override
     public boolean isFinished() {
         return currentTimeMillis()-startTime>3000;

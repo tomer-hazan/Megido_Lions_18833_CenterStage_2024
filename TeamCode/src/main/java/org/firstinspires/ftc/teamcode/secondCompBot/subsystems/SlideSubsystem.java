@@ -41,6 +41,7 @@ public class SlideSubsystem extends SubsystemBase{
     public void stopMotors(){
         motor.stopMotor();
     }
+    public boolean isBottom(){return motor.getCurrentPosition()<=0;}
     public void resetEncoders(){
         motor.resetEncoder();
     }

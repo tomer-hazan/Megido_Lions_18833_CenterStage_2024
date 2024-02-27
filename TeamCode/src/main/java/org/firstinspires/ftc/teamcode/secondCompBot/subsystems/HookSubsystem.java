@@ -19,15 +19,16 @@ public class HookSubsystem extends SubsystemBase {
     public double getHookPosition() {
         return rightServo.getPosition();
     }
-    public void setHookRaise(){
+    public void raiseHook(){
         rightServo.setPosition(1);
         leftServo.setPosition(1);
     }
-    public void setHookLower(){
+    public void lowerHook(){
         rightServo.setPosition(0);
         leftServo.setPosition(0);
     }
     public void pullUp(){suspension.set(1);}
     public void pullDown(){suspension.set(-1);}
+    public void pull(double power){suspension.set(power);}
     public void stopPulling(){suspension.set(0);}
 }

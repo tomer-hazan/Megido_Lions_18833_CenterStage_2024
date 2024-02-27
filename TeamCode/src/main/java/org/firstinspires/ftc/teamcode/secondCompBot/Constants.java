@@ -37,7 +37,6 @@ public class Constants {
         public static final double wheel_diameter = 0.01;
         public static final boolean up_direction_inverted=false;
         public static final boolean down_direction_inverted=true;
-        public static final double power=1;
         public static final double ticks_per_revolution = MotorConstants.RevHDHexMotor.ticks_per_revolution/gear_ratio;
         public static double ticksToMeters(double ticks){
             return 0;

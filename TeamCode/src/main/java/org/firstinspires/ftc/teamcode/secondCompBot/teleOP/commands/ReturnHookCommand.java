@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
 
 public class ReturnHookCommand extends CommandBase {
@@ -18,7 +17,7 @@ public class ReturnHookCommand extends CommandBase {
 
     @Override
     public void execute() {
-        subsystem.setHookPosition(Constants.HookConstants.bottom_limit);
+        subsystem.lowerHook();
     }
 
     @Override

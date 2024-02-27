@@ -20,30 +20,15 @@ public class MoveLiftCommand extends CommandBase {
     @Override
     public void initialize() {
         lift.setRunMode(Motor.RunMode.RawPower);
-//        if(joyStick.get()>0 && !lift.isTop())lift.setPower(joyStick.get());
-//        else if (joyStick.get()<0 && !lift.isBottom())lift.setPower(joyStick.get());
-//        else lift.setPower(joyStick.get());
     }
 
     @Override
     public void execute() {
         lift.setRunMode(Motor.RunMode.RawPower);
-//        double power = joyStick.get();
-//        if (!((lift.isBottom() && power < 0) || (lift.isTop() && power > 0))) {
-//            lift.setPower(power);
-//        } else {
-//            lift.setPower(0);
-//        }
         lift.setPower(joyStick.get());
     }
     public double getPower(){
         return joyStick.get();
-    }
-    public double getRealPower1(){
-        return lift.motor1.get();
-    }
-    public double getRealPower2(){
-        return lift.motor2.get();
     }
 
     @Override

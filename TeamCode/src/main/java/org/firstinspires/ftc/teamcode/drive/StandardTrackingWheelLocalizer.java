@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.firstCompBot.Constants.DriveTrainConstants;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.DriveTrainConstants;
 import static org.firstinspires.ftc.teamcode.util.convert.MeterToInch;
 
 /*

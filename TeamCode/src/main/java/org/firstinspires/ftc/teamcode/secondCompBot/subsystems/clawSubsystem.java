@@ -4,8 +4,13 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.SensorColor;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.Positions;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_limit;
@@ -14,18 +19,24 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 public class clawSubsystem extends SubsystemBase {
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
+    public final DistanceSensor distanceSensorLeft;
+    public final DistanceSensor distanceSensorRight;
     public final ServoEx rotationServo1;
     public final ServoEx rotationServo2;
     public final Servo leftClaw;//continuous
     public final Servo rightClaw;
-    public clawSubsystem(HardwareMap hardwareMap){
+    Supplier<Double> seconds;
+    public clawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
         this.rightClaw = hardwareMap.get(Servo.class,"right claw");
         this.leftClaw = hardwareMap.get(Servo.class,"left claw");
         rotationServo1 = new SimpleServo(hardwareMap,"claw rotation servo 1",rotation_start,rotation_limit);
         rotationServo2 = new SimpleServo(hardwareMap,"claw rotation servo 2",rotation_start,rotation_limit);
         colorSensorLeft = new SensorColor(hardwareMap,"color sensor left");
         colorSensorRight = new SensorColor(hardwareMap,"color sensor right");
+        distanceSensorLeft = hardwareMap.get(DistanceSensor.class,"color sensor left");
+        distanceSensorRight = hardwareMap.get(DistanceSensor.class,"color sensor right");
         colorSensorLeft.getARGB();
+        this.seconds = seconds;
     }
 
     public void openOrCloseLeft(Positions position){
@@ -34,7 +45,7 @@ public class clawSubsystem extends SubsystemBase {
                 leftClaw.setPosition(0);
                 break;
             case OPEN:
-                leftClaw.setPosition(1);
+                leftClaw.setPosition(0.5);
                 break;
         }
     }
@@ -58,7 +69,20 @@ public class clawSubsystem extends SubsystemBase {
     }
     public  int[] getLeftARGB(){return colorSensorLeft.getARGB();}
     public  int[] getRightARGB(){return colorSensorRight.getARGB();}
-
-
-
+    public boolean isDetectedPixelLeft(){
+        int[] argb = getLeftARGB();
+        return distanceSensorLeft.getDistance(DistanceUnit.MM)<60;
+    }
+    public boolean isDetectedPixelRight(){
+        int[] argb = getRightARGB();
+        return distanceSensorRight.getDistance(DistanceUnit.MM)<60;
+    }
+//    @Override
+//    public void periodic(){
+//        if(isDetectedPixelLeft())openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
+//        else openOrCloseLeft(Constants.ClawConstants.Positions.OPEN);
+//        if(isDetectedPixelRight())openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
+//        else openOrCloseRight(Constants.ClawConstants.Positions.OPEN);
+//    }
+    public double getTime(){return seconds.get();}
 }

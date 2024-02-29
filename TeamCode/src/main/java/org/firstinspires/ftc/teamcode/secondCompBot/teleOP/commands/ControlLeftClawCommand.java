@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
 public class ControlLeftClawCommand extends CommandBase {
     clawSubsystem subsystem;
     private boolean toOpen;
+    private double startTime;
 
     public ControlLeftClawCommand(clawSubsystem subsystem, boolean toOpen){
         this.subsystem=subsystem;
@@ -19,6 +20,7 @@ public class ControlLeftClawCommand extends CommandBase {
     public void initialize() {
         if(toOpen)subsystem.openOrCloseLeft(Constants.ClawConstants.Positions.OPEN);
         else subsystem.openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
+        startTime=subsystem.getTime();
     }
 
     @Override

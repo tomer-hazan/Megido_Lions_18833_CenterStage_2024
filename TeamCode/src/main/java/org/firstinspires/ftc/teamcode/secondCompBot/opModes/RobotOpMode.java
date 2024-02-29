@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,15 +16,14 @@ import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.LEDSubsystem;
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.MyOdometrySubsystem;
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeColorsCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeSpeedCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsAngleCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlLeftClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlRightClawCommand;
-import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeColorsCommand;
-import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeSpeedCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DeployHookCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DriveHorizontalCommand;
@@ -101,7 +99,7 @@ public class RobotOpMode extends CommandOpMode {
         slideSubsystem = new SlideSubsystem(hardwareMap);
         driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
         airplaneSubsystem = new AirplaneSubsystem(hardwareMap);
-        clawSubsystem = new clawSubsystem(hardwareMap);
+        clawSubsystem = new clawSubsystem(hardwareMap,()->getRuntime());
         hookSubsystem = new HookSubsystem(hardwareMap);
         odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
         ledSubsystem = new LEDSubsystem(hardwareMap);
@@ -163,6 +161,9 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(driver,GamepadKeys.Button.RIGHT_BUMPER).whileHeld(strafeRight);
         new Trigger(() -> Math.abs(controller.getLeftY())>0.05).whileActiveContinuous(moveLiftSlowCommand);
         new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(changeSpeedCommand);
+        new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
+        new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
+
     }
 
 

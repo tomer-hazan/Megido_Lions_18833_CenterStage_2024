@@ -72,7 +72,9 @@ public class Constants {
             CLOSE
         }
         public static final double rotation_start = 0;
-        public static final double rotation_limit = 108;
+        public static final double rotation_limit = 180;
+        public static final double rotation_min = 0.45;
+        public static final double rotation_max = 1;
         public static final double angle_threshold = 30;
 
     }

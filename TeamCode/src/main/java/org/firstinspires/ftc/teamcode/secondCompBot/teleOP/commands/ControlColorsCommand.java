@@ -15,6 +15,7 @@ public class ControlColorsCommand extends CommandBase {
         this.ledSubsystem=ledSubsystem;
         this.leftPixel=leftPixel;
         this.rightPixel=rightPixel;
+        addRequirements(ledSubsystem);
     }
 
     @Override

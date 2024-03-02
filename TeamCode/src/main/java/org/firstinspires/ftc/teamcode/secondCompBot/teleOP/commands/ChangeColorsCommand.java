@@ -5,16 +5,17 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.LEDSubsystem;
 
 public class ChangeColorsCommand extends CommandBase {
-    LEDSubsystem ledSubsystem;
+    LEDSubsystem subsystem;
     int color;
     public ChangeColorsCommand(LEDSubsystem ledSubsystem, int color){
-        this.ledSubsystem=ledSubsystem;
+        this.subsystem=ledSubsystem;
         this.color = color;
+        addRequirements(ledSubsystem);
     }
 
     @Override
     public void execute() {
-        ledSubsystem.makeColor(color);
+        subsystem.makeColor(color);
     }
 
     @Override

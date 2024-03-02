@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.Positions;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_limit;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_max;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_min;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_start;
 
 public class ClawSubsystem extends SubsystemBase {
@@ -30,14 +32,16 @@ public class ClawSubsystem extends SubsystemBase {
     public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
         this.rightClaw = hardwareMap.get(Servo.class,"right claw");
         this.leftClaw = hardwareMap.get(Servo.class,"left claw");
-        rotationServo1 = new SimpleServo(hardwareMap,"claw rotation servo 1",rotation_start,rotation_limit);
-        rotationServo2 = new SimpleServo(hardwareMap,"claw rotation servo 2",rotation_start,rotation_limit);
+        rotationServo1 = new SimpleServo(hardwareMap,"flip servo 1",rotation_start,rotation_limit);
+        rotationServo2 = new SimpleServo(hardwareMap,"flip servo 2",rotation_start,rotation_limit);
         colorSensorLeft = new SensorColor(hardwareMap,"color sensor left");
         colorSensorRight = new SensorColor(hardwareMap,"color sensor right");
         distanceSensorLeft = hardwareMap.get(DistanceSensor.class,"color sensor left");
         distanceSensorRight = hardwareMap.get(DistanceSensor.class,"color sensor right");
         colorSensorLeft.getARGB();
         this.seconds = seconds;
+        rotationServo2.setInverted(true);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
     }
 
     public void openOrCloseLeft(Positions position){
@@ -65,6 +69,8 @@ public class ClawSubsystem extends SubsystemBase {
         rotationServo2.turnToAngle(angle);
     }
     public void setPos(double pos){
+        if(pos<rotation_min)pos=rotation_min;
+        if(pos>rotation_max)pos=rotation_max;
         rotationServo1.setPosition(pos);
         rotationServo2.setPosition(pos);
     }

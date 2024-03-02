@@ -79,6 +79,7 @@ public class RobotOpMode extends CommandOpMode {
     ControlColorsCommand controlColorsCommand;
 
 
+
     double time;
     Constants.GameConstants.gamePeriod period;
     Pose2d pose;
@@ -119,8 +120,7 @@ public class RobotOpMode extends CommandOpMode {
         deployHookCommand = new DeployHookCommand(hookSubsystem);
         driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX());
         launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);
-        moveLiftCommand = new MoveLiftCommand(slideSubsystem,() -> controller.getRightY());
-        pullRobotCommand = new PullRobotCommand(hookSubsystem,()->-controller.getLeftY());
+        moveLiftCommand = new MoveLiftCommand(slideSubsystem,() -> controller.getLeftY());
         returnHookCommand = new ReturnHookCommand(hookSubsystem);
         driveHorizontalCommandLeft = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX(),() -> 1.0);
         driveHorizontalCommandRight = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX(),() -> -1.0);
@@ -140,6 +140,7 @@ public class RobotOpMode extends CommandOpMode {
         controlClawsAngleCommand = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
         controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.detectPixelColorLeft(),()->clawSubsystem.detectPixelColorRight());
+        pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->controller.getButton(GamepadKeys.Button.DPAD_UP),()->controller.getButton(GamepadKeys.Button.DPAD_DOWN));
 
     }
     private void assignCommands(){
@@ -150,9 +151,18 @@ public class RobotOpMode extends CommandOpMode {
         armSubsystem.setDefaultCommand(moveArmCommand);
         ledSubsystem.setDefaultCommand(controlColorsCommand);
 
+        //drivers commands
         new Trigger(()-> (getRuntime()>=90&& driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
         new GamepadButton(driver,GamepadKeys.Button.DPAD_UP).whenHeld(deployHookCommand);
         new GamepadButton(driver,GamepadKeys.Button.DPAD_DOWN).whenHeld(returnHookCommand);
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(strafeRightSlow);
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(strafeLeftSlow);
+        new GamepadButton(driver,GamepadKeys.Button.LEFT_BUMPER).whileHeld(strafeLeft);
+        new GamepadButton(driver,GamepadKeys.Button.RIGHT_BUMPER).whileHeld(strafeRight);
+        new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(changeSpeedCommand);
+
+
+        //controllers command
         new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whenHeld(deployHookCommand);
         new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whenHeld(returnHookCommand);
         new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
@@ -161,16 +171,14 @@ public class RobotOpMode extends CommandOpMode {
         if(slideSubsystem.isBottom())schedule(changeToGreenCommand);
         else schedule(changeToNoneCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
-        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(strafeRightSlow);
-        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(strafeLeftSlow);
-        new GamepadButton(driver,GamepadKeys.Button.LEFT_BUMPER).whileHeld(strafeLeft);
-        new GamepadButton(driver,GamepadKeys.Button.RIGHT_BUMPER).whileHeld(strafeRight);
-        new Trigger(() -> Math.abs(controller.getLeftY())>0.05).whileActiveContinuous(moveLiftSlowCommand);
-        new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(changeSpeedCommand);
         new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
         new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
-        new Trigger(()->clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand);
-        new Trigger(()-> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand);
+        new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whileHeld(openLeftClawCommand);
+        new GamepadButton(controller, GamepadKeys.Button.RIGHT_BUMPER).whileHeld(openRightClawCommand);
+        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(closeLeftClawCommand);
+        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(closeRightClawCommand);
+
+        //new Trigger(() -> Math.abs(controller.getLeftY())>0.05).whileActiveContinuous(moveLiftSlowCommand);
     }
 
 

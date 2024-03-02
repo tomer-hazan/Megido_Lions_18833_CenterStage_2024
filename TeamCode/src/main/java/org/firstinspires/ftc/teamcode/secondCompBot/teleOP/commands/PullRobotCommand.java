@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.secondCompBot.Constants.HookConstants;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
 
 import java.util.function.Supplier;
@@ -13,8 +12,8 @@ public class PullRobotCommand extends CommandBase {
     Supplier<Double> power;
     public PullRobotCommand(HookSubsystem subsystem, Supplier<Double> power) {
         this.subsystem = subsystem;
-        addRequirements(subsystem);
         this.power=power;
+        addRequirements(subsystem);
     }
 
     @Override

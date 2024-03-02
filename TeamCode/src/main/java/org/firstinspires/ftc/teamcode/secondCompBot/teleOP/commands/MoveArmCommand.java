@@ -12,6 +12,7 @@ public class MoveArmCommand extends CommandBase {
     public MoveArmCommand(ArmSubsystem subsystem,Supplier<Double> power){
         this.subsystem=subsystem;
         this.power = power;
+        addRequirements(subsystem);
     }
 
     @Override

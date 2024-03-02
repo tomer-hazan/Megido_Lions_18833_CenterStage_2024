@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class SlideSubsystem extends SubsystemBase{
     public final MotorEx   motor;
     public SlideSubsystem(HardwareMap hardwareMap){
-        this.motor = new MotorEx(hardwareMap,"slide motor");
+        this.motor = new MotorEx(hardwareMap,"slide");
         motor.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.encoder.setDirection(Motor.Direction.REVERSE);
         motor.resetEncoder();
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor.set(0);
-        motor.setInverted(false);
+        motor.setInverted(true);
     }
 
     @Override

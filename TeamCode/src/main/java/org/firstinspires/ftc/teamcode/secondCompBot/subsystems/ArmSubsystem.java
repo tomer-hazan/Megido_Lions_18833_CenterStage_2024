@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.Constants.ArmConstants;
 public class ArmSubsystem extends SubsystemBase{
     public final MotorEx   motor;
     public ArmSubsystem(HardwareMap hardwareMap){
-        this.motor = new MotorEx(hardwareMap,"arm motor");
+        this.motor = new MotorEx(hardwareMap,"arm");
         motor.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.encoder.setDirection(Motor.Direction.REVERSE);
         motor.resetEncoder();

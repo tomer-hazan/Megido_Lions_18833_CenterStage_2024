@@ -9,8 +9,8 @@ public class SwitchColorsCommand extends CommandBase {
     LEDSubsystem ledSubsystem;
     public SwitchColorsCommand(LEDSubsystem ledSubsystem){
         this.ledSubsystem = ledSubsystem;
-        addRequirements(ledSubsystem);
         color=0;
+        addRequirements(ledSubsystem);
     }
     @Override
     public void initialize() {

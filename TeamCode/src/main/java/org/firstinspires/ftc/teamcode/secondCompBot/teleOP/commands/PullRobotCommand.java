@@ -9,16 +9,22 @@ import java.util.function.Supplier;
 
 public class PullRobotCommand extends CommandBase {
     private HookSubsystem subsystem;
-    Supplier<Double> power;
-    public PullRobotCommand(HookSubsystem subsystem, Supplier<Double> power) {
+    Supplier<Boolean> dpadUp;
+    Supplier<Boolean> dpadDown;
+    Supplier<Double> defaultPower;
+    public PullRobotCommand(HookSubsystem subsystem, Supplier<Double> defaultPower, Supplier<Boolean> dpadUp,Supplier<Boolean> dpadDown) {
         this.subsystem = subsystem;
-        this.power=power;
+        this.defaultPower=defaultPower;
+        this.dpadDown=dpadDown;
+        this.dpadUp=dpadUp;
         addRequirements(subsystem);
     }
-
     @Override
     public void execute() {
-        subsystem.pull(power.get());
+        if(dpadUp.get())subsystem.pull(1);
+        else if(dpadDown.get())subsystem.pull(-1);
+        else subsystem.pull(defaultPower.get());
+
     }
 
     @Override

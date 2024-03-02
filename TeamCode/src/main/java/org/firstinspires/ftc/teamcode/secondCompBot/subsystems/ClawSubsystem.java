@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.Positions;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.normalBlue;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.normalGreen;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.normalRed;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_limit;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_max;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_min;
@@ -40,7 +43,7 @@ public class ClawSubsystem extends SubsystemBase {
         distanceSensorRight = hardwareMap.get(DistanceSensor.class,"color sensor right");
         colorSensorLeft.getARGB();
         this.seconds = seconds;
-        rotationServo2.setInverted(true);
+        rotationServo2.setInverted(false);
         leftClaw.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -50,7 +53,7 @@ public class ClawSubsystem extends SubsystemBase {
                 leftClaw.setPosition(0);
                 break;
             case OPEN:
-                leftClaw.setPosition(0.5);
+                leftClaw.setPosition(1);
                 break;
         }
     }
@@ -84,24 +87,24 @@ public class ClawSubsystem extends SubsystemBase {
     public boolean isDetectedPixelRight(){
         return getRightDistance()<60&&detectPixelColorRight()!=null;
     }
-    public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColor(colorSensorLeft.getARGB());}
-    public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColor(colorSensorRight.getARGB());}
-    public Constants.GameElements.Pixals detectPixelColor(int[] argb){
-        int red = argb[1];
-        int green = argb[2];
-        int blue = argb[3];
-        if(red>5000&&green>5000&&blue>5000)return Constants.GameElements.Pixals.WHITE;
-        if(red>5000&&blue>5000)return Constants.GameElements.Pixals.PURPLE;
-        if(red>5000&&green>5000)return Constants.GameElements.Pixals.YELLOW;
-        if(green>5000)return Constants.GameElements.Pixals.GREEN;
+    public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColor(getLeftARGBPercent());}
+    public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColor(getRightARGBPercent());}
+    public Constants.GameElements.Pixals detectPixelColor(double[] argb){
+        double red = argb[1];
+        double green = argb[2];
+        double blue = argb[3];
+        if(red<10&&green<10&&blue<10)return Constants.GameElements.Pixals.NULL;
+        else if(green/red>1.5&&green/blue>1.5)return Constants.GameElements.Pixals.GREEN;
+
         return Constants.GameElements.Pixals.NULL;
     }
-//    @Override
-//    public void periodic(){
-//        if(isDetectedPixelLeft())openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
-//        else openOrCloseLeft(Constants.ClawConstants.Positions.OPEN);
-//        if(isDetectedPixelRight())openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
-//        else openOrCloseRight(Constants.ClawConstants.Positions.OPEN);
-//    }
+    public double[] getLeftARGBPercent(){//A not normal, normal = ot
+        int[] argb = getLeftARGB();
+        return new double[]{argb[0],argb[1]*normalRed,argb[2]*normalGreen,argb[3]*normalBlue};
+    }
+    public double[] getRightARGBPercent(){//A not normal, normal = ot
+        int[] argb = getRightARGB();
+        return new double[]{argb[0],argb[1]*normalRed,argb[2]*normalGreen,argb[3]*normalBlue};
+    }
     public double getTime(){return seconds.get();}
 }

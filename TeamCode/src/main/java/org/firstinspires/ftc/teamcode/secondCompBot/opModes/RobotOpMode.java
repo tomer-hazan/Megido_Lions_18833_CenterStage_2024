@@ -163,8 +163,8 @@ public class RobotOpMode extends CommandOpMode {
 
 
         //controllers command
-        new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whenHeld(deployHookCommand);
-        new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whenHeld(returnHookCommand);
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(deployHookCommand);
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whileActiveOnce(returnHookCommand);
         new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
         new Trigger(() -> slideSubsystem.isBottom()).whileActiveOnce(changeToGreenCommand);
         new Trigger(() -> !slideSubsystem.isBottom()).whileActiveOnce(changeToNoneCommand);
@@ -190,6 +190,9 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("is bottom", slideSubsystem.isBottom());
         telemetry.addData("color ",switchColorsCommand.getColor());
         telemetry.addData("speed",speed);
+//        telemetry.addData("left pixel",clawSubsystem.detectPixelColorLeft());
+//        telemetry.addData("right pixel",clawSubsystem.detectPixelColorRight());
+        telemetry.addData("left argb",clawSubsystem.getLeftARGBPercent()[0]+", "+clawSubsystem.getLeftARGBPercent()[1]+", "+clawSubsystem.getLeftARGBPercent()[2]+", "+clawSubsystem.getLeftARGBPercent()[3]);
         telemetry.update();
     }
     @Override

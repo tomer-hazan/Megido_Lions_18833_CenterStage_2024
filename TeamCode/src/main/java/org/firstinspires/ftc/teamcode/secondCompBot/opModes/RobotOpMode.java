@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeColorsCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeSpeedCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsAngleCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlColorsCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlLeftClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlRightClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DeployHookCommand;
@@ -75,6 +76,7 @@ public class RobotOpMode extends CommandOpMode {
     ChangeSpeedCommand changeSpeedCommand;
     ControlClawsAngleCommand controlClawsAngleCommand;
     MoveArmCommand moveArmCommand;
+    ControlColorsCommand controlColorsCommand;
 
 
     double time;
@@ -137,8 +139,7 @@ public class RobotOpMode extends CommandOpMode {
         changeSpeedCommand = new ChangeSpeedCommand();
         controlClawsAngleCommand = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
-        new Trigger(()->clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand);
-        new Trigger(()-> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand);
+        controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.detectPixelColorLeft(),()->clawSubsystem.detectPixelColorRight());
 
     }
     private void assignCommands(){
@@ -147,6 +148,7 @@ public class RobotOpMode extends CommandOpMode {
         hookSubsystem.setDefaultCommand(pullRobotCommand);
         clawSubsystem.setDefaultCommand(controlClawsAngleCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
+        ledSubsystem.setDefaultCommand(controlColorsCommand);
 
         new Trigger(()-> (getRuntime()>=90&& driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
         new GamepadButton(driver,GamepadKeys.Button.DPAD_UP).whenHeld(deployHookCommand);
@@ -167,7 +169,8 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(changeSpeedCommand);
         new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
         new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
-
+        new Trigger(()->clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand);
+        new Trigger(()-> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand);
     }
 
 

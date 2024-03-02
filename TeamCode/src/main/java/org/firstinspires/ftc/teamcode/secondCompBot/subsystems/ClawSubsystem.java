@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 
 import java.util.function.Supplier;
 
@@ -72,12 +73,22 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return distanceSensorRight.getDistance(DistanceUnit.MM);}
     public double getLeftDistance(){return distanceSensorLeft.getDistance(DistanceUnit.MM);}
     public boolean isDetectedPixelLeft(){
-        int[] argb = getLeftARGB();
-        return getLeftDistance()<60&&(argb[1]>5000||argb[2]>5000||argb[3]>5000);
+        return getLeftDistance()<60&&detectPixelColorLeft()!=null;
     }
     public boolean isDetectedPixelRight(){
-        int[] argb = getRightARGB();
-        return getRightDistance()<60&&(argb[1]>5000||argb[2]>5000||argb[3]>5000);
+        return getRightDistance()<60&&detectPixelColorRight()!=null;
+    }
+    public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColor(colorSensorLeft.getARGB());}
+    public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColor(colorSensorRight.getARGB());}
+    public Constants.GameElements.Pixals detectPixelColor(int[] argb){
+        int red = argb[1];
+        int green = argb[2];
+        int blue = argb[3];
+        if(red>5000&&green>5000&&blue>5000)return Constants.GameElements.Pixals.WHITE;
+        if(red>5000&&blue>5000)return Constants.GameElements.Pixals.PURPLE;
+        if(red>5000&&green>5000)return Constants.GameElements.Pixals.YELLOW;
+        if(green>5000)return Constants.GameElements.Pixals.GREEN;
+        return Constants.GameElements.Pixals.NULL;
     }
 //    @Override
 //    public void periodic(){

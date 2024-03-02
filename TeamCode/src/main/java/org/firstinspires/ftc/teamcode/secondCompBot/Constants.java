@@ -79,7 +79,7 @@ public class Constants {
     public static final class ArmConstants {
         public static final double max_tick_count = 20000.0;
     }
-    public static final class GameElaments{
+    public static final class GameElements{
         public enum Pixals {
             GREEN,
             WHITE,

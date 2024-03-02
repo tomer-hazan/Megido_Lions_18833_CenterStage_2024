@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 
 public class RotateClawsToAngleCommand extends CommandBase {
-    clawSubsystem subsystem;
+    ClawSubsystem subsystem;
     private double angle;
 
-    public RotateClawsToAngleCommand(clawSubsystem subsystem, double angle){
+    public RotateClawsToAngleCommand(ClawSubsystem subsystem, double angle){
         this.subsystem=subsystem;
         this.angle=angle;
         addRequirements(subsystem);

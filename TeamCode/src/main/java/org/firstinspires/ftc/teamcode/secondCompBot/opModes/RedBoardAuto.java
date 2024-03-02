@@ -15,7 +15,7 @@
 //import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.DropPixelCommand;
 //import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.MoveLiftToHeightCommand;
 //import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.StopVisionCommand;
-//import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
+//import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 //import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
 //import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
 //import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.VisionSubsystem;
@@ -29,7 +29,7 @@
 //    SlideSubsystem slideSubsystem;
 //    InTakeSubsystem inTakeSubsystem;
 //    VisionSubsystem visionSubsystem;
-//    clawSubsystem cartridge;
+//    ClawSubsystem cartridge;
 //    SequentialCommandGroup auto;
 //    GameConstants.GameType gameType;
 //    @Override
@@ -44,7 +44,7 @@
 //        drive = driveTrainSubsystem.getSampleDrive();
 //        slideSubsystem = new SlideSubsystem(hardwareMap);
 //        inTakeSubsystem = new InTakeSubsystem(hardwareMap);
-//        cartridge = new clawSubsystem(hardwareMap);
+//        cartridge = new ClawSubsystem(hardwareMap);
 //        visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, GameConstants.StartingPosition.RED);
 //    }
 //    @Override

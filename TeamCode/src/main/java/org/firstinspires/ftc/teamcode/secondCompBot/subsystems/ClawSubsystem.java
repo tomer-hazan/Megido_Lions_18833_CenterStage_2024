@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_limit;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_start;
 
-public class clawSubsystem extends SubsystemBase {
+public class ClawSubsystem extends SubsystemBase {
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
     public final DistanceSensor distanceSensorLeft;
@@ -26,7 +26,7 @@ public class clawSubsystem extends SubsystemBase {
     public final Servo leftClaw;//continuous
     public final Servo rightClaw;
     Supplier<Double> seconds;
-    public clawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
+    public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
         this.rightClaw = hardwareMap.get(Servo.class,"right claw");
         this.leftClaw = hardwareMap.get(Servo.class,"left claw");
         rotationServo1 = new SimpleServo(hardwareMap,"claw rotation servo 1",rotation_start,rotation_limit);
@@ -69,13 +69,15 @@ public class clawSubsystem extends SubsystemBase {
     }
     public  int[] getLeftARGB(){return colorSensorLeft.getARGB();}
     public  int[] getRightARGB(){return colorSensorRight.getARGB();}
+    public double getRightDistance(){return distanceSensorRight.getDistance(DistanceUnit.MM);}
+    public double getLeftDistance(){return distanceSensorLeft.getDistance(DistanceUnit.MM);}
     public boolean isDetectedPixelLeft(){
         int[] argb = getLeftARGB();
-        return distanceSensorLeft.getDistance(DistanceUnit.MM)<60;
+        return getLeftDistance()<60&&(argb[1]>5000||argb[2]>5000||argb[3]>5000);
     }
     public boolean isDetectedPixelRight(){
         int[] argb = getRightARGB();
-        return distanceSensorRight.getDistance(DistanceUnit.MM)<60;
+        return getRightDistance()<60&&(argb[1]>5000||argb[2]>5000||argb[3]>5000);
     }
 //    @Override
 //    public void periodic(){

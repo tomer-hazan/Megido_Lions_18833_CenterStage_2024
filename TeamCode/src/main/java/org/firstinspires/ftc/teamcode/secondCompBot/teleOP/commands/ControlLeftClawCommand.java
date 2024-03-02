@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 
 public class ControlLeftClawCommand extends CommandBase {
-    clawSubsystem subsystem;
+    ClawSubsystem subsystem;
     private boolean toOpen;
     private double startTime;
 
-    public ControlLeftClawCommand(clawSubsystem subsystem, boolean toOpen){
+    public ControlLeftClawCommand(ClawSubsystem subsystem, boolean toOpen){
         this.subsystem=subsystem;
         this.toOpen=toOpen;
         addRequirements(subsystem);

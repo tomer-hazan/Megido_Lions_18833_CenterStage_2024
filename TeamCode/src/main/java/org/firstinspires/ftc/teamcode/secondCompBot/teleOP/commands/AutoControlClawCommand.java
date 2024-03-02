@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 
 public class AutoControlClawCommand extends CommandBase {
-    clawSubsystem subsystem;
+    ClawSubsystem subsystem;
 
-    public AutoControlClawCommand(clawSubsystem subsystem){
+    public AutoControlClawCommand(ClawSubsystem subsystem){
         this.subsystem=subsystem;
         addRequirements(subsystem);
     }

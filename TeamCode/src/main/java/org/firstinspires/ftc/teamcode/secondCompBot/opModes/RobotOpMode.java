@@ -13,12 +13,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.MyOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeColorsCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeSpeedCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsAngleCommand;
@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DriveCommand
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DriveHorizontalCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.LaunchAirplaneCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MecanumMovmentCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveLiftCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.PullRobotCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ReturnHookCommand;
@@ -44,7 +45,7 @@ public class RobotOpMode extends CommandOpMode {
     SlideSubsystem slideSubsystem;
     static DriveTrainSubsystem driveTrainSubsystem;
     AirplaneSubsystem airplaneSubsystem;
-    clawSubsystem clawSubsystem;
+    ClawSubsystem clawSubsystem;
     HookSubsystem hookSubsystem;
     MyOdometrySubsystem odometrySubsystem;
     ArmSubsystem armSubsystem;
@@ -56,8 +57,6 @@ public class RobotOpMode extends CommandOpMode {
     LaunchAirplaneCommand launchAirplaneCommand;
     MoveLiftCommand moveLiftCommand;
     MoveLiftCommand moveLiftSlowCommand;
-//    PullDownCommand pullDownCommand;
-//    PullUpCommand pullUpCommand;
     ReturnHookCommand returnHookCommand;
     DriveHorizontalCommand driveHorizontalCommandLeft;
     DriveHorizontalCommand driveHorizontalCommandRight;
@@ -75,6 +74,7 @@ public class RobotOpMode extends CommandOpMode {
     ChangeColorsCommand changeToNoneCommand;
     ChangeSpeedCommand changeSpeedCommand;
     ControlClawsAngleCommand controlClawsAngleCommand;
+    MoveArmCommand moveArmCommand;
 
 
     double time;
@@ -99,7 +99,7 @@ public class RobotOpMode extends CommandOpMode {
         slideSubsystem = new SlideSubsystem(hardwareMap);
         driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
         airplaneSubsystem = new AirplaneSubsystem(hardwareMap);
-        clawSubsystem = new clawSubsystem(hardwareMap,()->getRuntime());
+        clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime());
         hookSubsystem = new HookSubsystem(hardwareMap);
         odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
         ledSubsystem = new LEDSubsystem(hardwareMap);
@@ -136,6 +136,9 @@ public class RobotOpMode extends CommandOpMode {
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
         changeSpeedCommand = new ChangeSpeedCommand();
         controlClawsAngleCommand = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
+        moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
+        new Trigger(()->clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand);
+        new Trigger(()-> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand);
 
     }
     private void assignCommands(){
@@ -143,6 +146,7 @@ public class RobotOpMode extends CommandOpMode {
         slideSubsystem.setDefaultCommand(moveLiftCommand);
         hookSubsystem.setDefaultCommand(pullRobotCommand);
         clawSubsystem.setDefaultCommand(controlClawsAngleCommand);
+        armSubsystem.setDefaultCommand(moveArmCommand);
 
         new Trigger(()-> (getRuntime()>=90&& driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
         new GamepadButton(driver,GamepadKeys.Button.DPAD_UP).whenHeld(deployHookCommand);

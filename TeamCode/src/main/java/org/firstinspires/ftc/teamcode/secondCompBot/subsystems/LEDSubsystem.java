@@ -7,75 +7,75 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 
 public class LEDSubsystem extends SubsystemBase {
-    DigitalChannel redLED;
-    DigitalChannel greenLED;
-    DigitalChannel redLED2;
-    DigitalChannel greenLED2;
+    DigitalChannel redLeft;
+    DigitalChannel greenLeft;
+    DigitalChannel redRight;
+    DigitalChannel greenRight;
     public LEDSubsystem(HardwareMap hardwareMap){
-        redLED = hardwareMap.get(DigitalChannel.class,"red");
-        greenLED = hardwareMap.get(DigitalChannel.class,"green");
-        redLED.setMode(DigitalChannel.Mode.OUTPUT);
-        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
-        redLED2 = hardwareMap.get(DigitalChannel.class,"red2");
-        greenLED2 = hardwareMap.get(DigitalChannel.class,"green2");
-        redLED2.setMode(DigitalChannel.Mode.OUTPUT);
-        greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
+        redLeft = hardwareMap.get(DigitalChannel.class,"red left");
+        greenLeft = hardwareMap.get(DigitalChannel.class,"green left");
+        redLeft.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLeft.setMode(DigitalChannel.Mode.OUTPUT);
+        redRight = hardwareMap.get(DigitalChannel.class,"red right");
+        greenRight = hardwareMap.get(DigitalChannel.class,"green right");
+        redRight.setMode(DigitalChannel.Mode.OUTPUT);
+        greenRight.setMode(DigitalChannel.Mode.OUTPUT);
     }
     public void green(){
-        redLED.setState(false);
-        greenLED.setState(true);
-        redLED2.setState(false);
-        greenLED2.setState(true);
+        redLeft.setState(false);
+        greenLeft.setState(true);
+        redRight.setState(false);
+        greenRight.setState(true);
     }
     public void red(){
-        redLED.setState(true);
-        greenLED.setState(false);
-        redLED2.setState(true);
-        greenLED2.setState(false);
+        redLeft.setState(true);
+        greenLeft.setState(false);
+        redRight.setState(true);
+        greenRight.setState(false);
     }
     public void none(){
-        redLED.setState(true);
-        greenLED.setState(true);
-        redLED2.setState(true);
-        greenLED2.setState(true);
+        redLeft.setState(true);
+        greenLeft.setState(true);
+        redRight.setState(true);
+        greenRight.setState(true);
     }
     public void both(){
-        redLED.setState(false);
-        greenLED.setState(false);
-        redLED2.setState(false);
-        greenLED2.setState(false);
+        redLeft.setState(false);
+        greenLeft.setState(false);
+        redRight.setState(false);
+        greenRight.setState(false);
     }
-    public void green1(){
-        redLED.setState(false);
-        greenLED.setState(true);
+    public void greenLeft(){
+        redLeft.setState(false);
+        greenLeft.setState(true);
     }
-    public void red1(){
-        redLED.setState(true);
-        greenLED.setState(false);
+    public void redLeft(){
+        redLeft.setState(true);
+        greenLeft.setState(false);
     }
-    public void none1(){
-        redLED.setState(true);
-        greenLED.setState(true);
+    public void noneLeft(){
+        redLeft.setState(true);
+        greenLeft.setState(true);
     }
-    public void both1(){
-        redLED.setState(false);
-        greenLED.setState(false);
+    public void bothLeft(){
+        redLeft.setState(false);
+        greenLeft.setState(false);
     }
-    public void green2(){
-        redLED2.setState(false);
-        greenLED2.setState(true);
+    public void greenRight(){
+        redRight.setState(false);
+        greenRight.setState(true);
     }
-    public void red2(){
-        redLED2.setState(true);
-        greenLED2.setState(false);
+    public void redRight(){
+        redRight.setState(true);
+        greenRight.setState(false);
     }
-    public void none2(){
-        redLED2.setState(true);
-        greenLED2.setState(true);
+    public void noneRight(){
+        redRight.setState(true);
+        greenRight.setState(true);
     }
-    public void both2(){
-        redLED2.setState(false);
-        greenLED2.setState(false);
+    public void bothRight(){
+        redRight.setState(false);
+        greenRight.setState(false);
     }
     public void makeColor(int color){
         switch (color%4){
@@ -96,16 +96,16 @@ public class LEDSubsystem extends SubsystemBase {
     public void makeColorLeft(Constants.GameElements.Pixals color){
         switch (color){
             case GREEN:
-                green1();
+                greenLeft();
                 break;
             case PURPLE:
-                red1();
+                redLeft();
                 break;
             case YELLOW:
-                both1();
+                bothLeft();
                 break;
             case NULL:
-                none1();
+                noneLeft();
                 break;
         }
     }
@@ -113,16 +113,16 @@ public class LEDSubsystem extends SubsystemBase {
     public void makeColorRight(Constants.GameElements.Pixals color){
         switch (color){
             case GREEN:
-                green2();
+                greenRight();
                 break;
             case PURPLE:
-                red2();
+                redRight();
                 break;
             case YELLOW:
-                both2();
+                bothRight();
                 break;
             case NULL:
-                none2();
+                noneRight();
                 break;
         }
     }

@@ -89,7 +89,7 @@ public class RobotOpMode extends CommandOpMode {
     RotateClawsToAngleCommand rotateClawsToAngleCommand;
     ControlClawsCommand closeClawsCommand;
     ControlClawsCommand openClawsCommand;
-    ControlClawsAngleOnceCommand goTo130Command;
+    ControlClawsAngleCommand goTo130Command;
     ControlClawsAngleOnceCommand goToGroundCommand;
 //    ControlClawsPosOnceCommand goToGroundCommand;
 
@@ -155,7 +155,7 @@ public class RobotOpMode extends CommandOpMode {
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
         changeSpeedCommand = new ChangeSpeedCommand();
         controlClawsAngleCommand = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
-        goTo130Command = new ControlClawsAngleOnceCommand(clawSubsystem,130);
+        goTo130Command = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle(),130);
         goToGroundCommand = new ControlClawsAngleOnceCommand(clawSubsystem,Constants.ClawConstants.groundAngle);
 //        goToGroundCommand = new ControlClawsPosOnceCommand(clawSubsystem,Constants.ClawConstants.groundPos);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
@@ -170,7 +170,7 @@ public class RobotOpMode extends CommandOpMode {
         //default commands
         slideSubsystem.setDefaultCommand(moveLiftCommand);
         hookSubsystem.setDefaultCommand(pullRobotCommand);
-//        clawSubsystem.setDefaultCommand(controlClawsAngleCommand);
+        clawSubsystem.setDefaultCommand(new ControlClawsAngleCommand(clawSubsystem,()->armSubsystem.getAngle()));
 //        clawSubsystem.setDefaultCommand(rotateClawsToAngleCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
 
@@ -224,8 +224,14 @@ public class RobotOpMode extends CommandOpMode {
 //        telemetry.addData("left argb",clawSubsystem.getLeftARGB()[0]+", "+clawSubsystem.getLeftARGB()[1]+", "+clawSubsystem.getLeftARGB()[2]+", "+clawSubsystem.getLeftARGB()[3]);
 //        telemetry.addData("was just pressed",controller.wasJustPressed(GamepadKeys.Button.B));
 //        telemetry.addData("button",controller.getButton(GamepadKeys.Button.B));
-        telemetry.addData("flip pos",clawSubsystem.rotationServo1.getPosition());
-        telemetry.addData("flip deg",clawSubsystem.rotationServo1.getAngle());
+        double[] leftARGB = clawSubsystem.getLeftARGB();
+        telemetry.addData("left corrected argb",(int)leftARGB[0]+", "+(int)leftARGB[1]+", "+(int)leftARGB[2]+", "+(int)leftARGB[3]);
+        double[] rightARGB = clawSubsystem.getRightARGB();
+        telemetry.addData("right corrected argb",(int)rightARGB[0]+", "+(int)rightARGB[1]+", "+(int)rightARGB[2]+", "+(int)rightARGB[3]);
+//        telemetry.addData("left argb",clawSubsystem.colorSensorLeft.red()+", "+clawSubsystem.colorSensorLeft.green()+", "+clawSubsystem.colorSensorLeft.blue());
+//        telemetry.addData("right argb",clawSubsystem.colorSensorRight.red()+", "+clawSubsystem.colorSensorRight.green()+", "+clawSubsystem.colorSensorRight.blue());
+//        telemetry.addData("flip pos",clawSubsystem.rotationServo1.getPosition());
+//        telemetry.addData("flip deg",clawSubsystem.rotationServo1.getAngle());
         telemetry.update();
     }
     @Override

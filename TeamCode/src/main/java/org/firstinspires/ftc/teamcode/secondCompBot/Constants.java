@@ -77,10 +77,13 @@ public class Constants {
         public static final double rotation_min = groundPos;
         public static final double rotation_max = 1;
         public static final double angle_threshold = 90;
-        public static final double normalRed = 255.0/11500;
-        public static final double normalGreen = 255.0/20700;
-        public static final double normalBlue = 255.0/17400;
-        public static final double groundAngle = 68.4;
+        public static final double correctedRedRight = 255.0/12100;
+        public static final double correctedGreenRight = 255.0/21811;
+        public static final double correctedBlueRight = 255.0/18280;
+        public static final double correctedRedLeft = 255.0/7980;
+        public static final double correctedGreenLeft = 255.0/15690;
+        public static final double correctedBlueLeft = 255.0/16470;
+        public static final double groundAngle = 78;
 
     }
     public static final class ArmConstants {

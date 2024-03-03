@@ -15,9 +15,12 @@ import org.firstinspires.ftc.teamcode.secondCompBot.opModes.RobotOpMode;
 import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.Positions;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.normalBlue;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.normalGreen;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.normalRed;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedBlueLeft;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedBlueRight;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedGreenLeft;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedGreenRight;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedLeft;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedRight;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_limit;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_max;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_min;
@@ -33,8 +36,8 @@ public class ClawSubsystem extends SubsystemBase {
     public final Servo leftClaw;//continuous
     public final Servo rightClaw;
     Supplier<Double> seconds;
-    double[] normalArgbLeft;
-    double[] normalArgbRight;
+    double[] correctedArgbLeft;
+    double[] correctedArgbRight;
     double disLeft;
     double disRight;
     public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
@@ -51,8 +54,8 @@ public class ClawSubsystem extends SubsystemBase {
         rightClaw.setDirection(Servo.Direction.REVERSE);
         int[] argbLeft = colorSensorLeft.getARGB();
         int[] argbRight = colorSensorRight.getARGB();
-        normalArgbLeft = new double[]{argbLeft[0],argbLeft[1]*normalRed,argbLeft[2]*normalGreen,argbLeft[3]*normalBlue};
-        normalArgbRight = new double[]{argbRight[0],argbRight[1]*normalRed,argbRight[2]*normalGreen,argbRight[3]*normalBlue};
+        correctedArgbLeft = new double[]{argbLeft[0],argbLeft[1]* correctedRedLeft,argbLeft[2]* correctedGreenLeft,argbLeft[3]* correctedBlueLeft};
+        correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
         disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
         disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
         openOrCloseLeft(Positions.OPEN);
@@ -63,12 +66,12 @@ public class ClawSubsystem extends SubsystemBase {
     public void periodic() {
         if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==0){
             int[] argbRight = colorSensorRight.getARGB();
-            normalArgbRight = new double[]{argbRight[0],argbRight[1]*normalRed,argbRight[2]*normalGreen,argbRight[3]*normalBlue};
+            correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
             disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
         }
         if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==1){
             int[] argbLeft = colorSensorLeft.getARGB();
-            normalArgbLeft = new double[]{argbLeft[0],argbLeft[1]*normalRed,argbLeft[2]*normalGreen,argbLeft[3]*normalBlue};
+            correctedArgbLeft = new double[]{argbLeft[0],argbLeft[1]* correctedRedLeft,argbLeft[2]* correctedGreenLeft,argbLeft[3]* correctedBlueLeft};
             disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
         }
     }
@@ -103,26 +106,37 @@ public class ClawSubsystem extends SubsystemBase {
         rotationServo1.setPosition(pos);
         rotationServo2.setPosition(pos);
     }
-    public  double[] getLeftARGB(){return normalArgbLeft;}
-    public  double[] getRightARGB(){return normalArgbRight;}
+    public  double[] getLeftARGB(){return correctedArgbLeft;}
+    public  double[] getRightARGB(){return correctedArgbRight;}
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<60&&detectPixelColorLeft()!=null;
+        return getLeftDistance()<60&&detectPixelColorLeft()!=null;//toDo check if works well with far pixels
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<60&&detectPixelColorRight()!=null;
+        return getRightDistance()<60&&detectPixelColorRight()!=null;//toDo check if works well with far pixels
     }
-    public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColor(getLeftARGB());}
-    public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColor(getRightARGB());}
-    public Constants.GameElements.Pixals detectPixelColor(double[] argb){//toDO finish this
+    public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
+    public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}
+    public Constants.GameElements.Pixals detectPixelColorRight(double[] argb){
         double red = argb[1];
         double green = argb[2];
         double blue = argb[3];
         if(red<10&&green<10&&blue<10)return Constants.GameElements.Pixals.NULL;
+        else if (red>170&&green>170&&blue>170) return Constants.GameElements.Pixals.WHITE;
         else if(green/red>1.5&&green/blue>1.5)return Constants.GameElements.Pixals.GREEN;
-
-        return Constants.GameElements.Pixals.NULL;
+        else if (blue/green>1.3) return Constants.GameElements.Pixals.PURPLE;
+        else return Constants.GameElements.Pixals.YELLOW;
+    }
+    public Constants.GameElements.Pixals detectPixelColorLeft(double[] argb){
+        double red = argb[1];
+        double green = argb[2];
+        double blue = argb[3];
+        if(red<10&&green<10&&blue<10)return Constants.GameElements.Pixals.NULL;
+        else if (red>270&&green>270&&blue>270) return Constants.GameElements.Pixals.WHITE;
+        else if(green/red>1.5&&green/blue>1.5)return Constants.GameElements.Pixals.GREEN;
+        else if (blue/green>1.3) return Constants.GameElements.Pixals.PURPLE;
+        else return Constants.GameElements.Pixals.YELLOW;
     }
     public double getTime(){return seconds.get();}
 }

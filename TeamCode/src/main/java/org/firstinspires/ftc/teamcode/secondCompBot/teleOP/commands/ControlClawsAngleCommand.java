@@ -17,15 +17,15 @@ public class ControlClawsAngleCommand extends CommandBase {
     public ControlClawsAngleCommand(ClawSubsystem subsystem, Supplier<Double> angle){
         this.subsystem=subsystem;
         this.armAngle=angle;
-        defaultAngle=groundAngle;
+        defaultAngle = groundAngle;
         addRequirements(subsystem);
     }
 
     @Override
     public void execute() {
-        if(armAngle.get()<angle_threshold)subsystem.turnToAngle(68);
-        else subsystem.turnToAngle(defaultAngle);
-
+//        if(armAngle.get()<angle_threshold)subsystem.turnToAngle(defaultAngle);\
+        if(armAngle.get()<angle_threshold)subsystem.turnToAngle(groundAngle);
+        else subsystem.turnToAngle(150);
     }
     public void setDefaultAngle(double angle){
         defaultAngle = angle;

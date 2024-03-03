@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveArmComma
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveLiftCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.PullRobotCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ReturnHookCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToAngleCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
 
 @TeleOp
@@ -77,6 +78,7 @@ public class RobotOpMode extends CommandOpMode {
     ControlClawsAngleCommand controlClawsAngleCommand;
     MoveArmCommand moveArmCommand;
     ControlColorsCommand controlColorsCommand;
+    RotateClawsToAngleCommand rotateClawsToAngleCommand;
 
 
 
@@ -141,14 +143,16 @@ public class RobotOpMode extends CommandOpMode {
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
         controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.detectPixelColorLeft(),()->clawSubsystem.detectPixelColorRight());
         pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->controller.getButton(GamepadKeys.Button.DPAD_UP),()->controller.getButton(GamepadKeys.Button.DPAD_DOWN));
-
+        rotateClawsToAngleCommand = new RotateClawsToAngleCommand(clawSubsystem, ()->controller.getRightX()*360);
     }
     private void assignCommands(){
         //default commands
         slideSubsystem.setDefaultCommand(moveLiftCommand);
         hookSubsystem.setDefaultCommand(pullRobotCommand);
         clawSubsystem.setDefaultCommand(controlClawsAngleCommand);
+//        clawSubsystem.setDefaultCommand(rotateClawsToAngleCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
+
         ledSubsystem.setDefaultCommand(controlColorsCommand);
 
         //drivers commands
@@ -165,7 +169,7 @@ public class RobotOpMode extends CommandOpMode {
         //controllers command
         new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(deployHookCommand);
         new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whileActiveOnce(returnHookCommand);
-        new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
+        //new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
         new Trigger(() -> slideSubsystem.isBottom()).whileActiveOnce(changeToGreenCommand);
         new Trigger(() -> !slideSubsystem.isBottom()).whileActiveOnce(changeToNoneCommand);
         if(slideSubsystem.isBottom())schedule(changeToGreenCommand);
@@ -188,11 +192,15 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("pos","("+pose.getX()+", "+pose.getY()+")");
         telemetry.addData("heading",pose.getHeading());
         telemetry.addData("is bottom", slideSubsystem.isBottom());
+        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
+        telemetry.addData("arm deg",armSubsystem.getAngle());
+        telemetry.addData("claw deg",clawSubsystem.rotationServo1.getAngle());
+        telemetry.addData("claw deg2",clawSubsystem.rotationServo2.getAngle());
         telemetry.addData("color ",switchColorsCommand.getColor());
         telemetry.addData("speed",speed);
-//        telemetry.addData("left pixel",clawSubsystem.detectPixelColorLeft());
-//        telemetry.addData("right pixel",clawSubsystem.detectPixelColorRight());
-        telemetry.addData("left argb",clawSubsystem.getLeftARGBPercent()[0]+", "+clawSubsystem.getLeftARGBPercent()[1]+", "+clawSubsystem.getLeftARGBPercent()[2]+", "+clawSubsystem.getLeftARGBPercent()[3]);
+        telemetry.addData("left pixel",clawSubsystem.detectPixelColorLeft());
+        telemetry.addData("right pixel",clawSubsystem.detectPixelColorRight());
+        telemetry.addData("left argb",clawSubsystem.getLeftARGB()[0]+", "+clawSubsystem.getLeftARGB()[1]+", "+clawSubsystem.getLeftARGB()[2]+", "+clawSubsystem.getLeftARGB()[3]);
         telemetry.update();
     }
     @Override

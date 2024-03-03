@@ -21,8 +21,8 @@ public class ControlClawsAngleCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if(armAngle.get()<angle_threshold)subsystem.setPos(0);
-        else subsystem.turnToAngle(rotation_limit- armAngle.get());
+        if(armAngle.get()<angle_threshold)subsystem.turnToAngle(68);
+        else subsystem.turnToAngle(rotation_limit- armAngle.get());//toDo get the right angle limit
 
     }
 

@@ -75,14 +75,15 @@ public class Constants {
         public static final double rotation_limit = 180;
         public static final double rotation_min = 0.45;
         public static final double rotation_max = 1;
-        public static final double angle_threshold = 30;
+        public static final double angle_threshold = 90;
         public static final double normalRed = 255.0/11500;
         public static final double normalGreen = 255.0/20700;
         public static final double normalBlue = 255.0/17400;
+        public static final double groundAngle = 150;
 
     }
     public static final class ArmConstants {
-        public static final double max_tick_count = 20000.0;
+        public static final double max_tick_count = 5100;
     }
     public static final class GameElements{
         public enum Pixals {

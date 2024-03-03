@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -34,10 +35,12 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveArmComma
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveLiftCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.PullRobotCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ReturnHookCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToAngleCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
 
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
+    ToggleButtonReader aToggle;
     //controllers
     static GamepadEx driver;
     public static Constants.GameConstants.GameType gameType;
@@ -45,6 +48,8 @@ public class RobotOpMode extends CommandOpMode {
     //subsystems
     SlideSubsystem slideSubsystem;
     static DriveTrainSubsystem driveTrainSubsystem;
+    public static double sensorFrame=0;
+    public static double frameMod=5;
     AirplaneSubsystem airplaneSubsystem;
     ClawSubsystem clawSubsystem;
     HookSubsystem hookSubsystem;
@@ -75,8 +80,10 @@ public class RobotOpMode extends CommandOpMode {
     ChangeColorsCommand changeToNoneCommand;
     ChangeSpeedCommand changeSpeedCommand;
     ControlClawsAngleCommand controlClawsAngleCommand;
+    ControlClawsAngleCommand controlClawsAngleCommand90;
     MoveArmCommand moveArmCommand;
     ControlColorsCommand controlColorsCommand;
+    RotateClawsToAngleCommand rotateClawsToAngleCommand;
 
 
 
@@ -97,6 +104,8 @@ public class RobotOpMode extends CommandOpMode {
         initCommands();
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
         period = Constants.GameConstants.gamePeriod.teleOp;
+        aToggle = new ToggleButtonReader(controller, GamepadKeys.Button.A);
+
     }
     private void initSubsystems(){
         slideSubsystem = new SlideSubsystem(hardwareMap);
@@ -138,17 +147,21 @@ public class RobotOpMode extends CommandOpMode {
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
         changeSpeedCommand = new ChangeSpeedCommand();
         controlClawsAngleCommand = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
+        controlClawsAngleCommand90 = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
+        controlClawsAngleCommand90.setDefaultAngle(130);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
         controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.detectPixelColorLeft(),()->clawSubsystem.detectPixelColorRight());
         pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->controller.getButton(GamepadKeys.Button.DPAD_UP),()->controller.getButton(GamepadKeys.Button.DPAD_DOWN));
-
+        rotateClawsToAngleCommand = new RotateClawsToAngleCommand(clawSubsystem, ()->controller.getRightX()*360);
     }
     private void assignCommands(){
         //default commands
         slideSubsystem.setDefaultCommand(moveLiftCommand);
         hookSubsystem.setDefaultCommand(pullRobotCommand);
         clawSubsystem.setDefaultCommand(controlClawsAngleCommand);
+//        clawSubsystem.setDefaultCommand(rotateClawsToAngleCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
+
         ledSubsystem.setDefaultCommand(controlColorsCommand);
 
         //drivers commands
@@ -165,7 +178,7 @@ public class RobotOpMode extends CommandOpMode {
         //controllers command
         new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(deployHookCommand);
         new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whileActiveOnce(returnHookCommand);
-        new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
+        //new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
         new Trigger(() -> slideSubsystem.isBottom()).whileActiveOnce(changeToGreenCommand);
         new Trigger(() -> !slideSubsystem.isBottom()).whileActiveOnce(changeToNoneCommand);
         if(slideSubsystem.isBottom())schedule(changeToGreenCommand);
@@ -177,7 +190,7 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(controller, GamepadKeys.Button.RIGHT_BUMPER).whileHeld(openRightClawCommand);
         new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(closeLeftClawCommand);
         new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(closeRightClawCommand);
-
+        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(controlClawsAngleCommand,controlClawsAngleCommand90);
         //new Trigger(() -> Math.abs(controller.getLeftY())>0.05).whileActiveContinuous(moveLiftSlowCommand);
     }
 
@@ -188,11 +201,18 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("pos","("+pose.getX()+", "+pose.getY()+")");
         telemetry.addData("heading",pose.getHeading());
         telemetry.addData("is bottom", slideSubsystem.isBottom());
+        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
+        telemetry.addData("arm deg",armSubsystem.getAngle());
+        telemetry.addData("claw deg",clawSubsystem.rotationServo1.getAngle());
+        telemetry.addData("claw deg2",clawSubsystem.rotationServo2.getAngle());
         telemetry.addData("color ",switchColorsCommand.getColor());
         telemetry.addData("speed",speed);
-//        telemetry.addData("left pixel",clawSubsystem.detectPixelColorLeft());
-//        telemetry.addData("right pixel",clawSubsystem.detectPixelColorRight());
-        telemetry.addData("left argb",clawSubsystem.getLeftARGBPercent()[0]+", "+clawSubsystem.getLeftARGBPercent()[1]+", "+clawSubsystem.getLeftARGBPercent()[2]+", "+clawSubsystem.getLeftARGBPercent()[3]);
+        telemetry.addData("left pixel",clawSubsystem.detectPixelColorLeft());
+        telemetry.addData("right pixel",clawSubsystem.detectPixelColorRight());
+        telemetry.addData("left argb",clawSubsystem.getLeftARGB()[0]+", "+clawSubsystem.getLeftARGB()[1]+", "+clawSubsystem.getLeftARGB()[2]+", "+clawSubsystem.getLeftARGB()[3]);
+        telemetry.addData("filipy zavit",controlClawsAngleCommand.getDefaultAngle());
+        telemetry.addData("was just pressed",controller.wasJustPressed(GamepadKeys.Button.B));
+        telemetry.addData("button",controller.getButton(GamepadKeys.Button.B));
         telemetry.update();
     }
     @Override
@@ -201,5 +221,6 @@ public class RobotOpMode extends CommandOpMode {
         time= getRuntime();
         pose = odometrySubsystem.getPose();
         odometrySubsystem.update();
+        sensorFrame++;
     }
 }

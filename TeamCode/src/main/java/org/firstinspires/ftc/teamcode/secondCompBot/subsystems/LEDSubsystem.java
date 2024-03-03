@@ -21,6 +21,7 @@ public class LEDSubsystem extends SubsystemBase {
         redRight.setMode(DigitalChannel.Mode.OUTPUT);
         greenRight.setMode(DigitalChannel.Mode.OUTPUT);
     }
+
     public void green(){
         redLeft.setState(false);
         greenLeft.setState(true);

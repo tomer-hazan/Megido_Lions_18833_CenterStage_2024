@@ -4,13 +4,11 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 
-import java.util.function.Supplier;
-
-public class RotateClawsToAngleCommand extends CommandBase {
+public class RotateClawsToOneAngleCommand extends CommandBase {
     ClawSubsystem subsystem;
-    private  Supplier<Double> angle;
+    private  double angle;
 
-    public RotateClawsToAngleCommand(ClawSubsystem subsystem, Supplier<Double> angle){
+    public RotateClawsToOneAngleCommand(ClawSubsystem subsystem, double angle){
         this.subsystem=subsystem;
         this.angle=angle;
         addRequirements(subsystem);
@@ -18,12 +16,7 @@ public class RotateClawsToAngleCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        subsystem.turnToAngle(angle.get());
-    }
-
-    @Override
-    public void execute() {
-        subsystem.turnToAngle(angle.get());
+        subsystem.turnToAngle(angle);
     }
 
     @Override

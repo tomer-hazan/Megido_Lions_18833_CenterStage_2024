@@ -15,7 +15,7 @@ public class SlideSubsystem extends SubsystemBase{
         motor.resetEncoder();
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor.set(0);
-        motor.setInverted(true);
+        motor.setInverted(false);
     }
 
     @Override

@@ -173,7 +173,7 @@ public class RobotOpMode extends CommandOpMode {
         clawSubsystem.setDefaultCommand(new ControlClawsAngleCommand(clawSubsystem,()->armSubsystem.getAngle()));
 //        clawSubsystem.setDefaultCommand(rotateClawsToAngleCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
-
+        driveTrainSubsystem.setDefaultCommand(driveCommand);
         ledSubsystem.setDefaultCommand(controlColorsCommand);
 
         //drivers commands
@@ -195,7 +195,7 @@ public class RobotOpMode extends CommandOpMode {
         new Trigger(() -> !slideSubsystem.isBottom()).whileActiveOnce(changeToNoneCommand);
         if(slideSubsystem.isBottom())schedule(changeToGreenCommand);
         else schedule(changeToNoneCommand);
-        driveTrainSubsystem.setDefaultCommand(driveCommand);
+
         new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
         new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
         new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whileHeld(openLeftClawCommand);
@@ -232,6 +232,7 @@ public class RobotOpMode extends CommandOpMode {
 //        telemetry.addData("right argb",clawSubsystem.colorSensorRight.red()+", "+clawSubsystem.colorSensorRight.green()+", "+clawSubsystem.colorSensorRight.blue());
 //        telemetry.addData("flip pos",clawSubsystem.rotationServo1.getPosition());
 //        telemetry.addData("flip deg",clawSubsystem.rotationServo1.getAngle());
+        telemetry.addData("arm", armSubsystem.motor.getCurrentPosition());
         telemetry.update();
     }
     @Override

@@ -9,12 +9,12 @@ import java.util.function.Supplier;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ArmConstants.f;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ArmConstants.ticks_in_degree;
 
-public class MoveArmCommand extends CommandBase {
+public class PositionControlArmCommand extends CommandBase {
     ArmSubsystem subsystem;
     Supplier<Double> power;
     public int target;
     boolean isStopped;
-    public MoveArmCommand(ArmSubsystem subsystem,Supplier<Double> power){
+    public PositionControlArmCommand(ArmSubsystem subsystem, Supplier<Double> power){
         this.subsystem=subsystem;
         this.power = power;
         addRequirements(subsystem);

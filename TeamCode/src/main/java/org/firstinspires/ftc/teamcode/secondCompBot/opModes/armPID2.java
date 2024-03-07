@@ -9,9 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
+
 @Config
 @TeleOp
-public class armPID extends OpMode {
+public class armPID2 extends OpMode {
     PIDController controller;
     public static double p=0.025,i=0.25,d=0.0055;
     public static double f=0.15;
@@ -28,7 +30,7 @@ public class armPID extends OpMode {
         controller.setTolerance(50);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm = new MotorEx(hardwareMap,"slide");
+        arm = new MotorEx(hardwareMap,"arm");
         //arm.encoder.setDirection(Motor.Direction.REVERSE);
         arm.setInverted(true);
 //        slide = new MotorEx(hardwareMap,"slide");
@@ -39,6 +41,7 @@ public class armPID extends OpMode {
 //        slide.setRunMode(Motor.RunMode.PositionControl);
         telemetry.addData("pos",arm.getCurrentPosition());
         telemetry.addData("target", armTarget);
+        telemetry.addData("slideTarget",slideTarget);
 //        telemetry.addData("slidePos",slide.getCurrentPosition());
         telemetry.update();
     }
@@ -46,13 +49,15 @@ public class armPID extends OpMode {
     @Override
     public void loop() {
         controller.setPID(p,i,d);
+        if(gamepad1.left_stick_y<0)armTarget= (int) Constants.ArmConstants.max_tick_count;
+        else armTarget=0;
         int armPos = arm.getCurrentPosition();
         double pid = controller.calculate(armPos, armTarget);
         double ff = Math.cos(armTarget /ticks_in_degree)*f;
         double power = pid+ff;
         if(gamepad1.a)arm.resetEncoder();
 
-        arm.set(power);
+        arm.set(power*Math.abs(gamepad1.left_stick_y));
 //        slide.setTargetPosition(slideTarget);
 //        slide.set(0.75);
         telemetry.addData("pos",armPos);

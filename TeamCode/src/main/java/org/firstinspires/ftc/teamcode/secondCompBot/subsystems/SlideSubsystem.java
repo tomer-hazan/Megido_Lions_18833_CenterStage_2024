@@ -10,7 +10,7 @@ public class SlideSubsystem extends SubsystemBase{
     public final MotorEx   motor;
     public SlideSubsystem(HardwareMap hardwareMap){
         this.motor = new MotorEx(hardwareMap,"slide");
-        motor.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.encoder.setDirection(Motor.Direction.REVERSE);
         motor.resetEncoder();
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -25,7 +25,7 @@ public class SlideSubsystem extends SubsystemBase{
         motor.setRunMode(mode);
     }
 
-    public double getHeight(){
+    public int getHeight(){
         return motor.getCurrentPosition() ;
     }
 

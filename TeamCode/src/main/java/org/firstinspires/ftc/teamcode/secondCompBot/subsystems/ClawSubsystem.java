@@ -2,15 +2,12 @@ package org.firstinspires.ftc.teamcode.secondCompBot.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.SensorColor;
-import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
-import org.firstinspires.ftc.teamcode.secondCompBot.opModes.RobotOpMode;
 
 import java.util.function.Supplier;
 
@@ -21,18 +18,14 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedGreenRight;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedLeft;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedRight;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_limit;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_max;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_min;
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.rotation_start;
 
 public class ClawSubsystem extends SubsystemBase {
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
     public final DistanceSensor distanceSensorLeft;
     public final DistanceSensor distanceSensorRight;
-    public final ServoEx rotationServo1;
-    public final ServoEx rotationServo2;
+    Positions leftClawPos;
+    Positions rightClawPos;
     public final Servo leftClaw;//continuous
     public final Servo rightClaw;
     Supplier<Double> seconds;
@@ -43,14 +36,11 @@ public class ClawSubsystem extends SubsystemBase {
     public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
         this.rightClaw = hardwareMap.get(Servo.class,"right claw");
         this.leftClaw = hardwareMap.get(Servo.class,"left claw");
-        rotationServo1 = new SimpleServo(hardwareMap,"flip servo 1",rotation_start,rotation_limit);
-        rotationServo2 = new SimpleServo(hardwareMap,"flip servo 2",rotation_start,rotation_limit);
         colorSensorLeft = new SensorColor(hardwareMap,"color sensor left");
         colorSensorRight = new SensorColor(hardwareMap,"color sensor right");
         distanceSensorLeft = hardwareMap.get(DistanceSensor.class,"color sensor left");
         distanceSensorRight = hardwareMap.get(DistanceSensor.class,"color sensor right");
         this.seconds = seconds;
-        rotationServo2.setInverted(false);
         rightClaw.setDirection(Servo.Direction.REVERSE);
         int[] argbLeft = colorSensorLeft.getARGB();
         int[] argbRight = colorSensorRight.getARGB();
@@ -64,47 +54,55 @@ public class ClawSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==0){
+//        if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==0){
+//            int[] argbRight = colorSensorRight.getARGB();
+//            correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
+//            disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
+//        }
+//        if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==1){
+//            int[] argbLeft = colorSensorLeft.getARGB();
+//            correctedArgbLeft = new double[]{argbLeft[0],argbLeft[1]* correctedRedLeft,argbLeft[2]* correctedGreenLeft,argbLeft[3]* correctedBlueLeft};
+//            disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
+//        }
+        if(rightClawPos==Positions.OPEN){
             int[] argbRight = colorSensorRight.getARGB();
             correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
             disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
+        }else{
+            colorSensorRight.disable();
         }
-        if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==1){
+        if(leftClawPos==Positions.OPEN){
             int[] argbLeft = colorSensorLeft.getARGB();
             correctedArgbLeft = new double[]{argbLeft[0],argbLeft[1]* correctedRedLeft,argbLeft[2]* correctedGreenLeft,argbLeft[3]* correctedBlueLeft};
             disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
+        }else{
+            colorSensorLeft.disable();
         }
     }
 
     public void openOrCloseLeft(Positions position){
         switch (position){
             case CLOSE:
-                leftClaw.setPosition(0.65);
+                leftClaw.setPosition(0.7);
+                leftClawPos=Positions.CLOSE;
                 break;
             case OPEN:
                 leftClaw.setPosition(0.95);
+                leftClawPos=Positions.OPEN;
                 break;
         }
     }
     public void openOrCloseRight(Positions position){
         switch (position){
             case CLOSE:
-                rightClaw.setPosition(0.45);
+                rightClaw.setPosition(0.52);
+                rightClawPos=Positions.CLOSE;
                 break;
             case OPEN:
                 rightClaw.setPosition(0.8);
+                rightClawPos=Positions.OPEN;
                 break;
         }
-    }
-    public void turnToAngle(double angle){
-        rotationServo1.turnToAngle(angle);
-        rotationServo2.turnToAngle(angle);
-    }
-    public void setPos(double pos){
-        if(pos<rotation_min)pos=rotation_min;
-        if(pos>rotation_max)pos=rotation_max;
-        rotationServo1.setPosition(pos);
-        rotationServo2.setPosition(pos);
     }
     public  double[] getLeftARGB(){return correctedArgbLeft;}
     public  double[] getRightARGB(){return correctedArgbRight;}

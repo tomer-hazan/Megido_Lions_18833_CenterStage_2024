@@ -133,8 +133,9 @@ public final class ShapeDetectionUtil {
                 Imgproc.RETR_EXTERNAL,
                 Imgproc.CHAIN_APPROX_NONE
         );
-        final List<MatOfPoint> filteredContours = allContours.stream()
-                .filter(contour -> {return Imgproc.contourArea(contour)>25000 && contour.toArray().length>=7 && contour.toArray().length<=9;}).collect(Collectors.toList());
+//        final List<MatOfPoint> filteredContours = allContours.stream()
+//                .filter(contour -> {return Imgproc.contourArea(contour)>25000 && contour.toArray().length>=7 && contour.toArray().length<=9;}).collect(Collectors.toList());
+        final List<MatOfPoint> filteredContours = allContours.stream().collect(Collectors.toList());
         return filteredContours;
     }
 }

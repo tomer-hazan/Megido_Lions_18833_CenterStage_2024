@@ -78,14 +78,15 @@ public class VisionSubsystem extends SubsystemBase {
             else gameType = Constants.GameConstants.GameType.CENTER;
             ShapeDetectionUtil.markOuterContour(processed,input);
              filterd.release();
-             processed.release();
+             //processed.release();
              telemetry.addData("game type",gameType);
+             telemetry.addData("largest",largestContour.toArray().length);
              telemetry.update();
             for (MatOfPoint contour: allContours) {
                 contour.release();
             }
 
-            return input;
+            return processed;
         }
 
 
@@ -112,7 +113,7 @@ public class VisionSubsystem extends SubsystemBase {
         center = new Rect(camera_width/3,0,camera_width/3 ,camera_height);
         right = new Rect((camera_width/3)*2,0,camera_width/3,camera_height);
         this.telemetry = telemetry;
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

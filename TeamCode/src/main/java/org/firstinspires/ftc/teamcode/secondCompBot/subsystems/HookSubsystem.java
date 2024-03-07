@@ -15,19 +15,21 @@ public class HookSubsystem extends SubsystemBase {
         rightServo = hardwareMap.get(Servo.class,"right hook");
         leftServo = hardwareMap.get(Servo.class,"left hook");
         suspension = new MotorEx(hardwareMap,"suspension");
+        suspension.setInverted(true);
         suspension.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        leftServo.setDirection(Servo.Direction.REVERSE);//toDo check
     }
 
     public double getHookPosition() {
         return rightServo.getPosition();
     }
     public void raiseHook(){
-        rightServo.setPosition(1);
-        leftServo.setPosition(1);
+        rightServo.setPosition(0);
+        leftServo.setPosition(0.5);
     }
     public void lowerHook(){
-        rightServo.setPosition(0);
-        leftServo.setPosition(0);
+        rightServo.setPosition(1);
+        leftServo.setPosition(1);
     }
     public void pullUp(){suspension.set(1);}
     public void pullDown(){suspension.set(-1);}

@@ -6,24 +6,24 @@ import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.JointSubsystem;
 
 import java.util.function.Supplier;
 
-public class RotateClawsToAngleCommand extends CommandBase {
+public class RotateClawsToPosCommand extends CommandBase {
     JointSubsystem subsystem;
-    private  Supplier<Double> angle;
+    private  Supplier<Double> pos;
 
-    public RotateClawsToAngleCommand(JointSubsystem subsystem, Supplier<Double> angle){
+    public RotateClawsToPosCommand(JointSubsystem subsystem, Supplier<Double> pos){
         this.subsystem=subsystem;
-        this.angle=angle;
+        this.pos=pos;
         addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
-        subsystem.turnToAngle(angle.get());
+        subsystem.setPos(pos.get());
     }
 
     @Override
     public void execute() {
-        subsystem.turnToAngle(angle.get());
+        subsystem.setPos(pos.get());
     }
 
     @Override

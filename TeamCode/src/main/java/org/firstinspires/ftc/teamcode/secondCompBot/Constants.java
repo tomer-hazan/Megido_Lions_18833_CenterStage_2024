@@ -71,24 +71,36 @@ public class Constants {
             OPEN,
             CLOSE
         }
-        public static final double rotation_start = 0;
-        public static final double rotation_limit = 180;
-        public static final double groundPos = 0.38;
-        public static final double rotation_min = groundPos;
-        public static final double rotation_max = 1;
-        public static final double angle_threshold = 90;
+
+
         public static final double correctedRedRight = 255.0/12100;
         public static final double correctedGreenRight = 255.0/21811;
         public static final double correctedBlueRight = 255.0/18280;
         public static final double correctedRedLeft = 255.0/7980;
         public static final double correctedGreenLeft = 255.0/15690;
         public static final double correctedBlueLeft = 255.0/16470;
-        public static final double groundAngle = 78;
 
+
+    }
+    public static final class JointConstants{
+        public static final double angle_threshold = 90;
+        public static final double groundAngle = 78;
+        public static final double rotation_start = 0;
+        public static final double rotation_limit = 180;
+        public static final double groundPos = 0.54;
+        public static final double deg90Pos = 0.925;
+        public static final double rotation_min = groundPos;
+        public static final double rotation_max = 1;
     }
     public static final class ArmConstants {
         public static final double max_tick_count = 5400;
-        private final double ticks_in_degree=2790/119;
+        public static final double ticks_in_degree=2790/119;
+        public static double p=0.025,i=0.25,d=0.0055;
+        public static double f=0.15;
+        public enum State {
+            MOVING,
+            STAND_STILL
+        }
     }
     public static final class GameElements{
         public enum Pixals {
@@ -159,12 +171,12 @@ public class Constants {
         public static double RedValueThresholdLow = 133;
         public static double RedValueThresholdHigh = 255;
 
-        public static double BlueHueThresholdLow = 99;
+        public static double BlueHueThresholdLow = 31;
         public static double BlueHueThresholdHigh = 180;
-        public static double BlueSaturationThresholdLow = 57;
+        public static double BlueSaturationThresholdLow = 122;
         public static double BlueSaturationThresholdHigh = 255;
-        public static double BlueValueThresholdLow = 0;
-        public static double BlueValueThresholdHigh = 255;
+        public static double BlueValueThresholdLow = 73;
+        public static double BlueValueThresholdHigh = 186;
 
     }
 

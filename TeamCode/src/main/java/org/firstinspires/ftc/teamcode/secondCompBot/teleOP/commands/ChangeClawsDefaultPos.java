@@ -4,23 +4,21 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.JointSubsystem;
 
-public class RotateClawsToOneAngleCommand extends CommandBase {
+public class ChangeClawsDefaultPos extends CommandBase {
     JointSubsystem subsystem;
-    private  double angle;
-
-    public RotateClawsToOneAngleCommand(JointSubsystem subsystem, double angle){
-        this.subsystem=subsystem;
-        this.angle=angle;
-        addRequirements(subsystem);
+    double newPos;
+    public ChangeClawsDefaultPos(JointSubsystem jointSubsystem,double pos){
+        subsystem = jointSubsystem;
+        newPos = pos;
     }
 
     @Override
     public void initialize() {
-        subsystem.turnToAngle(angle);
+        subsystem.setDefaultPose(newPos);
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

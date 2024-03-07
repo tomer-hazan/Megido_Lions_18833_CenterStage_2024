@@ -26,6 +26,7 @@ public class MoveLiftCommand extends CommandBase {
     public void execute() {
         lift.setRunMode(Motor.RunMode.RawPower);
         lift.setPower(joyStick.get());
+
     }
     public double getPower(){
         return joyStick.get();

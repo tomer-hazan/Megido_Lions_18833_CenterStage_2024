@@ -18,14 +18,16 @@ import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.JointSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.MyOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeClawsDefaultPos;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeColorsCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeSpeedCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsAngleCommand;
-import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsAngleOnceCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlColorsCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlLeftClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlRightClawCommand;
@@ -39,6 +41,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveLiftComm
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.PullRobotCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ReturnHookCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToAngleCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
 
 @TeleOp
@@ -59,6 +62,7 @@ public class RobotOpMode extends CommandOpMode {
     MyOdometrySubsystem odometrySubsystem;
     ArmSubsystem armSubsystem;
     LEDSubsystem ledSubsystem;
+    JointSubsystem jointSubsystem;
     public static int speed;
     //commands
     DeployHookCommand deployHookCommand;
@@ -89,13 +93,16 @@ public class RobotOpMode extends CommandOpMode {
     RotateClawsToAngleCommand rotateClawsToAngleCommand;
     ControlClawsCommand closeClawsCommand;
     ControlClawsCommand openClawsCommand;
-    ControlClawsAngleCommand goTo130Command;
-    ControlClawsAngleOnceCommand goToGroundCommand;
+    ChangeClawsDefaultPos goToGroundCommand;
+    RotateClawsToPosCommand rotateClawsToPosCommand;
+    ChangeClawsDefaultPos goTo90DegCommand;
+    ControlClawsPosCommand controlClawsPosCommand;
 //    ControlClawsPosOnceCommand goToGroundCommand;
 
 
 
     double time;
+    double loopTime;
     Constants.GameConstants.gamePeriod period;
     Pose2d pose;
 
@@ -113,6 +120,8 @@ public class RobotOpMode extends CommandOpMode {
         CommandScheduler.getInstance().onCommandExecute(this::telemetry);
         period = Constants.GameConstants.gamePeriod.teleOp;
         aToggle = new ToggleButtonReader(controller, GamepadKeys.Button.A);
+        loopTime=0;
+        time=getRuntime();
 
     }
     private void initSubsystems(){
@@ -124,6 +133,7 @@ public class RobotOpMode extends CommandOpMode {
         odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
         ledSubsystem = new LEDSubsystem(hardwareMap);
         armSubsystem = new ArmSubsystem(hardwareMap);
+        jointSubsystem = new JointSubsystem(hardwareMap);
 
         //visionSubsystem = new VisionSubsystem(hardwareMap,telemetry);
 
@@ -134,6 +144,7 @@ public class RobotOpMode extends CommandOpMode {
         assignCommands();
     }
     private void constructCommands(){
+        controlClawsPosCommand = new ControlClawsPosCommand(jointSubsystem,()-> armSubsystem.getAngle());
         deployHookCommand = new DeployHookCommand(hookSubsystem);
         driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX());
         launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);
@@ -154,24 +165,26 @@ public class RobotOpMode extends CommandOpMode {
         strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(0.5));
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
         changeSpeedCommand = new ChangeSpeedCommand();
-        controlClawsAngleCommand = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle());
-        goTo130Command = new ControlClawsAngleCommand(clawSubsystem,() ->armSubsystem.getAngle(),130);
-        goToGroundCommand = new ControlClawsAngleOnceCommand(clawSubsystem,Constants.ClawConstants.groundAngle);
+        controlClawsAngleCommand = new ControlClawsAngleCommand(jointSubsystem,() ->armSubsystem.getAngle());
+        goToGroundCommand = new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos);
 //        goToGroundCommand = new ControlClawsPosOnceCommand(clawSubsystem,Constants.ClawConstants.groundPos);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
         controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.detectPixelColorLeft(),()->clawSubsystem.detectPixelColorRight());
         pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->controller.getButton(GamepadKeys.Button.DPAD_UP),()->controller.getButton(GamepadKeys.Button.DPAD_DOWN));
-        rotateClawsToAngleCommand = new RotateClawsToAngleCommand(clawSubsystem, ()->controller.getRightX()*360);
+        rotateClawsToAngleCommand = new RotateClawsToAngleCommand(jointSubsystem, ()->controller.getRightX()*360);
         closeClawsCommand = new ControlClawsCommand(clawSubsystem,false);
         openClawsCommand = new ControlClawsCommand(clawSubsystem,true);
+        rotateClawsToPosCommand = new RotateClawsToPosCommand(jointSubsystem,()->controller.getRightX());
+        goTo90DegCommand = new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos);
 
     }
     private void assignCommands(){
         //default commands
         slideSubsystem.setDefaultCommand(moveLiftCommand);
         hookSubsystem.setDefaultCommand(pullRobotCommand);
-        clawSubsystem.setDefaultCommand(new ControlClawsAngleCommand(clawSubsystem,()->armSubsystem.getAngle()));
-//        clawSubsystem.setDefaultCommand(rotateClawsToAngleCommand);
+//        clawSubsystem.setDefaultCommand(new ControlClawsAngleCommand(clawSubsystem,()->armSubsystem.getAngle()));
+        //clawSubsystem.setDefaultCommand(rotateClawsToPosCommand);
+        jointSubsystem.setDefaultCommand(controlClawsPosCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
         ledSubsystem.setDefaultCommand(controlColorsCommand);
@@ -203,41 +216,24 @@ public class RobotOpMode extends CommandOpMode {
         new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(closeLeftClawCommand);
         new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(closeRightClawCommand);
         new GamepadButton(controller, GamepadKeys.Button.B).toggleWhenPressed(closeClawsCommand,openClawsCommand);
-        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true),controlClawsAngleCommand),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goTo130Command));
+        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goTo90DegCommand));
+        new Trigger(()->controller.getButton(GamepadKeys.Button.X)).toggleWhenActive(rotateClawsToPosCommand);
     }
 
 
     private void telemetry(Command command) {
-//        telemetry.addData("lift height: ", slideSubsystem.getHeight());
-//        telemetry.addData("time ",time);
-//        telemetry.addData("pos","("+pose.getX()+", "+pose.getY()+")");
-//        telemetry.addData("heading",pose.getHeading());
-//        telemetry.addData("is bottom", slideSubsystem.isBottom());
-//        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
-//        telemetry.addData("arm deg",armSubsystem.getAngle());
-//        telemetry.addData("claw deg",clawSubsystem.rotationServo1.getAngle());
-//        telemetry.addData("claw deg2",clawSubsystem.rotationServo2.getAngle());
-//        telemetry.addData("color ",switchColorsCommand.getColor());
-//        telemetry.addData("speed",speed);
-//        telemetry.addData("left pixel",clawSubsystem.detectPixelColorLeft());
-//        telemetry.addData("right pixel",clawSubsystem.detectPixelColorRight());
-//        telemetry.addData("left argb",clawSubsystem.getLeftARGB()[0]+", "+clawSubsystem.getLeftARGB()[1]+", "+clawSubsystem.getLeftARGB()[2]+", "+clawSubsystem.getLeftARGB()[3]);
-//        telemetry.addData("was just pressed",controller.wasJustPressed(GamepadKeys.Button.B));
-//        telemetry.addData("button",controller.getButton(GamepadKeys.Button.B));
-        double[] leftARGB = clawSubsystem.getLeftARGB();
-        telemetry.addData("left corrected argb",(int)leftARGB[0]+", "+(int)leftARGB[1]+", "+(int)leftARGB[2]+", "+(int)leftARGB[3]);
-        double[] rightARGB = clawSubsystem.getRightARGB();
-        telemetry.addData("right corrected argb",(int)rightARGB[0]+", "+(int)rightARGB[1]+", "+(int)rightARGB[2]+", "+(int)rightARGB[3]);
-//        telemetry.addData("left argb",clawSubsystem.colorSensorLeft.red()+", "+clawSubsystem.colorSensorLeft.green()+", "+clawSubsystem.colorSensorLeft.blue());
-//        telemetry.addData("right argb",clawSubsystem.colorSensorRight.red()+", "+clawSubsystem.colorSensorRight.green()+", "+clawSubsystem.colorSensorRight.blue());
-//        telemetry.addData("flip pos",clawSubsystem.rotationServo1.getPosition());
-//        telemetry.addData("flip deg",clawSubsystem.rotationServo1.getAngle());
         telemetry.addData("arm", armSubsystem.motor.getCurrentPosition());
+        telemetry.addData("slide",slideSubsystem.getHeight());
+        telemetry.addData("loop time",loopTime);
+        telemetry.addData("arm power",armSubsystem.motor.get());
+        telemetry.addData("arm target",moveArmCommand.target);
+        telemetry.addData("arm velo",armSubsystem.getVelocity());
         telemetry.update();
     }
     @Override
     public void run() {
         super.run();
+        loopTime=getRuntime()-time;
         time= getRuntime();
         pose = odometrySubsystem.getPose();
         odometrySubsystem.update();

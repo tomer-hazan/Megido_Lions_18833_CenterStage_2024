@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
+import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTarget;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
@@ -38,11 +39,16 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.LaunchAirpla
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MecanumMovmentCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveLiftCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.MoveLiftToPosCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.OpenOrCloseLeftClawCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.OpenOrCloseRightClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.PullRobotCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ReturnHookCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToAngleCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
+
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.groundPosOpenSlide;
 
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
@@ -63,7 +69,7 @@ public class RobotOpMode extends CommandOpMode {
     ArmSubsystem armSubsystem;
     LEDSubsystem ledSubsystem;
     JointSubsystem jointSubsystem;
-    public static int speed;
+    public static double speed;
     //commands
     DeployHookCommand deployHookCommand;
     static DriveCommand driveCommand;
@@ -94,9 +100,13 @@ public class RobotOpMode extends CommandOpMode {
     ControlClawsCommand closeClawsCommand;
     ControlClawsCommand openClawsCommand;
     ChangeClawsDefaultPos goToGroundCommand;
+    ChangeClawsDefaultPos goToGroundOpenSlideCommand;
     RotateClawsToPosCommand rotateClawsToPosCommand;
     ChangeClawsDefaultPos goTo90DegCommand;
     ControlClawsPosCommand controlClawsPosCommand;
+    OpenOrCloseRightClawCommand openOrCloseRightClawCommand;
+    OpenOrCloseLeftClawCommand openOrCloseLeftClawCommand;
+    MoveLiftToPosCommand moveLiftToIntakeCommand;
 //    ControlClawsPosOnceCommand goToGroundCommand;
 
 
@@ -122,6 +132,7 @@ public class RobotOpMode extends CommandOpMode {
         aToggle = new ToggleButtonReader(controller, GamepadKeys.Button.A);
         loopTime=0;
         time=getRuntime();
+        speed=1;
 
     }
     private void initSubsystems(){
@@ -146,12 +157,12 @@ public class RobotOpMode extends CommandOpMode {
     private void constructCommands(){
         controlClawsPosCommand = new ControlClawsPosCommand(jointSubsystem,()-> armSubsystem.getAngle());
         deployHookCommand = new DeployHookCommand(hookSubsystem);
-        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX());
+        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX()*speed,() -> driver.getLeftY()*speed,() -> driver.getRightX()*speed);
         launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);
         moveLiftCommand = new MoveLiftCommand(slideSubsystem,() -> controller.getLeftY());
         returnHookCommand = new ReturnHookCommand(hookSubsystem);
-        driveHorizontalCommandLeft = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX(),() -> 1.0);
-        driveHorizontalCommandRight = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX(),() -> -1.0);
+        driveHorizontalCommandLeft = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX()*speed,() -> 1.0);
+        driveHorizontalCommandRight = new DriveHorizontalCommand(driveTrainSubsystem,()-> driver.getLeftX()*speed,() -> -1.0);
         openRightClawCommand = new ControlRightClawCommand(clawSubsystem,true);
         closeRightClawCommand = new ControlRightClawCommand(clawSubsystem,false);
         openLeftClawCommand = new ControlLeftClawCommand(clawSubsystem,true);
@@ -159,24 +170,27 @@ public class RobotOpMode extends CommandOpMode {
         switchColorsCommand = new SwitchColorsCommand(ledSubsystem);
         changeToGreenCommand = new ChangeColorsCommand(ledSubsystem,0);
         changeToNoneCommand = new ChangeColorsCommand(ledSubsystem,3);
-        strafeLeft = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1));
-        strafeRight = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1));
-        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-0.5));
-        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(0.5));
+        strafeLeft = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed);
+        strafeRight = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed);
+        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-0.5)*speed);
+        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(0.5)*speed);
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
-        changeSpeedCommand = new ChangeSpeedCommand();
+        changeSpeedCommand = new ChangeSpeedCommand(0.5);
         controlClawsAngleCommand = new ControlClawsAngleCommand(jointSubsystem,() ->armSubsystem.getAngle());
         goToGroundCommand = new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos);
+        goToGroundOpenSlideCommand = new ChangeClawsDefaultPos(jointSubsystem,groundPosOpenSlide);
 //        goToGroundCommand = new ControlClawsPosOnceCommand(clawSubsystem,Constants.ClawConstants.groundPos);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
-        controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.detectPixelColorLeft(),()->clawSubsystem.detectPixelColorRight());
+        controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.getLeftPixel(),()->clawSubsystem.getRightPixel());
         pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->controller.getButton(GamepadKeys.Button.DPAD_UP),()->controller.getButton(GamepadKeys.Button.DPAD_DOWN));
         rotateClawsToAngleCommand = new RotateClawsToAngleCommand(jointSubsystem, ()->controller.getRightX()*360);
         closeClawsCommand = new ControlClawsCommand(clawSubsystem,false);
         openClawsCommand = new ControlClawsCommand(clawSubsystem,true);
-        rotateClawsToPosCommand = new RotateClawsToPosCommand(jointSubsystem,()->controller.getRightX());
+        rotateClawsToPosCommand = new RotateClawsToPosCommand(jointSubsystem,()->controller.getLeftX());
         goTo90DegCommand = new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos);
-
+        openOrCloseLeftClawCommand = new OpenOrCloseLeftClawCommand(clawSubsystem);
+        openOrCloseRightClawCommand  =new OpenOrCloseRightClawCommand(clawSubsystem);
+        moveLiftToIntakeCommand = new MoveLiftToPosCommand(slideSubsystem,540);
     }
     private void assignCommands(){
         //default commands
@@ -211,13 +225,16 @@ public class RobotOpMode extends CommandOpMode {
 
         new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
         new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
-        new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whileHeld(openLeftClawCommand);
-        new GamepadButton(controller, GamepadKeys.Button.RIGHT_BUMPER).whileHeld(openRightClawCommand);
-        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(closeLeftClawCommand);
-        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(closeRightClawCommand);
+        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveOnce(openOrCloseRightClawCommand);
+        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveOnce(openOrCloseLeftClawCommand);
         new GamepadButton(controller, GamepadKeys.Button.B).toggleWhenPressed(closeClawsCommand,openClawsCommand);
-        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goTo90DegCommand));
+        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true),new MoveLiftToPosCommand(slideSubsystem,140)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goTo90DegCommand));
+        new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos)));
+
         new Trigger(()->controller.getButton(GamepadKeys.Button.X)).toggleWhenActive(rotateClawsToPosCommand);
+        new GamepadButton(controller,GamepadKeys.Button.Y).whenPressed(new SequentialCommandGroup( goToGroundOpenSlideCommand,new ControlClawsCommand(clawSubsystem,true),moveLiftToIntakeCommand));
+        new GamepadButton(controller,GamepadKeys.Button.RIGHT_BUMPER).whileActiveOnce(new MoveLiftToPosCommand(slideSubsystem,0)).whileActiveOnce(new SetArmsTarget(armSubsystem,0)).whileActiveOnce(new ControlClawsCommand(clawSubsystem, false)).whileActiveOnce(new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos));
+
     }
 
 
@@ -227,7 +244,9 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("loop time",loopTime);
         telemetry.addData("arm power",armSubsystem.motor.get());
         telemetry.addData("arm target",moveArmCommand.target);
-        telemetry.addData("arm velo",armSubsystem.getVelocity());
+        telemetry.addData("flip 1",jointSubsystem.rotationServo.getPosition());
+        telemetry.addData("right pixel",clawSubsystem.getRightPixel());
+        telemetry.addData("left pixel",clawSubsystem.getLeftPixel());
         telemetry.update();
     }
     @Override

@@ -38,8 +38,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 //    public static double Y_MULL = 253.0/249.0;
 public static double X_MULL = 1;
     public static double Y_MULL = 1;
-    public static double LATERAL_DISTANCE = 13.267; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = MeterToInch(-0.21); // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 13.38; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = MeterToInch(-0.085); // in; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -47,20 +47,21 @@ public static double X_MULL = 1;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
-                new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
-                new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
+                new Pose2d(MeterToInch(0.025), LATERAL_DISTANCE / 2, 0), // left
+                new Pose2d(MeterToInch(0.025), -LATERAL_DISTANCE / 2, 0), // right
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left front"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left rear"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right rear"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left rear"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right front"));
 
-        leftEncoder.setDirection(Encoder.Direction.REVERSE);
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.FORWARD);
+        rightEncoder.setDirection(Encoder.Direction.FORWARD);
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 

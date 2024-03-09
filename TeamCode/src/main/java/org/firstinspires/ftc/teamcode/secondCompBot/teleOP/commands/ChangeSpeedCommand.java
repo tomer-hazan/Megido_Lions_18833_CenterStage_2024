@@ -5,11 +5,14 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.secondCompBot.opModes.RobotOpMode;
 
 public class ChangeSpeedCommand extends CommandBase {
+    double speed;
+    public ChangeSpeedCommand(double speed){
+        this.speed=speed;
+    }
     @Override
     public void initialize() {
-        if(RobotOpMode.speed==0)RobotOpMode.speed=1;
-        else RobotOpMode.speed=0;
-        //RobotOpMode.slow();
+        if(RobotOpMode.speed==speed)RobotOpMode.speed=1;
+        else RobotOpMode.speed=speed;
     }
 
     @Override

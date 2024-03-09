@@ -16,7 +16,6 @@ public class armPID extends OpMode {
     public static double p=0.025,i=0.25,d=0.0055;
     public static double f=0.15;
     public static int armTarget =1000;
-    public static int slideTarget =1000;
     private final double ticks_in_degree=2790/119;
     Servo flip1;
     Servo flip2;
@@ -30,7 +29,7 @@ public class armPID extends OpMode {
 
         arm = new MotorEx(hardwareMap,"slide");
         //arm.encoder.setDirection(Motor.Direction.REVERSE);
-        arm.setInverted(true);
+        arm.setInverted(false);
 //        slide = new MotorEx(hardwareMap,"slide");
 //        flip1 = hardwareMap.get(Servo.class,"flip servo 1");
 //        flip2 = hardwareMap.get(Servo.class,"flip servo 2");
@@ -58,7 +57,6 @@ public class armPID extends OpMode {
         telemetry.addData("pos",armPos);
         telemetry.addData("target", armTarget);
         telemetry.addData("angle", armTarget /ticks_in_degree);
-        telemetry.addData("slideTarget",slideTarget);
 //        telemetry.addData("slidePos",slide.getCurrentPosition());
         telemetry.addData("isFinnished",controller.atSetPoint());
         telemetry.update();

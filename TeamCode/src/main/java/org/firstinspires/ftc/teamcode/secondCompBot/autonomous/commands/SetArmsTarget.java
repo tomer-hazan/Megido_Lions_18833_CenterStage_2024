@@ -27,7 +27,7 @@ public class SetArmsTarget extends CommandBase {
         double pid = controller.calculate(armPos, target);
         double ff = Math.cos(target/ticks_in_degree)*f;
         double power = pid+ff;
-        subsystem.setPower(power);
+        subsystem.setPower(-power);
     }
 
     @Override

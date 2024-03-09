@@ -18,7 +18,7 @@ public class ArmSubsystem extends SubsystemBase{
     double velo;
     public ArmSubsystem(HardwareMap hardwareMap){
         this.motor = new MotorEx(hardwareMap,"arm");
-        limit =hardwareMap.get(RevTouchSensor.class,"limit switch");
+        limit =hardwareMap.get(RevTouchSensor.class,"arm limit switch");
         motor.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.encoder.setDirection(Motor.Direction.REVERSE);
         motor.resetEncoder();

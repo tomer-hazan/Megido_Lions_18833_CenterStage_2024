@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -52,8 +53,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5.5, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(11, 8, 3);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.5, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 60/48;
 
@@ -75,6 +76,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+    BHI260IMU imu;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);//toDo change the second track width
@@ -125,6 +127,13 @@ public class SampleMecanumDrive extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
+        /* Lines 134-137 in SampleMecanumDrive.java */
+//        imu = hardwareMap.get(BHI260IMU.class, "imu");
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot());
+//        BHI260IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
+
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

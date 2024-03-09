@@ -29,6 +29,8 @@ public class ClawSubsystem extends SubsystemBase {
     public final Servo leftClaw;//continuous
     public final Servo rightClaw;
     Supplier<Double> seconds;
+    Constants.GameElements.Pixals leftPixel;
+    Constants.GameElements.Pixals rightPixel;
     double[] correctedArgbLeft;
     double[] correctedArgbRight;
     double disLeft;
@@ -68,6 +70,7 @@ public class ClawSubsystem extends SubsystemBase {
             int[] argbRight = colorSensorRight.getARGB();
             correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
             disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
+            rightPixel = detectPixelColorRight();
         }else{
             colorSensorRight.disable();
         }
@@ -75,6 +78,7 @@ public class ClawSubsystem extends SubsystemBase {
             int[] argbLeft = colorSensorLeft.getARGB();
             correctedArgbLeft = new double[]{argbLeft[0],argbLeft[1]* correctedRedLeft,argbLeft[2]* correctedGreenLeft,argbLeft[3]* correctedBlueLeft};
             disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
+            leftPixel=detectPixelColorLeft();
         }else{
             colorSensorLeft.disable();
         }
@@ -83,11 +87,11 @@ public class ClawSubsystem extends SubsystemBase {
     public void openOrCloseLeft(Positions position){
         switch (position){
             case CLOSE:
-                leftClaw.setPosition(0.7);
+                leftClaw.setPosition(0);
                 leftClawPos=Positions.CLOSE;
                 break;
             case OPEN:
-                leftClaw.setPosition(0.95);
+                leftClaw.setPosition(1);
                 leftClawPos=Positions.OPEN;
                 break;
         }
@@ -95,11 +99,11 @@ public class ClawSubsystem extends SubsystemBase {
     public void openOrCloseRight(Positions position){
         switch (position){
             case CLOSE:
-                rightClaw.setPosition(0.52);
+                rightClaw.setPosition(0);
                 rightClawPos=Positions.CLOSE;
                 break;
             case OPEN:
-                rightClaw.setPosition(0.8);
+                rightClaw.setPosition(1);
                 rightClawPos=Positions.OPEN;
                 break;
         }
@@ -109,10 +113,10 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<60&&detectPixelColorLeft()!=null;//toDo check if works well with far pixels
+        return getLeftDistance()<60;//toDo check if works well with far pixels
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<60&&detectPixelColorRight()!=null;//toDo check if works well with far pixels
+        return getRightDistance()<60;//toDo check if works well with far pixels
     }
     public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
     public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}
@@ -136,5 +140,21 @@ public class ClawSubsystem extends SubsystemBase {
         else if (blue/green>1.3) return Constants.GameElements.Pixals.PURPLE;
         else return Constants.GameElements.Pixals.YELLOW;
     }
+
+    public Positions getLeftClawPos() {
+        return leftClawPos;
+    }
+    public Positions getRightClawPos(){
+        return rightClawPos;
+    }
+
     public double getTime(){return seconds.get();}
+
+    public Constants.GameElements.Pixals getLeftPixel() {
+        return leftPixel;
+    }
+
+    public Constants.GameElements.Pixals getRightPixel() {
+        return rightPixel;
+    }
 }

@@ -12,31 +12,25 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConsta
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.rotation_start;
 
 public class JointSubsystem extends SubsystemBase {
-    public final ServoEx rotationServo1;
-    public final ServoEx rotationServo2;
+    public final ServoEx rotationServo;
     private double defaultPose;
     public JointSubsystem(HardwareMap hardwareMap){
-        rotationServo1 = new SimpleServo(hardwareMap,"flip servo 1",rotation_start,rotation_limit);
-        rotationServo2 = new SimpleServo(hardwareMap,"flip servo 2",rotation_start,rotation_limit);
-        rotationServo2.setInverted(false);
+        rotationServo = new SimpleServo(hardwareMap,"flip servo 1",rotation_start,rotation_limit);
         defaultPose = groundPos;
     }
     public void turnToAngle(double angle){
-        rotationServo1.turnToAngle(angle);
-        rotationServo2.turnToAngle(angle);
+        rotationServo.turnToAngle(angle);
     }
     public void setPosWithLimits(double pos){
         if(pos<rotation_min)pos=rotation_min;
         if(pos>rotation_max)pos=rotation_max;
-        rotationServo1.setPosition(pos);
-        rotationServo2.setPosition(pos);
+        rotationServo.setPosition(pos);
     }
     public void setPos(double pos){
-        rotationServo1.setPosition(pos);
-        rotationServo2.setPosition(pos);
+        rotationServo.setPosition(pos);
     }
     public double getPos(){
-        return rotationServo1.getPosition();
+        return rotationServo.getPosition();
     }
     public double getDefaultPose(){
         return defaultPose;
@@ -45,6 +39,6 @@ public class JointSubsystem extends SubsystemBase {
         this.defaultPose=defaultPose;
     }
     public double getAngle(){
-        return rotationServo1.getAngle();
+        return rotationServo.getAngle();
     }
 }

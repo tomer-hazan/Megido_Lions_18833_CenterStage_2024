@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -47,7 +46,6 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCO
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
 public class MotorVelocityPIDTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 

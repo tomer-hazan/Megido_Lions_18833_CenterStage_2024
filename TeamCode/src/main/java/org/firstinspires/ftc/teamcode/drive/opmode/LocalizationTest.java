@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,13 +18,25 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+    FtcDashboard dashboard;
+    static int leftEncoderStar;
+    static int rightEncoderStar;
+    static double frontEncoderStar;
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        TelemetryPacket packet = new TelemetryPacket();
+        dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        DcMotor leftEncoder = hardwareMap.get(DcMotor.class, "left rear");
+        DcMotor rightEncoder = hardwareMap.get(DcMotor.class, "right rear");
+        DcMotor frontEncoder =hardwareMap.get(DcMotor.class, "right front");
         waitForStart();
+        leftEncoderStar= leftEncoder.getCurrentPosition();
+        rightEncoderStar = rightEncoder.getCurrentPosition();
+        frontEncoderStar = frontEncoder.getCurrentPosition();
 
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
@@ -39,11 +53,13 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("velo",drive.getPoseVelocity());
-            telemetry.addData("velo2",drive.getPoseVelocity().getX());
-            telemetry.addData("velo3",drive.getPoseVelocity().getY());
-            telemetry.addData("velo3",drive.getPoseVelocity().component1());
-
+            telemetry.addData("leftEncoder",leftEncoder.getCurrentPosition());
+            telemetry.addData("rightEncoder",rightEncoder.getCurrentPosition());
+            telemetry.addData("frontEncoder",frontEncoder.getCurrentPosition());
+            packet.put("leftEncoder",leftEncoder.getCurrentPosition()-leftEncoderStar);
+            packet.put("rightEncoder",rightEncoder.getCurrentPosition()-rightEncoderStar);
+            packet.put("frontEncoder",frontEncoder.getCurrentPosition()-frontEncoderStar);
+            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
     }

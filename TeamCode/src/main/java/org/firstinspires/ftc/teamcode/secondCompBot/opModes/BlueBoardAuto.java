@@ -131,7 +131,7 @@ public class BlueBoardAuto extends CommandOpMode {
                 new SetArmsTarget(armSubsystem, 4000),
                 new ControlRightClawCommand(clawSubsystem, true),
                 new waitCommand(() -> getRuntime(), 3),
-                new SequentialCommandGroup(new ControlLeftClawCommand(clawSubsystem, false), new SetArmsTarget(armSubsystem, 0)),
+                new SequentialCommandGroup(new ControlRightClawCommand(clawSubsystem, false), new SetArmsTarget(armSubsystem, 0)),
                 park
         );
         return auto;
@@ -171,12 +171,11 @@ public class BlueBoardAuto extends CommandOpMode {
                 .strafeRight(24)
                 .back(30)
                 .turn(Math.toRadians(90))
+                .build());
+        DriveTrajectorySequenceCommand moveForward = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
                 .forward(7)
                 .build());
-        DriveTrajectorySequenceCommand moveForward = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(startPos)
-                .forward(7)
-                .build());
-        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
+        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveForward.getTrajectory().end())
                 .back(3)
                 .lineTo(new Vector2d(47, 40))
                 .build());

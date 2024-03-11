@@ -35,6 +35,7 @@ public class ClawSubsystem extends SubsystemBase {
     double[] correctedArgbRight;
     double disLeft;
     double disRight;
+
     public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
         this.rightClaw = hardwareMap.get(Servo.class,"right claw");
         this.leftClaw = hardwareMap.get(Servo.class,"left claw");
@@ -113,10 +114,10 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<60;//toDo check if works well with far pixels
+        return getLeftDistance()<40;//toDo check if works well with far pixels
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<60;//toDo check if works well with far pixels
+        return getRightDistance()<40;//toDo check if works well with far pixels
     }
     public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
     public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}

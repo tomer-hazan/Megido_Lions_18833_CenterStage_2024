@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.secondCompBot.subsystems;
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -38,14 +39,42 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.VisionConst
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.VisionConstants.RedValueThresholdLow;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.VisionConstants.camera_height;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.VisionConstants.camera_width;
-
+@Config
 public class VisionSubsystem extends SubsystemBase {
     OpenCvWebcam camera;
     Constants.GameConstants.StartingPosition color;
     Constants.GameConstants.GameType gameType;
     Telemetry telemetry;
     Rect center;
-    Rect right;
+    Rect side;
+    public static int centerBlueX =600;
+    public static int centerBlueY =250;
+    public static int centerBlueWidth = 500;
+    public static int centerBlueHeight = 255;
+
+    public static int centerRedX =260;
+    public static int centerRedY =275;
+    public static int centerRedWidth = 300;
+    public static int centerRedHeight = 200;
+
+    public static int leftX = 70;
+    public static int leftY = 250;
+    public static int leftWidth=350;
+    public static int leftHeight=300;
+
+    public static int rightX = 800;
+    public static int rightY = 250;
+    public static int rightWidth=350;
+    public static int rightHeight=250;
+
+    public static int areaThreshHold;
+    public static int blueAreaThreshHold=3000;
+    public static int redAreaThreshHold=3000;
+    MatOfPoint largestCenterContour = new MatOfPoint();
+    MatOfPoint largestSideContour = new MatOfPoint();
+    List<MatOfPoint> allSideContours;
+    List<MatOfPoint> allCenterContours;
+    Mat processed;
 
 
     private class PipeLine extends OpenCvPipeline {
@@ -54,40 +83,149 @@ public class VisionSubsystem extends SubsystemBase {
 
         @Override
         public Mat processFrame(Mat input) {
-            Mat filterd = new Mat();
+            Mat centerFiltered = new Mat();
+            Mat sideFiltered = new Mat();
+            Mat centerMat =input.submat(center);
+            Mat sideMat =input.submat(side);
+            Mat filtered = new Mat();
+            Mat processedSide;
+            Mat processedCenter;
             switch (color){
                 case RED:
-                    filterRed(input, filterd);
+                    filterRed(sideMat, sideFiltered);
+                    filterRed(centerMat, centerFiltered);
+                    filterRed(input,filtered);
+                    processed = ShapeDetectionUtil.processImage(filtered);
+                    processedSide = ShapeDetectionUtil.processImage(sideFiltered);
+                    largestSideContour = new MatOfPoint();
+                    allSideContours = ShapeDetectionUtil.getAllContours(processedSide);
+                    for (MatOfPoint contour: allSideContours) {
+                        if(largestSideContour.empty()){
+                            largestSideContour =contour;
+                        }
+                        if( Imgproc.boundingRect(contour).area()> Imgproc.boundingRect(largestSideContour).area()){
+                            largestSideContour =contour;
+                        }
+                    }
+                    processedCenter = ShapeDetectionUtil.processImage(centerFiltered);
+                    allCenterContours = ShapeDetectionUtil.getAllContours(processedCenter);
+                    for (MatOfPoint contour: allCenterContours) {
+                        if(largestCenterContour.empty()){
+                            largestCenterContour =contour;
+                        }
+                        if( Imgproc.boundingRect(contour).area()> Imgproc.boundingRect(largestCenterContour).area()){
+                            largestCenterContour =contour;
+                        }
+                    }
+                    if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.LEFT;
+                    else{
+                        if(largestCenterContour.empty()){
+                            if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.RIGHT;
+                            else gameType = Constants.GameConstants.GameType.LEFT;
+                        }
+                        else if(largestSideContour.empty()){
+                            if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
+                            else gameType = Constants.GameConstants.GameType.LEFT;
+                        }else{
+                            if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
+                                if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
+                                else gameType=Constants.GameConstants.GameType.LEFT;
+                            }
+                            else {
+                                if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.RIGHT;
+                                else gameType=Constants.GameConstants.GameType.LEFT;
+                            }
+                        }
+                    }
                     break;
                 case BLUE:
-                    filterBlue(input,filterd);
+                    filterBlue(sideMat,sideFiltered);
+                    filterBlue(centerMat,centerFiltered);
+                    filterBlue(input,filtered);
+                    processed = ShapeDetectionUtil.processImage(filtered);
+                    processedSide = ShapeDetectionUtil.processImage(sideFiltered);
+                    largestSideContour = new MatOfPoint();
+                    allSideContours = ShapeDetectionUtil.getAllContours(processedSide);
+                    for (MatOfPoint contour: allSideContours) {
+                        if(largestSideContour.empty()){
+                            largestSideContour =contour;
+                        }
+                        if( Imgproc.boundingRect(contour).area()> Imgproc.boundingRect(largestSideContour).area()){
+                            largestSideContour =contour;
+                        }
+                    }
+                    processedCenter = ShapeDetectionUtil.processImage(centerFiltered);
+                    allCenterContours = ShapeDetectionUtil.getAllContours(processedCenter);
+                    for (MatOfPoint contour: allCenterContours) {
+                        if(largestCenterContour.empty()){
+                            largestCenterContour =contour;
+                        }
+                        if( Imgproc.boundingRect(contour).area()> Imgproc.boundingRect(largestCenterContour).area()){
+                            largestCenterContour =contour;
+                        }
+                    }
+                    if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.RIGHT;
+                    else{
+                        if(largestCenterContour.empty()){
+                            if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.LEFT;
+                            else gameType = Constants.GameConstants.GameType.RIGHT;
+                        }
+                        else if(largestSideContour.empty()){
+                            if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
+                            else gameType = Constants.GameConstants.GameType.RIGHT;
+                        }else{
+                            if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
+                                if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
+                                else gameType=Constants.GameConstants.GameType.RIGHT;
+                            }
+                            else {
+                                if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.LEFT;
+                                else gameType=Constants.GameConstants.GameType.RIGHT;
+                            }
+                        }
+                    }
             }
-            Mat processed = ShapeDetectionUtil.processImage(filterd);
-            MatOfPoint largestContour = new MatOfPoint();
-            List<MatOfPoint> allContours = ShapeDetectionUtil.getAllContours(processed);
-            for (MatOfPoint contour: allContours) {
-                if(largestContour.empty()){
-                    largestContour =contour;
-                }
-                if( contour.toArray().length>largestContour.toArray().length){
-                    largestContour =contour;
-                }
-            }
-            if(largestContour.empty())gameType= Constants.GameConstants.GameType.LEFT;
-            else if (Imgproc.boundingRect(largestContour).x>camera_width*0.7) {gameType= Constants.GameConstants.GameType.RIGHT;}
-            else gameType = Constants.GameConstants.GameType.CENTER;
-            ShapeDetectionUtil.markOuterContour(processed,input);
-             filterd.release();
+
+
+//            ShapeDetectionUtil.markOuterContour(processed,input);
+             centerFiltered.release();
+             sideFiltered.release();
              //processed.release();
              telemetry.addData("game type",gameType);
-             telemetry.addData("largest",largestContour.toArray().length);
+            try {
+                telemetry.addData("largest center area",Imgproc.boundingRect(largestCenterContour).area());
+                telemetry.addData("largest left area", Imgproc.boundingRect(largestSideContour).area());
+                telemetry.addData("largest center size",largestCenterContour.toArray().length);
+                telemetry.addData("largest left size", largestSideContour.toArray().length);
+            }catch (Exception e){
+                telemetry.addData("faild","faild");
+            }
+
              telemetry.update();
-            for (MatOfPoint contour: allContours) {
+            for (MatOfPoint contour: allCenterContours) {
                 contour.release();
             }
+            for (MatOfPoint contour: allSideContours) {
+                contour.release();
+            }
+            Imgproc.rectangle(processed, center, new Scalar(255, 0, 0), 3);
+            Imgproc.rectangle(processed, side, new Scalar(0, 0, 255), 3);
 
             return processed;
         }
+
+
+
+//            @Override
+//    public Mat processFrame(Mat input) {
+//        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
+//        side = new Rect(rightX,rightY,rightWidth,rightHeight);
+//
+//        Imgproc.rectangle(input, center, new Scalar(255, 0, 0), 3);
+//        Imgproc.rectangle(input, side, new Scalar(0, 0, 255), 3);
+//
+//        return input;
+//    }
 
 
         private void filterRed(Mat input,
@@ -110,8 +248,19 @@ public class VisionSubsystem extends SubsystemBase {
 
     public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry,    Constants.GameConstants.StartingPosition color) {
         this.color = color;
-        center = new Rect(camera_width/3,0,camera_width/3 ,camera_height);
-        right = new Rect((camera_width/3)*2,0,camera_width/3,camera_height);
+        switch (color){
+            case RED:
+                center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
+                side = new Rect(rightX,rightY,rightWidth,rightHeight);
+                areaThreshHold = redAreaThreshHold;
+                break;
+            case BLUE:
+                center = new Rect(centerBlueX, centerBlueY, centerBlueWidth, centerBlueHeight);
+                side = new Rect(leftX,leftY,leftWidth,leftHeight);
+                areaThreshHold=blueAreaThreshHold;
+                break;
+        }
+
         this.telemetry = telemetry;
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.secondCompBot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-
+@Config
 public class HookSubsystem extends SubsystemBase {
     Servo rightServo;
     MotorEx suspension;
     Servo leftServo;
+    public static double rightPos=0.5;
     public HookSubsystem(HardwareMap hardwareMap){
         rightServo = hardwareMap.get(Servo.class,"right hook");
         leftServo = hardwareMap.get(Servo.class,"left hook");
@@ -24,8 +25,8 @@ public class HookSubsystem extends SubsystemBase {
         return rightServo.getPosition();
     }
     public void raiseHook(){
-        rightServo.setPosition(0);
-        leftServo.setPosition(0.5);
+        rightServo.setPosition(0.53);
+        leftServo.setPosition(0.3);
     }
     public void lowerHook(){
         rightServo.setPosition(1);

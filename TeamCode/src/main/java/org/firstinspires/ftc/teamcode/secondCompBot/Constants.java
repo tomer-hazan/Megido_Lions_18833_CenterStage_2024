@@ -21,6 +21,7 @@ public class Constants {
 
         public static double MaxVelocity = 1.867873;//1.764102,1.867873//,// Its recommended to put max velocity to 90% of the true value
         public static double MaxAccel = 1.7;
+        public static final double strafeRearWheels = 0.3;
 
         public final static double odometry_wheel_ticks_to_meters = OdometryWheelDiameter * Math.PI / ticks_per_revolution;
 
@@ -97,7 +98,7 @@ public class Constants {
         public static final double max_tick_count = 5400;
         public static final double ticks_in_degree=2790/119;
         public static double p=0.025,i=0.25,d=0.0055;
-        public static double f=0.15;
+        public static double f=0.17;
         public enum State {
             MOVING,
             STAND_STILL
@@ -166,18 +167,18 @@ public class Constants {
         public static Rect Blue = new Rect(600, 400, 120, 180);//not the real numbers (temporary)
 
         public static double RedHueThresholdLow = 0;
-        public static double RedHueThresholdHigh = 180;
-        public static double RedSaturationThresholdLow = 87;
+        public static double RedHueThresholdHigh = 92;
+        public static double RedSaturationThresholdLow = 140;
         public static double RedSaturationThresholdHigh = 255;
-        public static double RedValueThresholdLow = 133;
+        public static double RedValueThresholdLow = 103;
         public static double RedValueThresholdHigh = 255;
 
-        public static double BlueHueThresholdLow = 31;
-        public static double BlueHueThresholdHigh = 180;
-        public static double BlueSaturationThresholdLow = 122;
+        public static double BlueHueThresholdLow = 76;
+        public static double BlueHueThresholdHigh = 135;
+        public static double BlueSaturationThresholdLow = 73;
         public static double BlueSaturationThresholdHigh = 255;
-        public static double BlueValueThresholdLow = 73;
-        public static double BlueValueThresholdHigh = 186;
+        public static double BlueValueThresholdLow = 32;
+        public static double BlueValueThresholdHigh = 131;
 
     }
 

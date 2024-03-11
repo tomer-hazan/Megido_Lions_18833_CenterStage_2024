@@ -14,7 +14,6 @@ public class ArmSubsystem extends SubsystemBase{
     public static double f=0.5;
     RevTouchSensor limit;
     ArmConstants.State state;
-    double target;
     double velo;
     public ArmSubsystem(HardwareMap hardwareMap){
         this.motor = new MotorEx(hardwareMap,"arm");
@@ -32,13 +31,6 @@ public class ArmSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         if(limit.isPressed())motor.resetEncoder();
-        velo=Math.abs(motor.getVelocity());
-        if(velo<300){
-            if(state== ArmConstants.State.MOVING){
-                state= ArmConstants.State.STAND_STILL;
-                target=motor.getCurrentPosition();
-            }
-        }else state= ArmConstants.State.MOVING;
     }
 
     public void setRunMode(Motor.RunMode mode){

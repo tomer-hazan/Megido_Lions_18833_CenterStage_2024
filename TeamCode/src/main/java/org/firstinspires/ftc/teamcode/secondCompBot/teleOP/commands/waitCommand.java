@@ -9,10 +9,16 @@ public class waitCommand extends CommandBase {
     double start;
     double waitTime;
     public  waitCommand(Supplier<Double> time,double waitTime){
-        start = time.get();
+
         this.waitTime = waitTime;
         seconds = time;
     }
+
+    @Override
+    public void initialize() {
+        start = seconds.get();
+    }
+
     @Override
     public boolean isFinished() {
         return seconds.get()-start>=waitTime;

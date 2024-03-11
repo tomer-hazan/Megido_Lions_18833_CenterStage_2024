@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClaws
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlColorsCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlColorsCommand2;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlLeftClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlRightClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.DeployHookCommand;
@@ -48,6 +49,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsT
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
 
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.DriveTrainConstants.strafeRearWheels;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.groundPosOpenSlide;
 
 @TeleOp
@@ -107,6 +109,7 @@ public class RobotOpMode extends CommandOpMode {
     OpenOrCloseRightClawCommand openOrCloseRightClawCommand;
     OpenOrCloseLeftClawCommand openOrCloseLeftClawCommand;
     MoveLiftToPosCommand moveLiftToIntakeCommand;
+    ControlColorsCommand2 changeOrangeForPixelsCommand;
 //    ControlClawsPosOnceCommand goToGroundCommand;
 
 
@@ -170,12 +173,12 @@ public class RobotOpMode extends CommandOpMode {
         switchColorsCommand = new SwitchColorsCommand(ledSubsystem);
         changeToGreenCommand = new ChangeColorsCommand(ledSubsystem,0);
         changeToNoneCommand = new ChangeColorsCommand(ledSubsystem,3);
-        strafeLeft = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed);
-        strafeRight = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed);
-        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-0.5)*speed);
-        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(0.5)*speed);
+        strafeLeft = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed,()->Double.valueOf(-1)*speed);
+        strafeRight = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed,()->Double.valueOf(1)*speed);
+        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed,()->Double.valueOf(-strafeRearWheels)*speed);
+        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed,()->Double.valueOf(strafeRearWheels)*speed);
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
-        changeSpeedCommand = new ChangeSpeedCommand(0.5);
+        changeSpeedCommand = new ChangeSpeedCommand(0.6);
         controlClawsAngleCommand = new ControlClawsAngleCommand(jointSubsystem,() ->armSubsystem.getAngle());
         goToGroundCommand = new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos);
         goToGroundOpenSlideCommand = new ChangeClawsDefaultPos(jointSubsystem,groundPosOpenSlide);
@@ -191,6 +194,7 @@ public class RobotOpMode extends CommandOpMode {
         openOrCloseLeftClawCommand = new OpenOrCloseLeftClawCommand(clawSubsystem);
         openOrCloseRightClawCommand  =new OpenOrCloseRightClawCommand(clawSubsystem);
         moveLiftToIntakeCommand = new MoveLiftToPosCommand(slideSubsystem,540);
+        changeOrangeForPixelsCommand = new ControlColorsCommand2(ledSubsystem,()->clawSubsystem.isDetectedPixelLeft(),()->clawSubsystem.isDetectedPixelRight());
     }
     private void assignCommands(){
         //default commands
@@ -201,10 +205,11 @@ public class RobotOpMode extends CommandOpMode {
         jointSubsystem.setDefaultCommand(controlClawsPosCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
-        ledSubsystem.setDefaultCommand(controlColorsCommand);
+        ledSubsystem.setDefaultCommand(changeOrangeForPixelsCommand);
 
         //drivers commands
         new Trigger(()-> (getRuntime()>=90&& driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
+        new Trigger(()-> ( driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
         new GamepadButton(driver,GamepadKeys.Button.DPAD_UP).whenHeld(deployHookCommand);
         new GamepadButton(driver,GamepadKeys.Button.DPAD_DOWN).whenHeld(returnHookCommand);
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(strafeRightSlow);
@@ -239,14 +244,14 @@ public class RobotOpMode extends CommandOpMode {
 
 
     private void telemetry(Command command) {
-        telemetry.addData("arm", armSubsystem.motor.getCurrentPosition());
-        telemetry.addData("slide",slideSubsystem.getHeight());
-        telemetry.addData("loop time",loopTime);
-        telemetry.addData("arm power",armSubsystem.motor.get());
-        telemetry.addData("arm target",moveArmCommand.target);
-        telemetry.addData("flip 1",jointSubsystem.rotationServo.getPosition());
-        telemetry.addData("right pixel",clawSubsystem.getRightPixel());
-        telemetry.addData("left pixel",clawSubsystem.getLeftPixel());
+        double[] leftARGB = clawSubsystem.getLeftARGB();
+        double[] rightARGB = clawSubsystem.getRightARGB();
+        telemetry.addData("left rgb",leftARGB[1]+", "+leftARGB[2]+", "+leftARGB[3]);
+        telemetry.addData("left distance",clawSubsystem.getLeftDistance());
+        telemetry.addData("right rgb",rightARGB[1]+", "+rightARGB[2]+", "+rightARGB[3]);
+        telemetry.addData("right distance",clawSubsystem.getRightDistance());
+        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
+
         telemetry.update();
     }
     @Override

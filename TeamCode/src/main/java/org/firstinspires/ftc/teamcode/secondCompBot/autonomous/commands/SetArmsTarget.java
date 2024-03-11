@@ -31,6 +31,11 @@ public class SetArmsTarget extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        subsystem.setPower(0);
+    }
+
+    @Override
     public boolean isFinished() {
         return controller.atSetPoint();
     }

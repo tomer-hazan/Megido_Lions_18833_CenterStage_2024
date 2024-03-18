@@ -15,7 +15,7 @@ public class ArmSubsystem extends SubsystemBase{
     RevTouchSensor limit;
     ArmConstants.State state;
     double velo;
-    private final int[] preSetHeights = new int[]{0,1000,2000,3000};
+    private final int[] preSetHeights = new int[]{0,3670,3750,4000};
     private int preSetIndex =0;
     public ArmSubsystem(HardwareMap hardwareMap){
         this.motor = new MotorEx(hardwareMap,"arm");

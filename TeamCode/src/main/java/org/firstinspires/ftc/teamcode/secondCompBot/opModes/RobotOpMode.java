@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTarget;
-import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTargetToNextPreSet;
-import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTargetToPrevPreSet;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SetArmsTargetToNextPreSet;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SetArmsTargetToPrevPreSet;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;

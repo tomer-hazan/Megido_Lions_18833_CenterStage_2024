@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTarget;
+import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTargetToNextPreSet;
+import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTargetToPrevPreSet;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
@@ -49,8 +51,8 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsT
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
 
-import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.DriveTrainConstants.strafeRearWheels;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.groundPosOpenSlide;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.strafeRearWheels1;
 
 @TeleOp
 public class RobotOpMode extends CommandOpMode {
@@ -72,6 +74,7 @@ public class RobotOpMode extends CommandOpMode {
     LEDSubsystem ledSubsystem;
     JointSubsystem jointSubsystem;
     public static double speed;
+    public static double turnSpeed;
     //commands
     DeployHookCommand deployHookCommand;
     static DriveCommand driveCommand;
@@ -93,7 +96,9 @@ public class RobotOpMode extends CommandOpMode {
     PullRobotCommand pullRobotCommand;
     ChangeColorsCommand changeToGreenCommand;
     ChangeColorsCommand changeToNoneCommand;
-    ChangeSpeedCommand changeSpeedCommand;
+    ChangeSpeedCommand speed6Command;
+    ChangeSpeedCommand speed7Command;
+    ChangeSpeedCommand speed1Command;
     ControlClawsAngleCommand controlClawsAngleCommand;
     ControlClawsAngleCommand controlClawsAngleCommand90;
     MoveArmCommand moveArmCommand;
@@ -123,6 +128,7 @@ public class RobotOpMode extends CommandOpMode {
     @Override
     public void initialize() {
         speed = 1;
+        turnSpeed = 0.75;
         driver = new GamepadEx(gamepad1);
         controller = new GamepadEx(gamepad2);
         pose = new Pose2d();
@@ -135,19 +141,19 @@ public class RobotOpMode extends CommandOpMode {
         aToggle = new ToggleButtonReader(controller, GamepadKeys.Button.A);
         loopTime=0;
         time=getRuntime();
-        speed=1;
+        hookSubsystem.lowerHook();
 
     }
     private void initSubsystems(){
         slideSubsystem = new SlideSubsystem(hardwareMap);
         driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
         airplaneSubsystem = new AirplaneSubsystem(hardwareMap);
-        clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime());
         hookSubsystem = new HookSubsystem(hardwareMap);
         odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
         ledSubsystem = new LEDSubsystem(hardwareMap);
         armSubsystem = new ArmSubsystem(hardwareMap);
         jointSubsystem = new JointSubsystem(hardwareMap);
+        clawSubsystem=new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
 
         //visionSubsystem = new VisionSubsystem(hardwareMap,telemetry);
 
@@ -160,7 +166,7 @@ public class RobotOpMode extends CommandOpMode {
     private void constructCommands(){
         controlClawsPosCommand = new ControlClawsPosCommand(jointSubsystem,()-> armSubsystem.getAngle());
         deployHookCommand = new DeployHookCommand(hookSubsystem);
-        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX()*speed,() -> driver.getLeftY()*speed,() -> driver.getRightX()*speed);
+        driveCommand= new DriveCommand(driveTrainSubsystem,() -> driver.getLeftX()*speed,() -> driver.getLeftY()*speed,() -> driver.getRightX()*turnSpeed);
         launchAirplaneCommand = new LaunchAirplaneCommand(airplaneSubsystem);
         moveLiftCommand = new MoveLiftCommand(slideSubsystem,() -> controller.getLeftY());
         returnHookCommand = new ReturnHookCommand(hookSubsystem);
@@ -175,17 +181,19 @@ public class RobotOpMode extends CommandOpMode {
         changeToNoneCommand = new ChangeColorsCommand(ledSubsystem,3);
         strafeLeft = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed,()->Double.valueOf(-1)*speed);
         strafeRight = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed,()->Double.valueOf(1)*speed);
-        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed,()->Double.valueOf(-strafeRearWheels)*speed);
-        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed,()->Double.valueOf(strafeRearWheels)*speed);
+        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*0.6,()->Double.valueOf(-strafeRearWheels1)*0.6);
+        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*0.6,()->Double.valueOf(strafeRearWheels1)*0.6);
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
-        changeSpeedCommand = new ChangeSpeedCommand(0.6);
+        speed6Command = new ChangeSpeedCommand(0.6,0.5);
+        speed7Command = new ChangeSpeedCommand(0.7,0.6);
+        speed1Command = new ChangeSpeedCommand(1,0.75);
         controlClawsAngleCommand = new ControlClawsAngleCommand(jointSubsystem,() ->armSubsystem.getAngle());
         goToGroundCommand = new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos);
         goToGroundOpenSlideCommand = new ChangeClawsDefaultPos(jointSubsystem,groundPosOpenSlide);
 //        goToGroundCommand = new ControlClawsPosOnceCommand(clawSubsystem,Constants.ClawConstants.groundPos);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
         controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.getLeftPixel(),()->clawSubsystem.getRightPixel());
-        pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->controller.getButton(GamepadKeys.Button.DPAD_UP),()->controller.getButton(GamepadKeys.Button.DPAD_DOWN));
+        pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->driver.getButton(GamepadKeys.Button.DPAD_RIGHT),()->driver.getButton(GamepadKeys.Button.DPAD_LEFT));
         rotateClawsToAngleCommand = new RotateClawsToAngleCommand(jointSubsystem, ()->controller.getRightX()*360);
         closeClawsCommand = new ControlClawsCommand(clawSubsystem,false);
         openClawsCommand = new ControlClawsCommand(clawSubsystem,true);
@@ -200,8 +208,6 @@ public class RobotOpMode extends CommandOpMode {
         //default commands
         slideSubsystem.setDefaultCommand(moveLiftCommand);
         hookSubsystem.setDefaultCommand(pullRobotCommand);
-//        clawSubsystem.setDefaultCommand(new ControlClawsAngleCommand(clawSubsystem,()->armSubsystem.getAngle()));
-        //clawSubsystem.setDefaultCommand(rotateClawsToPosCommand);
         jointSubsystem.setDefaultCommand(controlClawsPosCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
@@ -216,23 +222,19 @@ public class RobotOpMode extends CommandOpMode {
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(strafeLeftSlow);
         new GamepadButton(driver,GamepadKeys.Button.LEFT_BUMPER).whileHeld(strafeLeft);
         new GamepadButton(driver,GamepadKeys.Button.RIGHT_BUMPER).whileHeld(strafeRight);
-        new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(changeSpeedCommand);
+        new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(speed6Command);
+        new GamepadButton(driver, GamepadKeys.Button.B).whenPressed(speed7Command);
+        new GamepadButton(driver, GamepadKeys.Button.A).whenPressed(speed1Command);
 
 
         //controllers command
         new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(deployHookCommand);
         new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whileActiveOnce(returnHookCommand);
-        //new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(switchColorsCommand);
-        new Trigger(() -> slideSubsystem.isBottom()).whileActiveOnce(changeToGreenCommand);
-        new Trigger(() -> !slideSubsystem.isBottom()).whileActiveOnce(changeToNoneCommand);
-        if(slideSubsystem.isBottom())schedule(changeToGreenCommand);
-        else schedule(changeToNoneCommand);
-
-        new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
-        new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
+        new GamepadButton(controller, GamepadKeys.Button.DPAD_UP).whenPressed(new SetArmsTargetToNextPreSet(armSubsystem));
+        new GamepadButton(controller, GamepadKeys.Button.DPAD_DOWN).whenPressed(new SetArmsTargetToPrevPreSet(armSubsystem));
         new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveOnce(openOrCloseRightClawCommand);
         new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveOnce(openOrCloseLeftClawCommand);
-        new GamepadButton(controller, GamepadKeys.Button.B).toggleWhenPressed(closeClawsCommand,openClawsCommand);
+        new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(closeClawsCommand);
         new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true),new MoveLiftToPosCommand(slideSubsystem,140)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goTo90DegCommand));
         new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos)));
 
@@ -240,6 +242,13 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(controller,GamepadKeys.Button.Y).whenPressed(new SequentialCommandGroup( goToGroundOpenSlideCommand,new ControlClawsCommand(clawSubsystem,true),moveLiftToIntakeCommand));
         new GamepadButton(controller,GamepadKeys.Button.RIGHT_BUMPER).whileActiveOnce(new MoveLiftToPosCommand(slideSubsystem,0)).whileActiveOnce(new SetArmsTarget(armSubsystem,0)).whileActiveOnce(new ControlClawsCommand(clawSubsystem, false)).whileActiveOnce(new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos));
 
+        //automations
+//        new Trigger(() -> slideSubsystem.isBottom()).whileActiveOnce(changeToGreenCommand);
+//        new Trigger(() -> !slideSubsystem.isBottom()).whileActiveOnce(changeToNoneCommand);
+//        if(slideSubsystem.isBottom())schedule(changeToGreenCommand);
+//        else schedule(changeToNoneCommand);
+        new Trigger(() -> clawSubsystem.isDetectedPixelRight()).whileActiveOnce(closeRightClawCommand).negate().whileActiveOnce(openRightClawCommand);
+        new Trigger(() -> clawSubsystem.isDetectedPixelLeft()).whileActiveOnce(closeLeftClawCommand).negate().whileActiveOnce(openLeftClawCommand);
     }
 
 
@@ -251,6 +260,8 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("right rgb",rightARGB[1]+", "+rightARGB[2]+", "+rightARGB[3]);
         telemetry.addData("right distance",clawSubsystem.getRightDistance());
         telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
+        telemetry.addData("slide pos",slideSubsystem.getHeight());
+        telemetry.addData("preSet index",armSubsystem.getPreSetIndex());
 
         telemetry.update();
     }

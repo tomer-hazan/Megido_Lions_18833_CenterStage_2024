@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsT
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.JointSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.VisionSubsystem;
@@ -38,6 +39,7 @@ public class RedBoardAuto extends CommandOpMode {
     ClawSubsystem clawSubsystem;
     JointSubsystem jointSubsystem;
     VisionSubsystem visionSubsystem;
+    HookSubsystem hookSubsystem;
     ArmSubsystem armSubsystem;
     SequentialCommandGroup autoLeft;
     SequentialCommandGroup autoCenter;
@@ -64,15 +66,17 @@ public class RedBoardAuto extends CommandOpMode {
         drive = driveTrainSubsystem.getSampleDrive();
         slideSubsystem = new SlideSubsystem(hardwareMap);
         jointSubsystem = new JointSubsystem(hardwareMap);
-        clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime());
         visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, GameConstants.StartingPosition.RED);
         armSubsystem = new ArmSubsystem(hardwareMap);
+        hookSubsystem = new HookSubsystem(hardwareMap);
+        clawSubsystem=new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
     }
     private void initRobot(){
         clawSubsystem.openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
         clawSubsystem.openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
         jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->getRuntime()));
         armSubsystem.setDefaultCommand(new ControlArmCommand(armSubsystem));
+        hookSubsystem.lowerHook();
     }
     @Override
     public void runOpMode() throws InterruptedException {
@@ -91,10 +95,6 @@ public class RedBoardAuto extends CommandOpMode {
             case RIGHT:
                 schedule(autoRight);
                 break;
-        }
-        if(isStopRequested()){
-            stop();
-            return;
         }
 
 
@@ -124,33 +124,31 @@ public class RedBoardAuto extends CommandOpMode {
                 .build());
         SequentialCommandGroup auto;
         auto=new SequentialCommandGroup(
-                new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 moveToPixelPos,
-                new ChangeClawsDefaultPos(jointSubsystem,groundPos),
                 moveForward,
-                new ControlRightClawCommand(clawSubsystem,true),
-                new waitCommand(()->getRuntime(),1),
-                new ParallelCommandGroup(new ControlRightClawCommand(clawSubsystem,false),new ChangeClawsDefaultPos(jointSubsystem,deg90Pos)),
-                new waitCommand(()->getRuntime(),1),
+                new ParallelCommandGroup(new ChangeClawsDefaultPos(jointSubsystem,deg90Pos)),
                 moveToBoard,
                 new SetArmsTarget(armSubsystem,4000),
                 new ControlLeftClawCommand(clawSubsystem,true),
-                new waitCommand(()->getRuntime(),3),
-                new SequentialCommandGroup(new ControlLeftClawCommand(clawSubsystem,false),new SetArmsTarget(armSubsystem,0)),
+                new ControlRightClawCommand(clawSubsystem,true),
+                new waitCommand(()->getRuntime(),1),
+                new SequentialCommandGroup(new ControlLeftClawCommand(clawSubsystem,false),new ControlRightClawCommand(clawSubsystem,false),new SetArmsTarget(armSubsystem,0)),
                 park
         );
         return  auto;
     }
     public SequentialCommandGroup autoCenter(){
         DriveTrajectorySequenceCommand moveToPixelPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(startPos)
-                .lineTo(new Vector2d(12,-35))
+                .lineTo(new Vector2d(12,-34))
                 .turn(Math.toRadians(180))
                 .build());
-        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
-                .back(5)
+        DriveTrajectorySequenceCommand turnToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
+                .back(8)
                 .turn(Math.toRadians(90))
+                .build());
+        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(turnToBoard.getTrajectory().end())
                 .lineTo(new Vector2d(47, -35))
-                .lineTo(new Vector2d(47, -29))
+                //.lineTo(new Vector2d(47, -29))
                 .back(1)
                 .build());
         DriveTrajectorySequenceCommand park = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
@@ -159,16 +157,20 @@ public class RedBoardAuto extends CommandOpMode {
                 .build());
         SequentialCommandGroup auto;
         auto=new SequentialCommandGroup(
-                moveToPixelPos,
-                new ParallelCommandGroup(new ChangeClawsDefaultPos(jointSubsystem,groundPos),new ControlRightClawCommand(clawSubsystem,true)),
-                new waitCommand(()->getRuntime(),1),
-                new ParallelCommandGroup(new ControlRightClawCommand(clawSubsystem,false),new ChangeClawsDefaultPos(jointSubsystem,deg90Pos)),
-                new waitCommand(()->getRuntime(),1),
-                moveToBoard,
-                new SetArmsTarget(armSubsystem,4000),
+                new ChangeClawsDefaultPos(jointSubsystem,groundPos),
+                new ParallelCommandGroup(moveToPixelPos, new ChangeClawsDefaultPos(jointSubsystem,groundPos)),
                 new ControlLeftClawCommand(clawSubsystem,true),
-                new waitCommand(()->getRuntime(),3),
-                new SequentialCommandGroup(new ControlLeftClawCommand(clawSubsystem,false),new SetArmsTarget(armSubsystem,0)),
+                new waitCommand(()->getRuntime(),0.35),
+                new ControlLeftClawCommand(clawSubsystem,false),
+                new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
+                turnToBoard,
+                new ParallelCommandGroup( moveToBoard, new SetArmsTarget(armSubsystem, 2000)),
+                new SetArmsTarget(armSubsystem,4000),
+                new waitCommand(()->getRuntime(),0.35),
+                new ControlRightClawCommand(clawSubsystem, true),
+                new waitCommand(()->getRuntime(),0.35),
+                new SetArmsTarget(armSubsystem, 2000),
+                new SequentialCommandGroup(new ControlRightClawCommand(clawSubsystem, false),new SetArmsTarget(armSubsystem, 0)),
                 park
         );
         return  auto;
@@ -190,16 +192,18 @@ public class RedBoardAuto extends CommandOpMode {
                 .build());
         SequentialCommandGroup auto;
         auto = new SequentialCommandGroup(
-                moveToPixelPos,
-                new ParallelCommandGroup(new ChangeClawsDefaultPos(jointSubsystem, groundPos), new ControlRightClawCommand(clawSubsystem, true)),
-                new waitCommand(() -> getRuntime(), 1),
-                new ParallelCommandGroup(new ControlRightClawCommand(clawSubsystem, false), new ChangeClawsDefaultPos(jointSubsystem, deg90Pos)),
-                new waitCommand(() -> getRuntime(), 1),
-                moveToBoard,
+                new ChangeClawsDefaultPos(jointSubsystem,groundPos),
+                new ParallelCommandGroup(moveToPixelPos, new ChangeClawsDefaultPos(jointSubsystem,groundPos)),
+                new ControlRightClawCommand(clawSubsystem,true),
+                new waitCommand(()->getRuntime(),0.35),
+                new ControlRightClawCommand(clawSubsystem,false),
+                new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
+                new ParallelCommandGroup( moveToBoard, new SetArmsTarget(armSubsystem, 2500)),
                 new SetArmsTarget(armSubsystem, 4000),
+                new waitCommand(()->getRuntime(),0.35),
                 new ControlLeftClawCommand(clawSubsystem, true),
-                new waitCommand(() -> getRuntime(), 3),
-                new SequentialCommandGroup(new ControlLeftClawCommand(clawSubsystem, false), new SetArmsTarget(armSubsystem, 0)),
+                new waitCommand(()->getRuntime(),0.35),
+                new SequentialCommandGroup(new ControlLeftClawCommand(clawSubsystem, false),new SetArmsTarget(armSubsystem, 0)),
                 park
         );
         return auto;

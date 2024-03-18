@@ -15,6 +15,8 @@ public class ArmSubsystem extends SubsystemBase{
     RevTouchSensor limit;
     ArmConstants.State state;
     double velo;
+    private final int[] preSetHeights = new int[]{0,1000,2000,3000};
+    private int preSetIndex =0;
     public ArmSubsystem(HardwareMap hardwareMap){
         this.motor = new MotorEx(hardwareMap,"arm");
         limit =hardwareMap.get(RevTouchSensor.class,"arm limit switch");
@@ -61,4 +63,20 @@ public class ArmSubsystem extends SubsystemBase{
     public double getAngle(){
         return motor.getCurrentPosition() /ArmConstants.ticks_in_degree;
     }
+
+    public int getPreSetIndex() {
+        return preSetIndex;
+    }
+    public int[] getPreSetHeights(){
+        return  preSetHeights;
+    }
+    public int getNextPreSet(){
+        preSetIndex++;
+        return preSetHeights[preSetIndex%preSetHeights.length];
+    }
+    public int getPrevPreSet(){
+        preSetIndex--;
+        return preSetHeights[preSetIndex%preSetHeights.length];
+    }
+    public int getCurrentPos(){return motor.getCurrentPosition();}
 }

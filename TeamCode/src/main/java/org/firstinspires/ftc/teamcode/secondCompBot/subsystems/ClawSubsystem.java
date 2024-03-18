@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedGreenRight;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedLeft;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedRight;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.angle_threshold;
 
 public class ClawSubsystem extends SubsystemBase {
     public final SensorColor colorSensorLeft;
@@ -35,14 +36,16 @@ public class ClawSubsystem extends SubsystemBase {
     double[] correctedArgbRight;
     double disLeft;
     double disRight;
+    Supplier<Double> armDeg;
 
-    public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds){
+    public ClawSubsystem(HardwareMap hardwareMap, Supplier<Double> seconds,Supplier<Double> armDeg){
         this.rightClaw = hardwareMap.get(Servo.class,"right claw");
         this.leftClaw = hardwareMap.get(Servo.class,"left claw");
         colorSensorLeft = new SensorColor(hardwareMap,"color sensor left");
         colorSensorRight = new SensorColor(hardwareMap,"color sensor right");
         distanceSensorLeft = hardwareMap.get(DistanceSensor.class,"color sensor left");
         distanceSensorRight = hardwareMap.get(DistanceSensor.class,"color sensor right");
+        this.armDeg = armDeg;
         this.seconds = seconds;
         rightClaw.setDirection(Servo.Direction.REVERSE);
         int[] argbLeft = colorSensorLeft.getARGB();
@@ -57,16 +60,6 @@ public class ClawSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==0){
-//            int[] argbRight = colorSensorRight.getARGB();
-//            correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
-//            disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
-//        }
-//        if(RobotOpMode.sensorFrame%RobotOpMode.frameMod==1){
-//            int[] argbLeft = colorSensorLeft.getARGB();
-//            correctedArgbLeft = new double[]{argbLeft[0],argbLeft[1]* correctedRedLeft,argbLeft[2]* correctedGreenLeft,argbLeft[3]* correctedBlueLeft};
-//            disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
-//        }
         if(rightClawPos==Positions.OPEN){
             int[] argbRight = colorSensorRight.getARGB();
             correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
@@ -92,7 +85,8 @@ public class ClawSubsystem extends SubsystemBase {
                 leftClawPos=Positions.CLOSE;
                 break;
             case OPEN:
-                leftClaw.setPosition(1);
+                if(armDeg.get()>angle_threshold)leftClaw.setPosition(0.45);
+                else leftClaw.setPosition(1);
                 leftClawPos=Positions.OPEN;
                 break;
         }
@@ -104,7 +98,8 @@ public class ClawSubsystem extends SubsystemBase {
                 rightClawPos=Positions.CLOSE;
                 break;
             case OPEN:
-                rightClaw.setPosition(1);
+                if(armDeg.get()>angle_threshold)rightClaw.setPosition(0.5);
+                else rightClaw.setPosition(1);
                 rightClawPos=Positions.OPEN;
                 break;
         }
@@ -114,10 +109,10 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<40;//toDo check if works well with far pixels
+        return getLeftDistance()<30;//toDo check if works well with far pixels
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<40;//toDo check if works well with far pixels
+        return getRightDistance()<30;//toDo check if works well with far pixels
     }
     public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
     public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}

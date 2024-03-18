@@ -6,13 +6,15 @@ import org.firstinspires.ftc.teamcode.secondCompBot.opModes.RobotOpMode;
 
 public class ChangeSpeedCommand extends CommandBase {
     double speed;
-    public ChangeSpeedCommand(double speed){
+    double turnSpeed;
+    public ChangeSpeedCommand(double speed,double turnSpeed){
         this.speed=speed;
+        this.turnSpeed=turnSpeed;
     }
     @Override
     public void initialize() {
-        if(RobotOpMode.speed==speed)RobotOpMode.speed=1;
-        else RobotOpMode.speed=speed;
+        RobotOpMode.speed=speed;
+        RobotOpMode.turnSpeed=turnSpeed;
     }
 
     @Override

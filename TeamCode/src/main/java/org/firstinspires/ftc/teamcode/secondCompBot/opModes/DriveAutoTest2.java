@@ -20,13 +20,13 @@ public class DriveAutoTest2 extends LinearOpMode {
     ChangeClawsDefaultPos jointToGround;
     @Override
     public void runOpMode() {
-        clawSubsystem=new ClawSubsystem(hardwareMap,()->getRuntime());
         jointSubsystem = new JointSubsystem(hardwareMap);
         clawSubsystem.openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
         clawSubsystem.openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
         controlClawsPosCommand = new ControlClawsPosCommand(jointSubsystem,()->0.0);
         jointToGround = new ChangeClawsDefaultPos(jointSubsystem, Constants.JointConstants.groundPos);
         jointSubsystem.setDefaultCommand(controlClawsPosCommand);
+        clawSubsystem=new ClawSubsystem(hardwareMap,()->getRuntime(),()->0.0);
 
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);

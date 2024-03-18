@@ -43,8 +43,8 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if(fieldCentric)m_drive.driveFieldCentric(leftX.get(),leftY.get(),0.75*rightX.get(),heading.get());
-        else m_drive.driveRobotCentric(leftX.get(),leftY.get(),0.75*rightX.get(),true);
+        if(fieldCentric)m_drive.driveFieldCentric(leftX.get(),leftY.get(),rightX.get(),heading.get());
+        else m_drive.driveRobotCentric(leftX.get(),leftY.get(),rightX.get(),true);
         Log.d("drive", "robot centric");
     }
 

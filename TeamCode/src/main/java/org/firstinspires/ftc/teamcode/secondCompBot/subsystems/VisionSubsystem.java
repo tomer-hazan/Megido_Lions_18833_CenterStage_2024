@@ -68,8 +68,8 @@ public class VisionSubsystem extends SubsystemBase {
     public static int rightHeight=250;
 
     public static int areaThreshHold;
-    public static int blueAreaThreshHold=3000;
-    public static int redAreaThreshHold=3000;
+    public static int blueAreaThreshHold=6000;
+    public static int redAreaThreshHold=6000;
     MatOfPoint largestCenterContour = new MatOfPoint();
     MatOfPoint largestSideContour = new MatOfPoint();
     List<MatOfPoint> allSideContours;
@@ -137,6 +137,8 @@ public class VisionSubsystem extends SubsystemBase {
                             }
                         }
                     }
+                    processedSide.release();
+                    processedCenter.release();
                     break;
                 case BLUE:
                     filterBlue(sideMat,sideFiltered);
@@ -184,13 +186,12 @@ public class VisionSubsystem extends SubsystemBase {
                             }
                         }
                     }
+                    processedSide.release();
+                    processedCenter.release();
             }
 
 
 //            ShapeDetectionUtil.markOuterContour(processed,input);
-             centerFiltered.release();
-             sideFiltered.release();
-             //processed.release();
              telemetry.addData("game type",gameType);
             try {
                 telemetry.addData("largest center area",Imgproc.boundingRect(largestCenterContour).area());
@@ -202,6 +203,11 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
              telemetry.update();
+            centerFiltered.release();
+            sideFiltered.release();
+            centerMat.release();
+            sideMat.release();
+            filtered.release();
             for (MatOfPoint contour: allCenterContours) {
                 contour.release();
             }
@@ -215,11 +221,11 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
 
-
+//shows an outline of the boxes
 //            @Override
 //    public Mat processFrame(Mat input) {
-//        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
-//        side = new Rect(rightX,rightY,rightWidth,rightHeight);
+////        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
+////        side = new Rect(rightX,rightY,rightWidth,rightHeight);
 //
 //        Imgproc.rectangle(input, center, new Scalar(255, 0, 0), 3);
 //        Imgproc.rectangle(input, side, new Scalar(0, 0, 255), 3);

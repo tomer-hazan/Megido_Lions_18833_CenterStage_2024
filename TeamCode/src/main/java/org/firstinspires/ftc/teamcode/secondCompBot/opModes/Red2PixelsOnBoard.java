@@ -46,8 +46,8 @@ public class Red2PixelsOnBoard extends CommandOpMode {
     private void initSubsystems(){
         driveTrainSubsystem = new DriveTrainSubsystem(hardwareMap);
         drive = driveTrainSubsystem.getSampleDrive();
-        clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime());
         armSubsystem = new ArmSubsystem(hardwareMap);
+        clawSubsystem=new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
         jointSubsystem = new JointSubsystem(hardwareMap);
     }
     private void initRobot(){

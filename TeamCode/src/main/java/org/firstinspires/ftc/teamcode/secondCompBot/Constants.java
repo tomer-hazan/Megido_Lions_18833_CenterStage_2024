@@ -5,9 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import org.opencv.core.Rect;
 
 import java.util.HashMap;
-
+@Config
 public class Constants {
-    public static final class DriveTrainConstants {
+    public static double strafeRearWheels1 = 0.8;
+    public static class DriveTrainConstants {
         public final static double ticks_per_revolution =
                 MotorConstants.REVThroughBoreEncoder.ticks_per_revolution;
 
@@ -21,7 +22,7 @@ public class Constants {
 
         public static double MaxVelocity = 1.867873;//1.764102,1.867873//,// Its recommended to put max velocity to 90% of the true value
         public static double MaxAccel = 1.7;
-        public static final double strafeRearWheels = 0.3;
+        public static double strafeRearWheels = 0.8;
 
         public final static double odometry_wheel_ticks_to_meters = OdometryWheelDiameter * Math.PI / ticks_per_revolution;
 

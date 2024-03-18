@@ -15,7 +15,7 @@ public class Auto extends CommandOpMode {
     VisionSubsystem visionSubsystem;
     private void initSubsystems(){
         armSubsystem = new ArmSubsystem(hardwareMap);
-        clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime());
+        clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
         visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, Constants.GameConstants.StartingPosition.BLUE);
     }
     @Override

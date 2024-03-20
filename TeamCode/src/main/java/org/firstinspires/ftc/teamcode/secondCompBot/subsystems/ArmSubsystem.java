@@ -21,7 +21,7 @@ public class ArmSubsystem extends SubsystemBase{
         this.motor = new MotorEx(hardwareMap,"arm");
         limit =hardwareMap.get(RevTouchSensor.class,"arm limit switch");
         motor.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.encoder.setDirection(Motor.Direction.REVERSE);
+        motor.encoder.setDirection(Motor.Direction.FORWARD);
         motor.resetEncoder();
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor.set(0);

@@ -27,9 +27,9 @@ public class armPID extends OpMode {
         controller.setTolerance(50);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm = new MotorEx(hardwareMap,"slide");
+        arm = new MotorEx(hardwareMap,"arm");
         //arm.encoder.setDirection(Motor.Direction.REVERSE);
-        arm.setInverted(false);
+        arm.setInverted(true);
 //        slide = new MotorEx(hardwareMap,"slide");
 //        flip1 = hardwareMap.get(Servo.class,"flip servo 1");
 //        flip2 = hardwareMap.get(Servo.class,"flip servo 2");

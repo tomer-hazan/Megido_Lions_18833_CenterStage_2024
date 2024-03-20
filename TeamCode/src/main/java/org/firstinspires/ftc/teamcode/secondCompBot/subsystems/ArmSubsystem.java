@@ -71,12 +71,12 @@ public class ArmSubsystem extends SubsystemBase{
         return  preSetHeights;
     }
     public int getNextPreSet(){
-        preSetIndex++;
+        if(preSetIndex<preSetHeights.length-1) preSetIndex++;
         return preSetHeights[preSetIndex%preSetHeights.length];
     }
     public int getPrevPreSet(){
-        preSetIndex--;
-        return preSetHeights[preSetIndex%preSetHeights.length];
+        if(preSetIndex>0) preSetIndex--;
+        return preSetHeights[preSetIndex];
     }
     public int getCurrentPos(){return motor.getCurrentPosition();}
 }

@@ -255,13 +255,15 @@ public class RobotOpMode extends CommandOpMode {
     private void telemetry(Command command) {
         double[] leftARGB = clawSubsystem.getLeftARGB();
         double[] rightARGB = clawSubsystem.getRightARGB();
-        telemetry.addData("left rgb",leftARGB[1]+", "+leftARGB[2]+", "+leftARGB[3]);
+//        telemetry.addData("left rgb",leftARGB[1]+", "+leftARGB[2]+", "+leftARGB[3]);
         telemetry.addData("left distance",clawSubsystem.getLeftDistance());
-        telemetry.addData("right rgb",rightARGB[1]+", "+rightARGB[2]+", "+rightARGB[3]);
+//        telemetry.addData("right rgb",rightARGB[1]+", "+rightARGB[2]+", "+rightARGB[3]);
         telemetry.addData("right distance",clawSubsystem.getRightDistance());
-        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
-        telemetry.addData("slide pos",slideSubsystem.getHeight());
-        telemetry.addData("preSet index",armSubsystem.getPreSetIndex());
+//        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
+//        telemetry.addData("slide pos",slideSubsystem.getHeight());
+//        telemetry.addData("preSet index",armSubsystem.getPreSetIndex());
+        telemetry.addData("sumRight",clawSubsystem.sumRightColor());
+        telemetry.addData("sumLeft",clawSubsystem.sumLeftColor());
 
         telemetry.update();
     }

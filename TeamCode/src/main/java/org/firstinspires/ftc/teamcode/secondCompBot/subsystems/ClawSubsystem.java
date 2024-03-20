@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.secondCompBot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.SensorColor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -19,8 +20,10 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedLeft;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstants.correctedRedRight;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.angle_threshold;
-
+@Config
 public class ClawSubsystem extends SubsystemBase {
+    public static double threshHoldLeft=7;
+    public static double threshHoldRight=4;
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
     public final DistanceSensor distanceSensorLeft;
@@ -109,10 +112,10 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<30;//toDo check if works well with far pixels
+        return getLeftDistance()<30&&threshHoldLeft<sumLeftColor();//toDo check if works well with far pixels
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<30;//toDo check if works well with far pixels
+        return getRightDistance()<30&&threshHoldRight<sumRightColor();//toDo check if works well with far pixels
     }
     public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
     public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}
@@ -152,5 +155,11 @@ public class ClawSubsystem extends SubsystemBase {
 
     public Constants.GameElements.Pixals getRightPixel() {
         return rightPixel;
+    }
+    public double sumLeftColor(){
+        return correctedArgbLeft[1]+correctedArgbLeft[2]+correctedArgbLeft[3];
+    }
+    public double sumRightColor(){
+        return correctedArgbRight[1]+correctedArgbRight[2]+correctedArgbRight[3];
     }
 }

@@ -22,7 +22,7 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.angle_threshold;
 @Config
 public class ClawSubsystem extends SubsystemBase {
-    public static double threshHoldLeft=7;
+    public static double threshHoldLeft=8;
     public static double threshHoldRight=4;
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
@@ -112,10 +112,10 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<30&&threshHoldLeft<sumLeftColor();//toDo check if works well with far pixels
+        return getLeftDistance()<35&&threshHoldLeft<sumLeftColor();//toDo check if works well with far pixels
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<30&&threshHoldRight<sumRightColor();//toDo check if works well with far pixels
+        return getRightDistance()<33&&threshHoldRight<sumRightColor();//toDo check if works well with far pixels
     }
     public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
     public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}

@@ -239,7 +239,9 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos)));
 
         new Trigger(()->controller.getButton(GamepadKeys.Button.X)).toggleWhenActive(rotateClawsToPosCommand);
-        new GamepadButton(controller,GamepadKeys.Button.Y).whenPressed(new SequentialCommandGroup( goToGroundOpenSlideCommand,new ControlClawsCommand(clawSubsystem,true),moveLiftToIntakeCommand));
+        new GamepadButton(controller,GamepadKeys.Button.Y).whenPressed(new SequentialCommandGroup( goToGroundOpenSlideCommand,moveLiftToIntakeCommand));
+        new Trigger(()->controller.getButton(GamepadKeys.Button.Y)&& !clawSubsystem.isDetectedPixelLeft()).whenActive(new ControlLeftClawCommand(clawSubsystem,true));
+        new Trigger(()->controller.getButton(GamepadKeys.Button.Y)&& !clawSubsystem.isDetectedPixelRight()).whenActive(new ControlRightClawCommand(clawSubsystem,true));
         new GamepadButton(controller,GamepadKeys.Button.RIGHT_BUMPER).whileActiveOnce(new MoveLiftToPosCommand(slideSubsystem,0)).whileActiveOnce(new SetArmsTarget(armSubsystem,0)).whileActiveOnce(new ControlClawsCommand(clawSubsystem, false)).whileActiveOnce(new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos));
 
         //automations
@@ -259,7 +261,7 @@ public class RobotOpMode extends CommandOpMode {
         telemetry.addData("left distance",clawSubsystem.getLeftDistance());
 //        telemetry.addData("right rgb",rightARGB[1]+", "+rightARGB[2]+", "+rightARGB[3]);
         telemetry.addData("right distance",clawSubsystem.getRightDistance());
-//        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
+        telemetry.addData("arm",armSubsystem.motor.getCurrentPosition());
 //        telemetry.addData("slide pos",slideSubsystem.getHeight());
 //        telemetry.addData("preSet index",armSubsystem.getPreSetIndex());
         telemetry.addData("sumRight",clawSubsystem.sumRightColor());

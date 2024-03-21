@@ -23,7 +23,7 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConsta
 @Config
 public class ClawSubsystem extends SubsystemBase {
     public static double threshHoldLeft=8;
-    public static double threshHoldRight=4;
+    public static double threshHoldRight=5;
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
     public final DistanceSensor distanceSensorLeft;
@@ -57,8 +57,8 @@ public class ClawSubsystem extends SubsystemBase {
         correctedArgbRight = new double[]{argbRight[0],argbRight[1]* correctedRedRight,argbRight[2]* correctedGreenRight,argbRight[3]* correctedBlueRight};
         disLeft = distanceSensorLeft.getDistance(DistanceUnit.MM);
         disRight = distanceSensorRight.getDistance(DistanceUnit.MM);
-        openOrCloseLeft(Positions.OPEN);
-        openOrCloseRight(Positions.OPEN);
+        openOrCloseLeft(Positions.CLOSE);
+        openOrCloseRight(Positions.CLOSE);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ClawSubsystem extends SubsystemBase {
                 leftClawPos=Positions.CLOSE;
                 break;
             case OPEN:
-                if(armDeg.get()>angle_threshold)leftClaw.setPosition(0.45);
+                if(armDeg.get()>angle_threshold)leftClaw.setPosition(0.5);
                 else leftClaw.setPosition(1);
                 leftClawPos=Positions.OPEN;
                 break;
@@ -101,7 +101,7 @@ public class ClawSubsystem extends SubsystemBase {
                 rightClawPos=Positions.CLOSE;
                 break;
             case OPEN:
-                if(armDeg.get()>angle_threshold)rightClaw.setPosition(0.5);
+                if(armDeg.get()>angle_threshold)rightClaw.setPosition(0.55);
                 else rightClaw.setPosition(1);
                 rightClawPos=Positions.OPEN;
                 break;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.secondCompBot.opModes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -55,6 +56,7 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConsta
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.strafeRearWheels1;
 
 @TeleOp
+@Config
 public class RobotOpMode extends CommandOpMode {
     ToggleButtonReader aToggle;
     //controllers
@@ -66,6 +68,8 @@ public class RobotOpMode extends CommandOpMode {
     static DriveTrainSubsystem driveTrainSubsystem;
     public static double sensorFrame=0;
     public static double frameMod=5;
+    public static double mechunomSlowPowerFront=0.6;
+    public static double mechunomSlowPowerRear=0.7;
     AirplaneSubsystem airplaneSubsystem;
     ClawSubsystem clawSubsystem;
     HookSubsystem hookSubsystem;
@@ -89,8 +93,8 @@ public class RobotOpMode extends CommandOpMode {
     ControlLeftClawCommand openLeftClawCommand;
     ControlLeftClawCommand closeLeftClawCommand;
     SwitchColorsCommand switchColorsCommand;
-    static MecanumMovmentCommand strafeLeft;
-    static MecanumMovmentCommand strafeRight;
+    MecanumMovmentCommand strafeLeftRealSlow;
+    MecanumMovmentCommand strafeRightRealSlow;
     MecanumMovmentCommand strafeLeftSlow;
     MecanumMovmentCommand strafeRightSlow;
     PullRobotCommand pullRobotCommand;
@@ -179,10 +183,10 @@ public class RobotOpMode extends CommandOpMode {
         switchColorsCommand = new SwitchColorsCommand(ledSubsystem);
         changeToGreenCommand = new ChangeColorsCommand(ledSubsystem,0);
         changeToNoneCommand = new ChangeColorsCommand(ledSubsystem,3);
-        strafeLeft = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*speed,()->Double.valueOf(-1)*speed);
-        strafeRight = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*speed,()->Double.valueOf(1)*speed);
-        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*0.6,()->Double.valueOf(-strafeRearWheels1)*0.6);
-        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*0.6,()->Double.valueOf(strafeRearWheels1)*0.6);
+        strafeLeftRealSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> -0.6*mechunomSlowPowerFront,()->Double.valueOf(-0.48)*mechunomSlowPowerRear);
+        strafeRightRealSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> 0.6*mechunomSlowPowerFront,()->Double.valueOf(0.48)*mechunomSlowPowerRear);
+        strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*mechunomSlowPowerFront,()->Double.valueOf(-strafeRearWheels1)*mechunomSlowPowerRear);
+        strafeRightSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(1)*mechunomSlowPowerFront,()->Double.valueOf(strafeRearWheels1)*mechunomSlowPowerRear);
         moveLiftSlowCommand = new MoveLiftCommand(slideSubsystem,() -> -controller.getLeftY()*0.65);
         speed6Command = new ChangeSpeedCommand(0.6,0.5);
         speed7Command = new ChangeSpeedCommand(0.7,0.6);
@@ -220,29 +224,27 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(driver,GamepadKeys.Button.DPAD_DOWN).whenHeld(returnHookCommand);
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(strafeRightSlow);
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(strafeLeftSlow);
-        new GamepadButton(driver,GamepadKeys.Button.LEFT_BUMPER).whileHeld(strafeLeft);
-        new GamepadButton(driver,GamepadKeys.Button.RIGHT_BUMPER).whileHeld(strafeRight);
+        new GamepadButton(driver,GamepadKeys.Button.LEFT_BUMPER).whileHeld(strafeRightRealSlow);
+        new GamepadButton(driver,GamepadKeys.Button.RIGHT_BUMPER).whileHeld(strafeLeftRealSlow);
         new GamepadButton(driver, GamepadKeys.Button.X).whenPressed(speed6Command);
         new GamepadButton(driver, GamepadKeys.Button.B).whenPressed(speed7Command);
         new GamepadButton(driver, GamepadKeys.Button.A).whenPressed(speed1Command);
 
 
         //controllers command
-        new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(deployHookCommand);
-        new GamepadButton(controller,GamepadKeys.Button.DPAD_RIGHT).whileActiveOnce(returnHookCommand);
         new GamepadButton(controller, GamepadKeys.Button.DPAD_UP).whenPressed(new SetArmsTargetToNextPreSet(armSubsystem));
         new GamepadButton(controller, GamepadKeys.Button.DPAD_DOWN).whenPressed(new SetArmsTargetToPrevPreSet(armSubsystem));
-        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveOnce(openOrCloseRightClawCommand);
-        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveOnce(openOrCloseLeftClawCommand);
-        new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(closeClawsCommand);
-        new GamepadButton(controller, GamepadKeys.Button.A).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true),new MoveLiftToPosCommand(slideSubsystem,140,()->getRuntime())),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),goTo90DegCommand));
-        new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.groundPos)),new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem,false),new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos)));
+        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveOnce(closeRightClawCommand);
+        new Trigger(()->controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveOnce(closeLeftClawCommand);
+        new GamepadButton(controller, GamepadKeys.Button.LEFT_BUMPER).whenPressed(openLeftClawCommand);
+        new GamepadButton(controller, GamepadKeys.Button.RIGHT_BUMPER).whenPressed(openRightClawCommand);
+        new GamepadButton(controller, GamepadKeys.Button.B).whenPressed(new SequentialCommandGroup(new ControlClawsCommand(clawSubsystem, false),goToGroundCommand,new ControlClawsCommand(clawSubsystem,true),new MoveLiftToPosCommand(slideSubsystem,140,()->getRuntime())));
 
         new Trigger(()->controller.getButton(GamepadKeys.Button.X)).toggleWhenActive(rotateClawsToPosCommand);
         new GamepadButton(controller,GamepadKeys.Button.Y).whenPressed(new SequentialCommandGroup( goToGroundOpenSlideCommand,moveLiftToIntakeCommand));
         new Trigger(()->controller.getButton(GamepadKeys.Button.Y)&& !clawSubsystem.isDetectedPixelLeft()).whenActive(new ControlLeftClawCommand(clawSubsystem,true));
         new Trigger(()->controller.getButton(GamepadKeys.Button.Y)&& !clawSubsystem.isDetectedPixelRight()).whenActive(new ControlRightClawCommand(clawSubsystem,true));
-        new GamepadButton(controller,GamepadKeys.Button.RIGHT_BUMPER).whileActiveOnce(new MoveLiftToPosCommand(slideSubsystem,0,()->getRuntime())).whileActiveOnce(new SetArmsTarget(armSubsystem,0)).whileActiveOnce(new ControlClawsCommand(clawSubsystem, false)).whileActiveOnce(new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos));
+        new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(new MoveLiftToPosCommand(slideSubsystem,0,()->getRuntime())).whileActiveOnce(new SetArmsTarget(armSubsystem,0)).whileActiveOnce(new ControlClawsCommand(clawSubsystem, false)).whileActiveOnce(new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos));
 
         //automations
 //        new Trigger(() -> slideSubsystem.isBottom()).whileActiveOnce(changeToGreenCommand);

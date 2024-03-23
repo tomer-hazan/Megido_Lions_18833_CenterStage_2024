@@ -15,7 +15,7 @@ public class JointSubsystem extends SubsystemBase {
     public final ServoEx rotationServo;
     private double defaultPose;
     public JointSubsystem(HardwareMap hardwareMap){
-        rotationServo = new SimpleServo(hardwareMap,"flip servo 1",rotation_start,rotation_limit);
+        rotationServo = new SimpleServo(hardwareMap,"flip servo",rotation_start,rotation_limit);
         defaultPose = groundPos;
     }
     public void turnToAngle(double angle){

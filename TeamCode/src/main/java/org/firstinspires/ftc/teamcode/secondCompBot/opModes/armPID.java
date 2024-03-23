@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -28,7 +29,7 @@ public class armPID extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         arm = new MotorEx(hardwareMap,"arm");
-        //arm.encoder.setDirection(Motor.Direction.REVERSE);
+        arm.encoder.setDirection(Motor.Direction.REVERSE);
         arm.setInverted(true);
 //        slide = new MotorEx(hardwareMap,"slide");
 //        flip1 = hardwareMap.get(Servo.class,"flip servo 1");

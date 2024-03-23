@@ -222,11 +222,11 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
 
-//shows an outline of the boxes
+////shows an outline of the boxes
 //            @Override
 //    public Mat processFrame(Mat input) {
-////        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
-////        side = new Rect(rightX,rightY,rightWidth,rightHeight);
+//        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
+//        side = new Rect(rightX,rightY,rightWidth,rightHeight);
 //
 //        Imgproc.rectangle(input, center, new Scalar(255, 0, 0), 3);
 //        Imgproc.rectangle(input, side, new Scalar(0, 0, 255), 3);
@@ -265,8 +265,8 @@ public class VisionSubsystem extends SubsystemBase {
                         areaThreshHold = redAreaThreshHold;
                         break;
                     case WING://toDo thinks thats works, not sure
-                        center = new Rect(centerBlueX, centerBlueY, centerBlueWidth, centerBlueHeight);
-                        side = new Rect(leftX,leftY,leftWidth,leftHeight);
+                        center = new Rect(580, 230, 320, 200);
+                        side = new Rect(10,220,350,250);
                         areaThreshHold=blueAreaThreshHold;
                         break;
                 }
@@ -279,8 +279,8 @@ public class VisionSubsystem extends SubsystemBase {
                         areaThreshHold=blueAreaThreshHold;
                         break;
                     case WING://toDo thinks thats works, not sure
-                        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
-                        side = new Rect(rightX,rightY,rightWidth,rightHeight);
+                        center = new Rect(300, 235, 300, 200);
+                        side = new Rect(900,180,350,300);
                         areaThreshHold = redAreaThreshHold;
                         break;
                 }

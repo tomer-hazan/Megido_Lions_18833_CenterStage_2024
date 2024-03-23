@@ -42,7 +42,8 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.VisionConst
 @Config
 public class VisionSubsystem extends SubsystemBase {
     OpenCvWebcam camera;
-    Constants.GameConstants.StartingPosition color;
+    Constants.GameConstants.StartingColor color;
+    Constants.GameConstants.StartingPos pos;
     Constants.GameConstants.GameType gameType;
     Telemetry telemetry;
     Rect center;
@@ -252,18 +253,37 @@ public class VisionSubsystem extends SubsystemBase {
 
 
 
-    public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry,    Constants.GameConstants.StartingPosition color) {
+    public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry, Constants.GameConstants.StartingColor color, Constants.GameConstants.StartingPos startingPos) {
         this.color = color;
+        this.pos = startingPos;
         switch (color){
             case RED:
-                center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
-                side = new Rect(rightX,rightY,rightWidth,rightHeight);
-                areaThreshHold = redAreaThreshHold;
+                switch (pos){
+                    case BOARD:
+                        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
+                        side = new Rect(rightX,rightY,rightWidth,rightHeight);
+                        areaThreshHold = redAreaThreshHold;
+                        break;
+                    case WING://toDo thinks thats works, not sure
+                        center = new Rect(centerBlueX, centerBlueY, centerBlueWidth, centerBlueHeight);
+                        side = new Rect(leftX,leftY,leftWidth,leftHeight);
+                        areaThreshHold=blueAreaThreshHold;
+                        break;
+                }
                 break;
             case BLUE:
-                center = new Rect(centerBlueX, centerBlueY, centerBlueWidth, centerBlueHeight);
-                side = new Rect(leftX,leftY,leftWidth,leftHeight);
-                areaThreshHold=blueAreaThreshHold;
+                switch (pos){
+                    case BOARD:
+                        center = new Rect(centerBlueX, centerBlueY, centerBlueWidth, centerBlueHeight);
+                        side = new Rect(leftX,leftY,leftWidth,leftHeight);
+                        areaThreshHold=blueAreaThreshHold;
+                        break;
+                    case WING://toDo thinks thats works, not sure
+                        center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
+                        side = new Rect(rightX,rightY,rightWidth,rightHeight);
+                        areaThreshHold = redAreaThreshHold;
+                        break;
+                }
                 break;
         }
 

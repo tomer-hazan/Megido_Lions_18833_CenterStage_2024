@@ -4,11 +4,11 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import java.util.function.Supplier;
 
-public class waitCommand extends CommandBase {
+public class WaitCommand extends CommandBase {
     Supplier<Double> seconds;
     double start;
     double waitTime;
-    public  waitCommand(Supplier<Double> time,double waitTime){
+    public WaitCommand(Supplier<Double> time, double waitTime){
 
         this.waitTime = waitTime;
         seconds = time;

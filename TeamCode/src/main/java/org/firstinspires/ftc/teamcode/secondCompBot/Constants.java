@@ -146,9 +146,13 @@ public class Constants {
             CENTER,
             RIGHT
         }
-        public enum StartingPosition {
+        public enum StartingColor {
             RED,
             BLUE
+        }
+        public enum StartingPos {
+            BOARD,
+            WING
         }
     }
     public static class util{

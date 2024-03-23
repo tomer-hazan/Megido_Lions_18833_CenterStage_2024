@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeClawsD
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlClawsPosCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlLeftClawCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ControlRightClawCommand;
-import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.waitCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.WaitCommand;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.deg90Pos;
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.groundPos;
@@ -66,7 +66,7 @@ public class BlueBoardAuto extends CommandOpMode {
         drive = driveTrainSubsystem.getSampleDrive();
         slideSubsystem = new SlideSubsystem(hardwareMap);
         jointSubsystem = new JointSubsystem(hardwareMap);
-        visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, GameConstants.StartingPosition.BLUE);
+        visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, GameConstants.StartingColor.BLUE, GameConstants.StartingPos.BOARD);
         armSubsystem = new ArmSubsystem(hardwareMap);
         hookSubsystem = new HookSubsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
@@ -127,15 +127,15 @@ public class BlueBoardAuto extends CommandOpMode {
                 new ChangeClawsDefaultPos(jointSubsystem,groundPos),
                 new ParallelCommandGroup(moveToPixelPos, new ChangeClawsDefaultPos(jointSubsystem,groundPos)),
                 new ControlLeftClawCommand(clawSubsystem,true),
-                new waitCommand(()->getRuntime(),0.35),
+                new WaitCommand(()->getRuntime(),0.35),
                 new ControlLeftClawCommand(clawSubsystem,false),
                 new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 new ParallelCommandGroup( moveToBoard, new SetArmsTarget(armSubsystem, 2500)),
                 new SetArmsTarget(armSubsystem, 4300),
-                new waitCommand(()->getRuntime(),0.35),
+                new WaitCommand(()->getRuntime(),0.35),
                 new ControlRightClawCommand(clawSubsystem, true),
-                new waitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new waitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
+                new WaitCommand(()->getRuntime(),0.35),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
                 park
         );
         return auto;
@@ -161,16 +161,16 @@ public class BlueBoardAuto extends CommandOpMode {
                 new ChangeClawsDefaultPos(jointSubsystem,groundPos),
                 new ParallelCommandGroup(moveToPixelPos, new ChangeClawsDefaultPos(jointSubsystem,groundPos)),
                 new ControlLeftClawCommand(clawSubsystem,true),
-                new waitCommand(()->getRuntime(),0.35),
+                new WaitCommand(()->getRuntime(),0.35),
                 new ControlLeftClawCommand(clawSubsystem,false),
                 new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 turnToBoard,
                 new ParallelCommandGroup( moveToBoard, new SetArmsTarget(armSubsystem, 2500)),
                 new SetArmsTarget(armSubsystem,4300),
-                new waitCommand(()->getRuntime(),0.35),
+                new WaitCommand(()->getRuntime(),0.35),
                 new ControlRightClawCommand(clawSubsystem, true),
-                new waitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new waitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
+                new WaitCommand(()->getRuntime(),0.35),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
                 park
         );
         return  auto;
@@ -198,15 +198,15 @@ public class BlueBoardAuto extends CommandOpMode {
                 new ChangeClawsDefaultPos(jointSubsystem,groundPos),
                 moveForward,
                 new ControlLeftClawCommand(clawSubsystem,true),
-                new waitCommand(()->getRuntime(),0.35),
+                new WaitCommand(()->getRuntime(),0.35),
                 new ControlLeftClawCommand(clawSubsystem,false),
                 new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 new ParallelCommandGroup( moveToBoard, new SetArmsTarget(armSubsystem, 2500)),
                 new SetArmsTarget(armSubsystem,4300),
-                new waitCommand(()->getRuntime(),0.35),
+                new WaitCommand(()->getRuntime(),0.35),
                 new ControlRightClawCommand(clawSubsystem, true),
-                new waitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new waitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
+                new WaitCommand(()->getRuntime(),0.35),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
                 park
         );
         return  auto;

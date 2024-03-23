@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.secondCompBot.opModes;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.VisionSubsystem;
@@ -16,7 +15,7 @@ public class Auto extends CommandOpMode {
     private void initSubsystems(){
         armSubsystem = new ArmSubsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
-        visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, Constants.GameConstants.StartingPosition.BLUE);
+        //visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, Constants.GameConstants.StartingColor.BLUE);
     }
     @Override
     public void initialize() {

@@ -15,15 +15,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.secondCompBot.Constants;
 import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTarget;
-import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SetArmsTargetToNextPreSet;
-import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SetArmsTargetToPrevPreSet;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.AirplaneSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.HookSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.JointSubsystem;
-import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.MyOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.SlideSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ChangeClawsDefaultPos;
@@ -50,6 +47,8 @@ import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.PullRobotCom
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.ReturnHookCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToAngleCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.RotateClawsToPosCommand;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SetArmsTargetToNextPreSet;
+import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SetArmsTargetToPrevPreSet;
 import org.firstinspires.ftc.teamcode.secondCompBot.teleOP.commands.SwitchColorsCommand;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.groundPosOpenSlide;
@@ -75,7 +74,7 @@ public class RobotOpMode extends CommandOpMode {
     HookSubsystem hookSubsystem;
     MyOdometrySubsystem odometrySubsystem;
     ArmSubsystem armSubsystem;
-    LEDSubsystem ledSubsystem;
+    //LEDSubsystem ledSubsystem;
     JointSubsystem jointSubsystem;
     public static double speed;
     public static double turnSpeed;
@@ -154,7 +153,7 @@ public class RobotOpMode extends CommandOpMode {
         airplaneSubsystem = new AirplaneSubsystem(hardwareMap);
         hookSubsystem = new HookSubsystem(hardwareMap);
         odometrySubsystem = new MyOdometrySubsystem(hardwareMap);
-        ledSubsystem = new LEDSubsystem(hardwareMap);
+        //ledSubsystem = new LEDSubsystem(hardwareMap);
         armSubsystem = new ArmSubsystem(hardwareMap);
         jointSubsystem = new JointSubsystem(hardwareMap);
         clawSubsystem=new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
@@ -180,9 +179,9 @@ public class RobotOpMode extends CommandOpMode {
         closeRightClawCommand = new ControlRightClawCommand(clawSubsystem,false);
         openLeftClawCommand = new ControlLeftClawCommand(clawSubsystem,true);
         closeLeftClawCommand = new ControlLeftClawCommand(clawSubsystem,false);
-        switchColorsCommand = new SwitchColorsCommand(ledSubsystem);
-        changeToGreenCommand = new ChangeColorsCommand(ledSubsystem,0);
-        changeToNoneCommand = new ChangeColorsCommand(ledSubsystem,3);
+//        switchColorsCommand = new SwitchColorsCommand(ledSubsystem);
+//        changeToGreenCommand = new ChangeColorsCommand(ledSubsystem,0);
+//        changeToNoneCommand = new ChangeColorsCommand(ledSubsystem,3);
         strafeLeftRealSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> -0.6*mechunomSlowPowerFront,()->Double.valueOf(-0.48)*mechunomSlowPowerRear);
         strafeRightRealSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> 0.6*mechunomSlowPowerFront,()->Double.valueOf(0.48)*mechunomSlowPowerRear);
         strafeLeftSlow = new MecanumMovmentCommand(driveTrainSubsystem,() -> Double.valueOf(-1)*mechunomSlowPowerFront,()->Double.valueOf(-strafeRearWheels1)*mechunomSlowPowerRear);
@@ -196,7 +195,7 @@ public class RobotOpMode extends CommandOpMode {
         goToGroundOpenSlideCommand = new ChangeClawsDefaultPos(jointSubsystem,groundPosOpenSlide);
 //        goToGroundCommand = new ControlClawsPosOnceCommand(clawSubsystem,Constants.ClawConstants.groundPos);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
-        controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.getLeftPixel(),()->clawSubsystem.getRightPixel());
+        //controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.getLeftPixel(),()->clawSubsystem.getRightPixel());
         pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->driver.getButton(GamepadKeys.Button.DPAD_RIGHT),()->driver.getButton(GamepadKeys.Button.DPAD_LEFT));
         rotateClawsToAngleCommand = new RotateClawsToAngleCommand(jointSubsystem, ()->controller.getRightX()*360);
         closeClawsCommand = new ControlClawsCommand(clawSubsystem,false);
@@ -206,7 +205,7 @@ public class RobotOpMode extends CommandOpMode {
         openOrCloseLeftClawCommand = new OpenOrCloseLeftClawCommand(clawSubsystem);
         openOrCloseRightClawCommand  =new OpenOrCloseRightClawCommand(clawSubsystem);
         moveLiftToIntakeCommand = new MoveLiftToPosCommand(slideSubsystem,540,()->getRuntime());
-        changeOrangeForPixelsCommand = new ControlColorsCommand2(ledSubsystem,()->clawSubsystem.isDetectedPixelLeft(),()->clawSubsystem.isDetectedPixelRight());
+        //changeOrangeForPixelsCommand = new ControlColorsCommand2(ledSubsystem,()->clawSubsystem.isDetectedPixelLeft(),()->clawSubsystem.isDetectedPixelRight());
     }
     private void assignCommands(){
         //default commands
@@ -215,7 +214,7 @@ public class RobotOpMode extends CommandOpMode {
         jointSubsystem.setDefaultCommand(controlClawsPosCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
         driveTrainSubsystem.setDefaultCommand(driveCommand);
-        ledSubsystem.setDefaultCommand(changeOrangeForPixelsCommand);
+        //ledSubsystem.setDefaultCommand(changeOrangeForPixelsCommand);
 
         //drivers commands
         new Trigger(()-> (getRuntime()>=90&& driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);

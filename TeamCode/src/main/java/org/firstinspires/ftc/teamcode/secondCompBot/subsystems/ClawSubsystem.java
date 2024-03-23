@@ -112,10 +112,12 @@ public class ClawSubsystem extends SubsystemBase {
     public double getRightDistance(){return disRight;}
     public double getLeftDistance(){return disLeft;}
     public boolean isDetectedPixelLeft(){
-        return getLeftDistance()<35&&threshHoldLeft<sumLeftColor();//toDo check if works well with far pixels
+//        return getLeftDistance()<35&&threshHoldLeft<sumLeftColor();//toDo check if works well with far pixels
+        return false;
     }
     public boolean isDetectedPixelRight(){
-        return getRightDistance()<33&&threshHoldRight<sumRightColor();//toDo check if works well with far pixels
+//        return getRightDistance()<33&&threshHoldRight<sumRightColor();//toDo check if works well with far pixels
+        return false;
     }
     public Constants.GameElements.Pixals detectPixelColorLeft(){return detectPixelColorLeft(getLeftARGB());}
     public Constants.GameElements.Pixals detectPixelColorRight(){return detectPixelColorRight(getRightARGB());}

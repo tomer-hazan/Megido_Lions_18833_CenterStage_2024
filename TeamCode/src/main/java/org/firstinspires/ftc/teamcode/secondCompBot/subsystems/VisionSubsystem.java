@@ -69,13 +69,14 @@ public class VisionSubsystem extends SubsystemBase {
     public static int rightHeight=250;
 
     public static int areaThreshHold;
-    public static int blueAreaThreshHold=6000;
+    public static int blueAreaThreshHold=15000;
     public static int redAreaThreshHold=6000;
     MatOfPoint largestCenterContour = new MatOfPoint();
     MatOfPoint largestSideContour = new MatOfPoint();
     List<MatOfPoint> allSideContours;
     List<MatOfPoint> allCenterContours;
     Mat processed;
+    String startSide ="left";
 
 
     private class PipeLine extends OpenCvPipeline {
@@ -118,26 +119,53 @@ public class VisionSubsystem extends SubsystemBase {
                             largestCenterContour =contour;
                         }
                     }
-                    if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.LEFT;
-                    else{
-                        if(largestCenterContour.empty()){
-                            if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.RIGHT;
-                            else gameType = Constants.GameConstants.GameType.LEFT;
-                        }
-                        else if(largestSideContour.empty()){
-                            if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
-                            else gameType = Constants.GameConstants.GameType.LEFT;
-                        }else{
-                            if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
-                                if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
-                                else gameType=Constants.GameConstants.GameType.LEFT;
+                    switch (startSide){
+                        case "right":
+                            if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.LEFT;
+                            else{
+                                if(largestCenterContour.empty()){
+                                    if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.RIGHT;
+                                    else gameType = Constants.GameConstants.GameType.LEFT;
+                                }
+                                else if(largestSideContour.empty()){
+                                    if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
+                                    else gameType = Constants.GameConstants.GameType.LEFT;
+                                }else{
+                                    if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
+                                        if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
+                                        else gameType=Constants.GameConstants.GameType.LEFT;
+                                    }
+                                    else {
+                                        if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.RIGHT;
+                                        else gameType=Constants.GameConstants.GameType.LEFT;
+                                    }
+                                }
                             }
-                            else {
-                                if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.RIGHT;
-                                else gameType=Constants.GameConstants.GameType.LEFT;
+                            break;
+                        case "left":
+                            if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.RIGHT;
+                            else{
+                                if(largestCenterContour.empty()){
+                                    if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.LEFT;
+                                    else gameType = Constants.GameConstants.GameType.RIGHT;
+                                }
+                                else if(largestSideContour.empty()){
+                                    if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
+                                    else gameType = Constants.GameConstants.GameType.RIGHT;
+                                }else{
+                                    if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
+                                        if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
+                                        else gameType=Constants.GameConstants.GameType.RIGHT;
+                                    }
+                                    else {
+                                        if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.LEFT;
+                                        else gameType=Constants.GameConstants.GameType.RIGHT;
+                                    }
+                                }
                             }
-                        }
+                            break;
                     }
+
                     processedSide.release();
                     processedCenter.release();
                     break;
@@ -167,25 +195,51 @@ public class VisionSubsystem extends SubsystemBase {
                             largestCenterContour =contour;
                         }
                     }
-                    if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.RIGHT;
-                    else{
-                        if(largestCenterContour.empty()){
-                            if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.LEFT;
-                            else gameType = Constants.GameConstants.GameType.RIGHT;
-                        }
-                        else if(largestSideContour.empty()){
-                            if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
-                            else gameType = Constants.GameConstants.GameType.RIGHT;
-                        }else{
-                            if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
-                                if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
-                                else gameType=Constants.GameConstants.GameType.RIGHT;
+                    switch (startSide){
+                        case "right":
+                            if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.LEFT;
+                            else{
+                                if(largestCenterContour.empty()){
+                                    if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.RIGHT;
+                                    else gameType = Constants.GameConstants.GameType.LEFT;
+                                }
+                                else if(largestSideContour.empty()){
+                                    if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
+                                    else gameType = Constants.GameConstants.GameType.LEFT;
+                                }else{
+                                    if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
+                                        if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
+                                        else gameType=Constants.GameConstants.GameType.LEFT;
+                                    }
+                                    else {
+                                        if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.RIGHT;
+                                        else gameType=Constants.GameConstants.GameType.LEFT;
+                                    }
+                                }
                             }
-                            else {
-                                if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.LEFT;
-                                else gameType=Constants.GameConstants.GameType.RIGHT;
+                            break;
+                        case "left":
+                            if(largestCenterContour.empty()&& largestSideContour.empty())gameType= Constants.GameConstants.GameType.RIGHT;
+                            else{
+                                if(largestCenterContour.empty()){
+                                    if (Imgproc.boundingRect(largestSideContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.LEFT;
+                                    else gameType = Constants.GameConstants.GameType.RIGHT;
+                                }
+                                else if(largestSideContour.empty()){
+                                    if (Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold) gameType= Constants.GameConstants.GameType.CENTER;
+                                    else gameType = Constants.GameConstants.GameType.RIGHT;
+                                }else{
+                                    if(Imgproc.boundingRect(largestCenterContour).area()>Imgproc.boundingRect(largestSideContour).area()){
+                                        if(Imgproc.boundingRect(largestCenterContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.CENTER;
+                                        else gameType=Constants.GameConstants.GameType.RIGHT;
+                                    }
+                                    else {
+                                        if(Imgproc.boundingRect(largestSideContour).area()>areaThreshHold)gameType= Constants.GameConstants.GameType.LEFT;
+                                        else gameType=Constants.GameConstants.GameType.RIGHT;
+                                    }
+                                }
                             }
-                        }
+                            break;
                     }
                     processedSide.release();
                     processedCenter.release();
@@ -215,8 +269,9 @@ public class VisionSubsystem extends SubsystemBase {
             for (MatOfPoint contour: allSideContours) {
                 contour.release();
             }
-            Imgproc.rectangle(processed, center, new Scalar(255, 0, 0), 3);
-            Imgproc.rectangle(processed, side, new Scalar(0, 0, 255), 3);
+            //processed.release();
+            Imgproc.rectangle(input, center, new Scalar(255, 0, 0), 3);
+            Imgproc.rectangle(input, side, new Scalar(0, 0, 255), 3);
 
             return processed;
         }
@@ -263,11 +318,14 @@ public class VisionSubsystem extends SubsystemBase {
                         center = new Rect(centerRedX, centerRedY, centerRedWidth, centerRedHeight);
                         side = new Rect(rightX,rightY,rightWidth,rightHeight);
                         areaThreshHold = redAreaThreshHold;
+                        startSide = "right";
                         break;
-                    case WING://toDo thinks thats works, not sure
+
+                    case WING:
                         center = new Rect(580, 230, 320, 200);
                         side = new Rect(10,220,350,250);
                         areaThreshHold=blueAreaThreshHold;
+                        startSide = "left";
                         break;
                 }
                 break;
@@ -277,11 +335,13 @@ public class VisionSubsystem extends SubsystemBase {
                         center = new Rect(centerBlueX, centerBlueY, centerBlueWidth, centerBlueHeight);
                         side = new Rect(leftX,leftY,leftWidth,leftHeight);
                         areaThreshHold=blueAreaThreshHold;
+                        startSide = "left";
                         break;
-                    case WING://toDo thinks thats works, not sure
+                    case WING:
                         center = new Rect(300, 235, 300, 200);
                         side = new Rect(900,180,350,300);
                         areaThreshHold = redAreaThreshHold;
+                        startSide = "right";
                         break;
                 }
                 break;

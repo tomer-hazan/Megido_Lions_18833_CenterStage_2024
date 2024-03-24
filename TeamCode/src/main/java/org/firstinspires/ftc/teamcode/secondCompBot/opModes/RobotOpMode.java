@@ -196,7 +196,7 @@ public class RobotOpMode extends CommandOpMode {
 //        goToGroundCommand = new ControlClawsPosOnceCommand(clawSubsystem,Constants.ClawConstants.groundPos);
         moveArmCommand = new MoveArmCommand(armSubsystem,()->controller.getRightY());
         //controlColorsCommand = new ControlColorsCommand(ledSubsystem,()->clawSubsystem.getLeftPixel(),()->clawSubsystem.getRightPixel());
-        pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->driver.getButton(GamepadKeys.Button.DPAD_RIGHT),()->driver.getButton(GamepadKeys.Button.DPAD_LEFT));
+        pullRobotCommand = new PullRobotCommand(hookSubsystem,()->0.0,()->driver.getButton(GamepadKeys.Button.DPAD_UP),()->driver.getButton(GamepadKeys.Button.DPAD_DOWN));
         rotateClawsToAngleCommand = new RotateClawsToAngleCommand(jointSubsystem, ()->controller.getRightX()*360);
         closeClawsCommand = new ControlClawsCommand(clawSubsystem,false);
         openClawsCommand = new ControlClawsCommand(clawSubsystem,true);
@@ -219,8 +219,7 @@ public class RobotOpMode extends CommandOpMode {
         //drivers commands
         new Trigger(()-> (getRuntime()>=90&& driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
         new Trigger(()-> ( driver.getButton(GamepadKeys.Button.Y))).whileActiveOnce(launchAirplaneCommand);
-        new GamepadButton(driver,GamepadKeys.Button.DPAD_UP).whenHeld(deployHookCommand);
-        new GamepadButton(driver,GamepadKeys.Button.DPAD_DOWN).whenHeld(returnHookCommand);
+        new GamepadButton(driver, GamepadKeys.Button.DPAD_LEFT).toggleWhenPressed(deployHookCommand,returnHookCommand);
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.05).whileActiveContinuous(strafeRightSlow);
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.05).whileActiveContinuous(strafeLeftSlow);
         new GamepadButton(driver,GamepadKeys.Button.LEFT_BUMPER).whileHeld(strafeRightRealSlow);

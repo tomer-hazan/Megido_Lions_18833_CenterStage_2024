@@ -22,8 +22,8 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.ClawConstan
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.angle_threshold;
 @Config
 public class ClawSubsystem extends SubsystemBase {
-    public static double threshHoldLeft=8;
-    public static double threshHoldRight=5;
+    public static double threshHoldLeft=12;
+    public static double threshHoldRight=10;
     public final SensorColor colorSensorLeft;
     public final SensorColor colorSensorRight;
     public final DistanceSensor distanceSensorLeft;

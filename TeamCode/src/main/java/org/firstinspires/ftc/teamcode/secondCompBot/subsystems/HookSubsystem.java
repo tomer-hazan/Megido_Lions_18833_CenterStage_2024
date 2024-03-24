@@ -11,7 +11,7 @@ public class HookSubsystem extends SubsystemBase {
     Servo rightServo;
     MotorEx suspension;
     Servo leftServo;
-    public static double rightPos=0.56;
+    public static double rightPos=0;
     public HookSubsystem(HardwareMap hardwareMap){
         rightServo = hardwareMap.get(Servo.class,"right hook");
         leftServo = hardwareMap.get(Servo.class,"left hook");

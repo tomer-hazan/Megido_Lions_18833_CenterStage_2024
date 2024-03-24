@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.groundPos;
+
 @Config
 @TeleOp
 public class armPID extends OpMode {
@@ -19,8 +21,8 @@ public class armPID extends OpMode {
     public static int armTarget =1000;
     private final double ticks_in_degree=2790/119;
     Servo flip1;
-    Servo flip2;
     MotorEx arm;
+    public static double flipPos=groundPos;;
 //    MotorEx slide;
     @Override
     public void init() {
@@ -31,20 +33,15 @@ public class armPID extends OpMode {
         arm = new MotorEx(hardwareMap,"arm");
         arm.encoder.setDirection(Motor.Direction.REVERSE);
         arm.setInverted(true);
-//        slide = new MotorEx(hardwareMap,"slide");
-//        flip1 = hardwareMap.get(Servo.class,"flip servo 1");
-//        flip2 = hardwareMap.get(Servo.class,"flip servo 2");
-//        flip1.setPosition(Constants.ClawConstants.groundPos);
-//        flip2.setPosition(Constants.ClawConstants.groundPos);
-//        slide.setRunMode(Motor.RunMode.PositionControl);
+        flip1 = hardwareMap.get(Servo.class,"flip servo");
         telemetry.addData("pos",arm.getCurrentPosition());
         telemetry.addData("target", armTarget);
-//        telemetry.addData("slidePos",slide.getCurrentPosition());
         telemetry.update();
     }
 
     @Override
     public void loop() {
+        flip1.setPosition(flipPos);
         controller.setPID(p,i,d);
         int armPos = arm.getCurrentPosition();
         double pid = controller.calculate(armPos, armTarget);

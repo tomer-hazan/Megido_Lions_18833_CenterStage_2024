@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.JointSubsystem;
 import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.angle_threshold;
+import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConstants.deg90Pos;
 
 public class ControlClawsPosCommand extends CommandBase {
     JointSubsystem subsystem;
@@ -21,7 +22,7 @@ public class ControlClawsPosCommand extends CommandBase {
     @Override
     public void execute() {
         if(armDeg.get()<angle_threshold)subsystem.setPos(subsystem.getDefaultPose());
-        else subsystem.setPos(1);
+        else subsystem.setPos(deg90Pos);
     }
 
     @Override

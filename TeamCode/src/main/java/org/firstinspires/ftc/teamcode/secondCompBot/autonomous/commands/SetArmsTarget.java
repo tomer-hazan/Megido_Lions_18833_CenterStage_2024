@@ -20,6 +20,13 @@ public class SetArmsTarget extends CommandBase {
         controller.setTolerance(100);
         addRequirements(subsystem);
     }
+    public SetArmsTarget(ArmSubsystem subsystem, double target,double tolerance){
+        this.subsystem=subsystem;
+        this.target = target;
+        controller = new PIDController(p,i,d);
+        controller.setTolerance(tolerance);
+        addRequirements(subsystem);
+    }
 
     @Override
     public void execute() {

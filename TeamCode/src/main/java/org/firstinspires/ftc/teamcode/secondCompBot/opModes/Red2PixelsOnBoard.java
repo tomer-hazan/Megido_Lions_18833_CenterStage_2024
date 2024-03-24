@@ -53,7 +53,7 @@ public class Red2PixelsOnBoard extends CommandOpMode {
     private void initRobot(){
         clawSubsystem.openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
         clawSubsystem.openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
-        jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->getRuntime()));
+        jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->0.0));
         armSubsystem.setDefaultCommand(new ControlArmCommand(armSubsystem));
     }
     @Override

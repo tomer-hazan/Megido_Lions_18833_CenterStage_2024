@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.secondCompBot.Constants.GameConstants;
 import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.ControlArmCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.DriveTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.secondCompBot.autonomous.commands.SetArmsTarget;
+import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.AprilTagSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.secondCompBot.subsystems.DriveTrainSubsystem;
@@ -45,6 +46,7 @@ public class BlueBoardAuto extends CommandOpMode {
     SequentialCommandGroup autoRight;
     Pose2d startPos;
     HookSubsystem hookSubsystem;
+    AprilTagSubsystem aprilTagSubsystem;
 
     @Override
     public void initialize() {
@@ -70,11 +72,12 @@ public class BlueBoardAuto extends CommandOpMode {
         armSubsystem = new ArmSubsystem(hardwareMap);
         hookSubsystem = new HookSubsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
+        //aprilTagSubsystem = new AprilTagSubsystem(hardwareMap,telemetry);
     }
     private void initRobot(){
         clawSubsystem.openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
         clawSubsystem.openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
-        jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->getRuntime()));
+        jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->0.0));
         armSubsystem.setDefaultCommand(new ControlArmCommand(armSubsystem));
         hookSubsystem.lowerHook();
     }
@@ -216,6 +219,7 @@ public class BlueBoardAuto extends CommandOpMode {
         drive.update();
         telemetry.addData("pos",drive.getPoseEstimate());
         telemetry.addData("arm pos",armSubsystem.motor.getCurrentPosition());
+        telemetry.addData("axon pos",jointSubsystem.rotationServo.getPosition());
         telemetry.update();
         return isStopRequested();
     }

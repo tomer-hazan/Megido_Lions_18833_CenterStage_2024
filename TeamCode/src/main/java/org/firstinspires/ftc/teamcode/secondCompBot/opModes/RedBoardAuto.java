@@ -74,7 +74,7 @@ public class RedBoardAuto extends CommandOpMode {
     private void initRobot(){
         clawSubsystem.openOrCloseRight(Constants.ClawConstants.Positions.CLOSE);
         clawSubsystem.openOrCloseLeft(Constants.ClawConstants.Positions.CLOSE);
-        jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->getRuntime()));
+        jointSubsystem.setDefaultCommand(new ControlClawsPosCommand(jointSubsystem,()->0.0));
         armSubsystem.setDefaultCommand(new ControlArmCommand(armSubsystem));
         hookSubsystem.lowerHook();
     }
@@ -211,6 +211,7 @@ public class RedBoardAuto extends CommandOpMode {
     private boolean updates(){
         drive.update();
         telemetry.addData("pos",drive.getPoseEstimate());
+        telemetry.addData("axon pos",jointSubsystem.rotationServo.getPosition());
         telemetry.update();
         return isStopRequested();
     }

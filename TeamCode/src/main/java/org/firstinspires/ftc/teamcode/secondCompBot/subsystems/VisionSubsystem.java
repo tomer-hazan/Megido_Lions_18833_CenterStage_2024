@@ -324,7 +324,7 @@ public class VisionSubsystem extends SubsystemBase {
                     case WING:
                         center = new Rect(580, 230, 320, 200);
                         side = new Rect(10,220,350,250);
-                        areaThreshHold=blueAreaThreshHold;
+                        areaThreshHold=redAreaThreshHold;
                         startSide = "left";
                         break;
                 }
@@ -340,7 +340,7 @@ public class VisionSubsystem extends SubsystemBase {
                     case WING:
                         center = new Rect(300, 235, 300, 200);
                         side = new Rect(900,180,350,300);
-                        areaThreshHold = redAreaThreshHold;
+                        areaThreshHold = blueAreaThreshHold;
                         startSide = "right";
                         break;
                 }

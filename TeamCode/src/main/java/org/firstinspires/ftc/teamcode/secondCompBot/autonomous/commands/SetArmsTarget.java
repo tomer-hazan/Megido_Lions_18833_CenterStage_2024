@@ -11,6 +11,7 @@ public class SetArmsTarget extends CommandBase {
     ArmSubsystem subsystem;
     double target;
     PIDController controller;
+    double power;
     public static double p=0.025,i=0.34,d=0.0055;
     public static double f=0.5;
     public SetArmsTarget(ArmSubsystem subsystem, double target){
@@ -19,13 +20,21 @@ public class SetArmsTarget extends CommandBase {
         controller = new PIDController(p,i,d);
         controller.setTolerance(100);
         addRequirements(subsystem);
+        this.power=1;
     }
-    public SetArmsTarget(ArmSubsystem subsystem, double target,double tolerance){
+//    public SetArmsTarget(ArmSubsystem subsystem, double target,double tolerance){
+//        this.subsystem=subsystem;
+//        this.target = target;
+//        controller = new PIDController(p,i,d);
+//        controller.setTolerance(tolerance);
+//        addRequirements(subsystem);
+//    }
+    public SetArmsTarget(ArmSubsystem subsystem, double target,double power){
         this.subsystem=subsystem;
         this.target = target;
         controller = new PIDController(p,i,d);
-        controller.setTolerance(tolerance);
         addRequirements(subsystem);
+        this.power=power;
     }
 
     @Override
@@ -34,7 +43,7 @@ public class SetArmsTarget extends CommandBase {
         double pid = controller.calculate(armPos, target);
         double ff = Math.cos(target/ticks_in_degree)*f;
         double power = pid+ff;
-        subsystem.setPower(-power);
+        subsystem.setPower(-power*this.power);
     }
 
     @Override

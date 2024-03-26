@@ -89,9 +89,9 @@ public class Constants {
         public static final double groundAngle = 78;
         public static final double rotation_start = 0;
         public static final double rotation_limit = 180;
-        public static final double groundPos = 0.37;
-        public static final double groundPosOpenSlide = 0.33;
-        public static final double deg90Pos = 0.86;
+        public static final double groundPos = 0.54;
+        public static final double groundPosOpenSlide = 0.5;
+        public static final double deg90Pos = 1;
         public static final double rotation_min = groundPos;
         public static final double rotation_max = 1;
     }

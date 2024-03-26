@@ -119,11 +119,11 @@ public class BlueBoardAuto extends CommandOpMode {
                 .forward(1)
                 .build());
         DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
-                .lineToConstantHeading(new Vector2d(46, 27))
+                .lineToConstantHeading(new Vector2d(44, 26))
                 .build());
         DriveTrajectorySequenceCommand park = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
                 .lineToConstantHeading(new Vector2d(46, 60))
-                .lineToConstantHeading(new Vector2d(60, 60))
+                .lineToConstantHeading(new Vector2d(52, 60))
                 .build());
         SequentialCommandGroup auto;
         auto = new SequentialCommandGroup(
@@ -138,7 +138,7 @@ public class BlueBoardAuto extends CommandOpMode {
                 new WaitCommand(()->getRuntime(),0.35),
                 new ControlRightClawCommand(clawSubsystem, true),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.5), new ControlRightClawCommand(clawSubsystem, false))),
                 park
         );
         return auto;
@@ -157,7 +157,7 @@ public class BlueBoardAuto extends CommandOpMode {
                 .build());
         DriveTrajectorySequenceCommand park = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
                 .lineToConstantHeading(new Vector2d(46, 60))
-                .lineToConstantHeading(new Vector2d(60, 60))
+                .lineToConstantHeading(new Vector2d(52, 60))
                 .build());
         SequentialCommandGroup auto;
         auto=new SequentialCommandGroup(
@@ -173,7 +173,7 @@ public class BlueBoardAuto extends CommandOpMode {
                 new WaitCommand(()->getRuntime(),0.35),
                 new ControlRightClawCommand(clawSubsystem, true),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.5), new ControlRightClawCommand(clawSubsystem, false))),
                 park
         );
         return  auto;
@@ -192,7 +192,7 @@ public class BlueBoardAuto extends CommandOpMode {
                 .build());
         DriveTrajectorySequenceCommand park = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
                 .lineToConstantHeading(new Vector2d(46, 60))
-                .lineToConstantHeading(new Vector2d(60, 60))
+                .lineToConstantHeading(new Vector2d(52, 60))
                 .build());
         SequentialCommandGroup auto;
         auto=new SequentialCommandGroup(
@@ -209,7 +209,7 @@ public class BlueBoardAuto extends CommandOpMode {
                 new WaitCommand(()->getRuntime(),0.35),
                 new ControlRightClawCommand(clawSubsystem, true),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false))),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.5), new ControlRightClawCommand(clawSubsystem, false))),
                 park
         );
         return  auto;

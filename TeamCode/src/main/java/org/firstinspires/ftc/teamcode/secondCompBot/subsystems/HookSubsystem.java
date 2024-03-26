@@ -29,7 +29,7 @@ public class HookSubsystem extends SubsystemBase {
         leftServo.setPosition(0.3);
     }
     public void lowerHook(){
-        rightServo.setPosition(1);
+        rightServo.setPosition(0.6);
         leftServo.setPosition(1);
     }
     public void pullUp(){suspension.set(1);}

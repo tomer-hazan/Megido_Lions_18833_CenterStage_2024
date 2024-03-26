@@ -35,7 +35,7 @@ import static org.firstinspires.ftc.teamcode.secondCompBot.Constants.JointConsta
 
 @Autonomous
 @Config
-public class BlueWingAuto extends CommandOpMode {
+public class RedWingAuto extends CommandOpMode {
     SampleMecanumDrive drive;
     DriveTrainSubsystem driveTrainSubsystem;
     SlideSubsystem slideSubsystem;
@@ -53,7 +53,7 @@ public class BlueWingAuto extends CommandOpMode {
 
     @Override
     public void initialize() {
-        startPos = new Pose2d(-39, 60, Math.toRadians(90));
+        startPos = new Pose2d(-39, -60, -Math.toRadians(90));
         initSubsystems();
         initRobot();
         initAutos();
@@ -71,7 +71,7 @@ public class BlueWingAuto extends CommandOpMode {
         drive = driveTrainSubsystem.getSampleDrive();
         slideSubsystem = new SlideSubsystem(hardwareMap);
         jointSubsystem = new JointSubsystem(hardwareMap);
-        visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, GameConstants.StartingColor.BLUE, GameConstants.StartingPos.WING);
+        visionSubsystem = new VisionSubsystem(hardwareMap,telemetry, GameConstants.StartingColor.RED, GameConstants.StartingPos.WING);
         armSubsystem = new ArmSubsystem(hardwareMap);
         hookSubsystem = new HookSubsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap,()->getRuntime(),()->armSubsystem.getAngle());
@@ -115,81 +115,90 @@ public class BlueWingAuto extends CommandOpMode {
         stop();
     }
 
-    public SequentialCommandGroup autoRight(){
-        DriveTrajectorySequenceCommand moveToPixelPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(startPos)
+    public SequentialCommandGroup autoRight() {
+        DriveTrajectorySequenceCommand moveToPixelPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(startPos)
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(-39,28))
+                .lineToConstantHeading(new Vector2d(-42, -29))
                 .turn(Math.toRadians(90))
+                .forward(6)
                 .build());
         DriveTrajectorySequenceCommand moveToWaitPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .back(4)
-                .lineToConstantHeading(new Vector2d(-39,8))
-                .lineToConstantHeading(new Vector2d(12,8))
+                .lineToConstantHeading(new Vector2d(-50, -29))
+                .turn(Math.toRadians(-90))
+                .lineToConstantHeading(new Vector2d(-50,-14))
+                .turn(Math.toRadians(-90))
+                .lineToConstantHeading(new Vector2d(12,-14))
                 .build());
-        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToWaitPos.getTrajectory().end())
+        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToWaitPos.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(40,10))
-                .lineToConstantHeading(new Vector2d(40,22))
+                .lineToConstantHeading(new Vector2d(40,-14))
+                .turn(Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(40, -54.5))
+                .turn(Math.toRadians(-90))
+                .build());
+        DriveTrajectorySequenceCommand moveInToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(slowMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(slowMove))
-                .lineToConstantHeading(new Vector2d(49, 22))
+                .lineToConstantHeading(new Vector2d(47,- 54.5))
                 .build());
         SequentialCommandGroup auto;
-        auto=new SequentialCommandGroup(
+        auto = new SequentialCommandGroup(
                 new ChangeClawsDefaultPos(jointSubsystem,groundPos),
-                moveToPixelPos,
-                new ControlRightClawCommand(clawSubsystem,true),
+                new ParallelCommandGroup(moveToPixelPos, new ChangeClawsDefaultPos(jointSubsystem,groundPos)),
+                new ControlLeftClawCommand(clawSubsystem,true),
                 new WaitCommand(()->getRuntime(),0.35),
                 new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ControlRightClawCommand(clawSubsystem,false),
+                new ControlLeftClawCommand(clawSubsystem,false),
                 moveToWaitPos,
+                moveToBoard,
                 new SetArmsTarget(armSubsystem,3400),
                 new WaitCommand(()->getRuntime(),0.35),//the waiting time
-                moveToBoard,
+                moveInToBoard,
                 new ChangeClawsDefaultPos(jointSubsystem,0.97),
-                new WaitCommand(()->getRuntime(),0.35),//the waiting time
-                new ControlLeftClawCommand(clawSubsystem, true),
-        new WaitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlLeftClawCommand(clawSubsystem, false)))
+                new WaitCommand(()->getRuntime(),0.35),
+                new ControlRightClawCommand(clawSubsystem, true),
+                new WaitCommand(()->getRuntime(),0.35),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlRightClawCommand(clawSubsystem, false)))
         );
-        return  auto;
+        return auto;
     }
+
     public SequentialCommandGroup autoCenter(){
         DriveTrajectorySequenceCommand moveToPixelPos1 = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(startPos)
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(-56,60))
-                .lineToConstantHeading(new Vector2d(-56, 12))
+                .lineToConstantHeading(new Vector2d(-53,-60))
+                .lineToConstantHeading(new Vector2d(-53, -13))
                 .build());
         DriveTrajectorySequenceCommand moveToPixelPos2 = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToPixelPos1.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(-39, 12))
+                .lineToConstantHeading(new Vector2d(-37, -13))
                 .build());
         DriveTrajectorySequenceCommand moveToWaitPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToPixelPos2.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
                 .back(4)
-                .turn(Math.toRadians(80))
-                .lineToConstantHeading(new Vector2d(12, 8))
+                .turn(Math.toRadians(-90))
+                .lineToConstantHeading(new Vector2d(12, -12.5))
                 .build());
         DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToWaitPos.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(40,10))
-                .turn(Math.toRadians(-100))
-                .lineToConstantHeading(new Vector2d(40,27))
-                .turn(Math.toRadians(100))
+                .lineToConstantHeading(new Vector2d(40,-12.5))
+                .turn(Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(40,-44))
+                .turn(Math.toRadians(-90))
                 .build());
         DriveTrajectorySequenceCommand moveInToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(slowMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(slowMove))
-                .lineToConstantHeading(new Vector2d(50, 27))
+                .lineToConstantHeading(new Vector2d(47, -44))
                 .build());
         SequentialCommandGroup auto;
         auto=new SequentialCommandGroup(
@@ -198,11 +207,11 @@ public class BlueWingAuto extends CommandOpMode {
                 new ChangeClawsDefaultPos(jointSubsystem,groundPos),
                 new WaitCommand(()->getRuntime(),0.35),
                 moveToPixelPos2,
-                new ControlRightClawCommand(clawSubsystem,true),
+                new ControlLeftClawCommand(clawSubsystem,true),
                 new WaitCommand(()->getRuntime(),0.35),
                 new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ControlRightClawCommand(clawSubsystem,false),
+                new ControlLeftClawCommand(clawSubsystem,false),
                 moveToWaitPos,
                 moveToBoard,
                 new SetArmsTarget(armSubsystem,3400),
@@ -210,64 +219,57 @@ public class BlueWingAuto extends CommandOpMode {
                 moveInToBoard,
                 new ChangeClawsDefaultPos(jointSubsystem,0.97),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ControlLeftClawCommand(clawSubsystem, true),
-        new WaitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlLeftClawCommand(clawSubsystem, false)))
+                new ControlRightClawCommand(clawSubsystem, true),
+                new WaitCommand(()->getRuntime(),0.35),
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.5), new ControlRightClawCommand(clawSubsystem, false)))
         );
         return  auto;
     }
-    public SequentialCommandGroup autoLeft() {
-        DriveTrajectorySequenceCommand moveToPixelPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(startPos)
+    public SequentialCommandGroup autoLeft(){
+        DriveTrajectorySequenceCommand moveToPixelPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(startPos)
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(-42, 30))
+                .lineToConstantHeading(new Vector2d(-35,-25))
                 .turn(Math.toRadians(-90))
-                .forward(5)
                 .build());
         DriveTrajectorySequenceCommand moveToWaitPos = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToPixelPos.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(-50, 30))
-                .turn(Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-50,10))
-                .turn(Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(12,10))
+                .back(3)
+                .lineToConstantHeading(new Vector2d(-39,-12))
+                .lineToConstantHeading(new Vector2d(12,-12))
                 .build());
-        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToWaitPos.getTrajectory().end())
+        DriveTrajectorySequenceCommand moveToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem,drive.trajectorySequenceBuilder(moveToWaitPos.getTrajectory().end())
                 .setVelConstraint(new MecanumVelocityConstraint(normalMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(normalMove))
-                .lineToConstantHeading(new Vector2d(40,10))
-                .turn(Math.toRadians(-100))
-                .lineToConstantHeading(new Vector2d(40, 33.5))
-                .turn(Math.toRadians(100))
-                .build());
-        DriveTrajectorySequenceCommand moveInToBoard = new DriveTrajectorySequenceCommand(driveTrainSubsystem, drive.trajectorySequenceBuilder(moveToBoard.getTrajectory().end())
+                .lineToConstantHeading(new Vector2d(40,-14))
+                .lineToConstantHeading(new Vector2d(40,-37))
                 .setVelConstraint(new MecanumVelocityConstraint(slowMove,DriveConstants.TRACK_WIDTH))
                 .setAccelConstraint(new ProfileAccelerationConstraint(slowMove))
-                .lineToConstantHeading(new Vector2d(52, 33.5))
+                .lineToConstantHeading(new Vector2d(47, -37))
                 .build());
         SequentialCommandGroup auto;
-        auto = new SequentialCommandGroup(
+        auto=new SequentialCommandGroup(
                 new ChangeClawsDefaultPos(jointSubsystem,groundPos),
-                new ParallelCommandGroup(moveToPixelPos, new ChangeClawsDefaultPos(jointSubsystem,groundPos)),
-                new ControlRightClawCommand(clawSubsystem,true),
+                moveToPixelPos,
+                new ControlLeftClawCommand(clawSubsystem,true),
                 new WaitCommand(()->getRuntime(),0.35),
                 new ChangeClawsDefaultPos(jointSubsystem,deg90Pos),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ControlRightClawCommand(clawSubsystem,false),
+                new ControlLeftClawCommand(clawSubsystem,false),
                 moveToWaitPos,
-                moveToBoard,
                 new SetArmsTarget(armSubsystem,3400),
                 new WaitCommand(()->getRuntime(),0.35),//the waiting time
-                moveInToBoard,
+                moveToBoard,
                 new ChangeClawsDefaultPos(jointSubsystem,0.97),
+                new WaitCommand(()->getRuntime(),0.35),//the waiting time
+                new ControlRightClawCommand(clawSubsystem, true),
                 new WaitCommand(()->getRuntime(),0.35),
-                new ControlLeftClawCommand(clawSubsystem, true),
-                new WaitCommand(()->getRuntime(),0.35),
-                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.2), new ControlLeftClawCommand(clawSubsystem, false)))
+                new ParallelCommandGroup(new SetArmsTarget(armSubsystem, 0),new SequentialCommandGroup(new WaitCommand(()->getRuntime(),0.5), new ControlRightClawCommand(clawSubsystem, false)))
         );
-        return auto;
+        return  auto;
     }
+
 
     private boolean updates(){
         drive.update();

@@ -242,6 +242,7 @@ public class RobotOpMode extends CommandOpMode {
         new GamepadButton(controller,GamepadKeys.Button.Y).whenPressed(new SequentialCommandGroup( goToGroundOpenSlideCommand,moveLiftToIntakeCommand));
         new Trigger(()->controller.getButton(GamepadKeys.Button.Y)&& !clawSubsystem.isDetectedPixelLeft()).whenActive(new ControlLeftClawCommand(clawSubsystem,true));
         new Trigger(()->controller.getButton(GamepadKeys.Button.Y)&& !clawSubsystem.isDetectedPixelRight()).whenActive(new ControlRightClawCommand(clawSubsystem,true));
+        new GamepadButton(controller,GamepadKeys.Button.A).whenPressed(new SequentialCommandGroup( new ChangeClawsDefaultPos(jointSubsystem,groundPosOpenSlide),new MoveLiftToPosCommand(slideSubsystem,540,()->getRuntime())));
         new GamepadButton(controller,GamepadKeys.Button.DPAD_LEFT).whileActiveOnce(new MoveLiftToPosCommand(slideSubsystem,0,()->getRuntime())).whileActiveOnce(new SetArmsTarget(armSubsystem,0)).whileActiveOnce(new ControlClawsCommand(clawSubsystem, false)).whileActiveOnce(new ChangeClawsDefaultPos(jointSubsystem,Constants.JointConstants.deg90Pos));
 
         //automations
